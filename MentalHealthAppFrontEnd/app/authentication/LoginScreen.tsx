@@ -9,12 +9,14 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const handleLogin = () => {
+  
     login(email, password)
-      .then(() => {
-        // Successfully signed in, use data.customToken if needed
+      .then((response) => {
+        console.log('Login successful:', response);
         router.replace('home'); // Navigate to home screen
       })
       .catch((error: any) => {
+        console.error('Login failed:', error);
         if (error instanceof Error) {
           Alert.alert('Login Error', error.message);
         } else {
@@ -22,6 +24,7 @@ export default function LoginScreen() {
         }
       });
   };
+  
 
   return (
     <View style={styles.container}>
