@@ -36,3 +36,6 @@
 
 # firebase
 /backend/src/firebase_options.ts
+
+# dist
+/backend/dist

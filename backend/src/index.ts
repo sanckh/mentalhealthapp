@@ -1,6 +1,15 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import authRoutes from './authRoutes';
+import authRoutes from './routes/auth_routes';
+import admin from 'firebase-admin';
+import { app as firebaseApp } from './firebase_options';
+
+
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  databaseURL: 'https://mental-health-app-77517-default-rtdb.firebaseio.com'
+});
 
 const app = express();
 const port = process.env.PORT || 3000;
