@@ -34,6 +34,7 @@ export default function RootLayout() {
         <Stack.Screen name="home" options={{ title: 'Home' }} />
         <Stack.Screen name="profile" options={{ title: 'Profile' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+        <Stack.Screen name="dailycheckin" options={{ title: 'Daily Check-in' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
