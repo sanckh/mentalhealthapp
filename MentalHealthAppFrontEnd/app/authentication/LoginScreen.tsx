@@ -13,7 +13,7 @@ export default function LoginScreen() {
     login(email, password)
       .then((response) => {
         console.log('Login successful:', response);
-        router.replace('home'); // Navigate to home screen
+        router.replace('dailycheckin');
       })
       .catch((error: any) => {
         console.error('Login failed:', error);
