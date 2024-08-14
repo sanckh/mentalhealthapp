@@ -7,7 +7,9 @@ npm (v6+)
 Firebase project set up with Firestore and Authentication
 
 Getting Started
+
 Backend Setup
+
 Navigate to the Backend Directory:
 
 cd backend
@@ -15,9 +17,11 @@ cd backend
 Install Dependencies:
 
 npm install
+
 Set Up Environment Variables:
 
 Create a firebase_options.ts file in the backend directory.
+
 Add your Firebase credentials and other environment variables.
 
 Start the Backend Server:
@@ -26,6 +30,7 @@ npm start
 
 
 Frontend Setup
+
 Navigate to the Frontend Directory:
 
 cd mentalhealthappfrontend
