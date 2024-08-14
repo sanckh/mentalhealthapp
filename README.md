@@ -10,8 +10,8 @@ Getting Started
 Backend Setup
 Navigate to the Backend Directory:
 
-
 cd backend
+
 Install Dependencies:
 
 npm install
