@@ -26,7 +26,7 @@ Add your Firebase credentials and other environment variables.
 
 Start the Backend Server:
 
-npm start
+npm start. Alternatively using ts-node run npx ts-node src/index.ts
 
 
 Frontend Setup
