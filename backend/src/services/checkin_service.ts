@@ -31,12 +31,17 @@ export const saveCheckIn = async (
 };
 
 export const hasSubmittedDailyCheckin = async (userId: string) => {
-  const today = new Date();
-  const query = db.collection('checkins')
-    .where('userId', '==', userId)
-    .where('timestamp', '>=', today)
-    .where('timestamp', '<', new Date(today.setDate(today.getDate() + 1)));
-  const querySnapshot = await query.get();
-  return querySnapshot.docs.length > 0;
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+tomorrow.setHours(0, 0, 0, 0);
+
+const query = db.collection('checkins')
+  .where('userId', '==', userId)
+  .where('timestamp', '>=', today)
+  .where('timestamp', '<', tomorrow);
+const querySnapshot = await query.get();
+return querySnapshot.docs.length > 0;
 };
   
