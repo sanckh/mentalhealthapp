@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Picker } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Picker, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getCurrentUser } from '../../api/auth';
 import { submitCheckIn } from '../../api/checkin';
@@ -11,12 +11,13 @@ export default function DailyCheckInScreen() {
   const [sleep, setSleep] = useState('5');
   const [activity, setActivity] = useState('5');
   const [gratitude, setGratitude] = useState('');
+  const [user, setUser] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
     getCurrentUser()
       .then(user => {
-        console.log('User:', user);
+        setUser(user);
       })
       .catch(error => {
         console.error('Error fetching user:', error);
@@ -26,7 +27,7 @@ export default function DailyCheckInScreen() {
 
   const handleCheckIn = async () => {
     try {
-      await submitCheckIn({ mood, notes, stress, sleep, activity, gratitude });
+      await submitCheckIn({ userId: user.uid, mood, notes, stress, sleep, activity, gratitude });
       Alert.alert('Success', 'Check-in completed');
       router.replace('home');
     } catch (error: any) {
@@ -35,18 +36,18 @@ export default function DailyCheckInScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Daily Check-In</Text>
-      
-      <Text style={styles.label}>Mood</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="How are you feeling today?"
-        value={mood}
-        onChangeText={setMood}
-      />
+    <ScrollView contentContainerStyle={styles.container}>
+    <Text style={styles.title}>Daily Check-In</Text>
+    
+    <Text style={styles.label}>Mood</Text>
+    <TextInput
+      style={styles.input}
+      placeholder="How are you feeling today?"
+      value={mood}
+      onChangeText={setMood}
+    />
 
-      <Text style={styles.label}>Stress Level</Text>
+    <Text style={styles.label}>Stress Level</Text>
       <Picker
         selectedValue={stress}
         style={styles.picker}
@@ -95,8 +96,10 @@ export default function DailyCheckInScreen() {
         onChangeText={setNotes}
       />
 
-      <Button title="Submit" onPress={handleCheckIn} />
-    </View>
+      <TouchableOpacity onPress={handleCheckIn} style={styles.button}>
+        <Text style={styles.buttonText} >Submit</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -106,6 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 16,
     backgroundColor: '#f5f5f5',
+    paddingBottom: 20
   },
   title: {
     fontSize: 28,
@@ -130,4 +134,17 @@ const styles = StyleSheet.create({
     height: 50,
     marginVertical: 10,
   },
+  button: {
+    height: 40,
+    marginTop: 20,
+    marginBottom: 200,
+    padding: 10,
+    backgroundColor: '#007aff',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+  }
 });

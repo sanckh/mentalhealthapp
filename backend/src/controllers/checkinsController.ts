@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
-import { saveCheckIn } from '../services/checkin_service';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { hasSubmittedDailyCheckin, saveCheckIn } from '../services/checkin_service';
 
-export const submitCheckIn = async (req: AuthenticatedRequest, res: Response) => {
-  const { mood, notes, stress, sleep, activity, gratitude } = req.body;
-  const userId = req.user?.uid;
+export const submitCheckIn = async (req: Request, res: Response) => {
+  const { userId, mood, notes, stress, sleep, activity, gratitude } = req.body;
 
   if (!userId) {
     throw new Error('User ID is required');
@@ -17,3 +15,13 @@ export const submitCheckIn = async (req: AuthenticatedRequest, res: Response) =>
     res.status(500).json({ error: 'Failed to submit check-in' });
   }
 };
+
+export const getHasSubmittedDailyCheckin = async (req: Request, res: Response) => {
+  console.log("I am server side")
+  const userId = req.params.userId?.toString();
+  if (!userId || typeof userId !== 'string') {
+    throw new Error('User ID must be a string');
+  }
+  const hasSubmitted = await hasSubmittedDailyCheckin(userId);
+  res.json({ hasSubmitted });
+}

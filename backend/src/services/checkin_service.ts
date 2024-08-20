@@ -29,4 +29,14 @@ export const saveCheckIn = async (
     throw new Error('Failed to save check-in');
   }
 };
+
+export const hasSubmittedDailyCheckin = async (userId: string) => {
+  const today = new Date();
+  const query = db.collection('checkins')
+    .where('userId', '==', userId)
+    .where('timestamp', '>=', today)
+    .where('timestamp', '<', new Date(today.setDate(today.getDate() + 1)));
+  const querySnapshot = await query.get();
+  return querySnapshot.docs.length > 0;
+};
   

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { login } from '../../api/auth';
+import { hasSubmittedDailyCheckin } from '@/api/checkin';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -13,7 +14,14 @@ export default function LoginScreen() {
     login(email, password)
       .then((response) => {
         console.log('Login successful:', response);
-        router.replace('dailycheckin');
+        hasSubmittedDailyCheckin(response.uid)
+        .then((hasSubmitted) => {
+          if (hasSubmitted) {
+            router.replace('home');
+          } else {
+            router.replace('dailycheckin');
+          }
+        })
       })
       .catch((error: any) => {
         console.error('Login failed:', error);
