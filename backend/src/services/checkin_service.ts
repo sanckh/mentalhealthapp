@@ -31,6 +31,8 @@ export const saveCheckIn = async (
 };
 
 export const hasSubmittedDailyCheckin = async (userId: string) => {
+  //This sets today and tomorrow to midnight to check if a user
+  // has submitted a checkin on that day
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const tomorrow = new Date(today);
