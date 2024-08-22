@@ -8,7 +8,7 @@ export default function Index() {
   useEffect(() => {
     // Delay navigation slightly
     setTimeout(() => {
-      router.replace('login');
+      router.replace({pathname: '/login'});
     }, 0); // You can increase the delay slightly if necessary
   }, [router]);
 

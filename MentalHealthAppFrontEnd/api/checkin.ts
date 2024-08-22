@@ -24,7 +24,6 @@ export const submitCheckIn = async (data: {
   };
 
   export const hasSubmittedDailyCheckin = async (userId: string) => {
-    console.log("I am here")
     const response = await fetch(`${API_URL}/hassubmitteddailycheckin/${userId}`, {
       method: 'GET',
       headers: {

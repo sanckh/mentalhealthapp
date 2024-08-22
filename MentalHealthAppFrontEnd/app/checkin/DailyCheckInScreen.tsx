@@ -21,7 +21,7 @@ export default function DailyCheckInScreen() {
       })
       .catch(error => {
         console.error('Error fetching user:', error);
-        router.replace('login');
+        router.replace({pathname: '/login'});
       });
   }, []);
 
@@ -29,7 +29,7 @@ export default function DailyCheckInScreen() {
     try {
       await submitCheckIn({ userId: user.uid, mood, notes, stress, sleep, activity, gratitude });
       Alert.alert('Success', 'Check-in completed');
-      router.replace('home');
+      router.replace({pathname: '/home'});
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
@@ -97,7 +97,11 @@ export default function DailyCheckInScreen() {
       />
 
       <TouchableOpacity onPress={handleCheckIn} style={styles.button}>
-        <Text style={styles.buttonText} >Submit</Text>
+        <Text style={styles.buttonText}>Submit</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={ () => router.replace({pathname: '/home'})} style={styles.buttonTwo}>
+        <Text style={styles.buttonText} >Skip for Today</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -136,11 +140,18 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 40,
-    marginTop: 20,
-    marginBottom: 200,
     padding: 10,
     backgroundColor: '#007aff',
     borderRadius: 5,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  buttonTwo: {
+    height: 40,
+    padding: 10,
+    backgroundColor: '#ff0000',
+    borderRadius: 5,
+    marginBottom: 200,
   },
   buttonText: {
     color: '#fff',

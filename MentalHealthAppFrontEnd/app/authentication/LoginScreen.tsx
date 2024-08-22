@@ -17,9 +17,9 @@ export default function LoginScreen() {
         hasSubmittedDailyCheckin(response.uid)
         .then((hasSubmitted) => {
           if (hasSubmitted) {
-            router.replace('home');
+            router.replace({pathname: '/home'});
           } else {
-            router.replace('dailycheckin');
+            router.replace({pathname: '/dailycheckin'});
           }
         })
       })

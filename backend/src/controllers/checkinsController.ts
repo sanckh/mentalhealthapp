@@ -17,7 +17,6 @@ export const submitCheckIn = async (req: Request, res: Response) => {
 };
 
 export const getHasSubmittedDailyCheckin = async (req: Request, res: Response) => {
-  console.log("I am server side")
   const userId = req.params.userId?.toString();
   if (!userId || typeof userId !== 'string') {
     throw new Error('User ID must be a string');
