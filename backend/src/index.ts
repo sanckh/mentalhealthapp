@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import authRoutes from './routes/auth_routes';
 import checkinRoutes from './routes/checkin_routes';
+import insightRoutes from './routes/insight_routes';
 import admin from 'firebase-admin';
 import cors from 'cors';
 
@@ -23,6 +24,7 @@ app.options('*', cors(corsOptions));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/checkin', checkinRoutes); 
+app.use('/api', insightRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

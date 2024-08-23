@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser } from "@/api/auth";
 
@@ -31,57 +31,61 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
 
   return (
-    <View>
-      <View style={styles.container}>
-        <Text style={styles.header}>Welcome Back!</Text>
-        {/* Show this only if the user has NOT checked in */}
-        {user && !hasCheckedIn && (
-          <View style={styles.section}>
-            <Text style={styles.title}>Complete your daily check-in</Text>
-            <Button
-              title="Go to Check-in"
-              onPress={() => router.replace({ pathname: "/dailycheckin" })}
-            />
-          </View>
-        )}
-      </View>
+    <View style={styles.container}>
+      <Text style={styles.header}>Welcome Back!</Text>
 
-      <View style={styles.section}>
+      {user && !hasCheckedIn && (
+        <View style={styles.card}>
+          <Text style={styles.title}>Complete your daily check-in</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => router.replace({ pathname: "/dailycheckin" })}
+          >
+            <Text style={styles.buttonText}>Go to Check-in</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View style={styles.card}>
         <Text style={styles.title}>Personalized Insights</Text>
-        <Text>Recent mood trends and tips...</Text>
+        <Text style={styles.contentText}>Recent mood trends and tips...</Text>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.card}>
         <Text style={styles.title}>Mindfulness Exercise</Text>
-        <Button
-          title="Start Meditation"
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => {} /* Navigation or function to start meditation */}
-        />
+        >
+          <Text style={styles.buttonText}>Start Meditation</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.card}>
         <Text style={styles.title}>Recommended Resources</Text>
-        <Text>Suggested articles, videos, etc.</Text>
+        <Text style={styles.contentText}>Suggested articles, videos, etc.</Text>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.card}>
         <Text style={styles.title}>Crisis Support</Text>
-        <Button
-          title="Emergency Contacts"
-          //onPress={() => router.replace({pathname: '/crisisscreen'})}
-        />
+        <TouchableOpacity
+          style={styles.button}
+          //onPress={() => router.replace({ pathname: '/crisisscreen' })}
+        >
+          <Text style={styles.buttonText}>Emergency Contacts</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.card}>
         <Text style={styles.title}>Progress Overview</Text>
-        <Text>Your recent progress...</Text>
+        <Text style={styles.contentText}>Your recent progress...</Text>
       </View>
     </View>
   );
@@ -90,20 +94,58 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
+    backgroundColor: "#ffffff",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#f5f5f5",
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
   },
-  section: {
-    marginBottom: 20,
+  header: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 24,
+    color: "#333",
+    textAlign: "center",
+  },
+  card: {
+    backgroundColor: "#fafafa",
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#333",
+  },
+  contentText: {
+    fontSize: 16,
+    color: "#666",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 12,
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
