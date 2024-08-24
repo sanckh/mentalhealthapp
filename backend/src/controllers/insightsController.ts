@@ -13,7 +13,7 @@ export const getUserPersonalizedInsights = async (req: Request, res: Response) =
       return res.status(400).json({ message: 'Invalid User ID' });
     }
 
-    // Step 1: Fetch user check-in data
+    // Step 1: Fetch user check-in data for the last week
     const checkinData = await getUserCheckinData(userId, 7);
 
     // Step 2: Calculate averages for the user's metrics

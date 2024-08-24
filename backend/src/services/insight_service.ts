@@ -43,7 +43,7 @@ export function evaluateInsights(averages: Record<string, number>, insights: Ins
 /**
  * Evaluates a specific condition.
  * @param average - The average value of the metric.
- * @param condition - The condition to evaluate ("below", "above", "stable").
+ * @param condition - The condition to evaluate ("below", "above", "equal").
  * @param value - The value to compare against.
  * @returns Whether the condition is met.
  */
@@ -53,7 +53,7 @@ function evaluateCondition(average: number, condition: string, value: number | s
       return average < value;
     case 'above':
       return average > value;
-    case 'stable':
+    case 'equal':
       return Math.abs(average - Number(value)) < 0.5; // Adjust tolerance as needed
     default:
       return false;
