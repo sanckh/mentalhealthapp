@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { getUserPersonalizedInsights } from '../controllers/insightsController';
 
-const router = express.Router();
+const router = Router();
 
 // Define the route to get personalized insights for a user
 router.get('/personalizedinsights/:userId', getUserPersonalizedInsights);

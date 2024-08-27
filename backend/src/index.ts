@@ -24,7 +24,7 @@ app.options('*', cors(corsOptions));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/checkin', checkinRoutes); 
-app.use('/api', insightRoutes);
+app.use('/insight', insightRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

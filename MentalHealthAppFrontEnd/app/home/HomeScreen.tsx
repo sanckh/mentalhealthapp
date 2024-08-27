@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser } from "@/api/auth";
+import { getPersonalizedInsights } from "@/api/insights";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);

@@ -1,5 +1,6 @@
 import { firestore } from 'firebase-admin';
 import { Insight } from '../interfaces/insight';
+import { Averages } from '../interfaces/averages';
 
 /**
  * Fetches personalized insights from the database.
@@ -14,7 +15,7 @@ export async function getPersonalizedInsights(): Promise<Insight[]> {
   }
 
   const insights: Insight[] = [];
-  snapshot.forEach(doc => insights.push({ id: doc.id, ...doc.data() as Insight }));
+  snapshot.forEach(doc => insights.push({ ...doc.data() as Insight }));
 
   return insights;
 }
@@ -25,15 +26,34 @@ export async function getPersonalizedInsights(): Promise<Insight[]> {
  * @param insights - Array of insights to evaluate.
  * @returns Array of applicable insights.
  */
-export function evaluateInsights(averages: Record<string, number>, insights: Insight[]): Insight[] {
+export function evaluateInsights(averages: Averages, insights: Insight[]): Insight[] {
   return insights.filter(insight => {
     const { trigger } = insight;
+
+    // Map string condition to InsightConditionEnum
+    let conditionEnum: InsightConditionEnum;
+
+    switch (trigger.condition) {
+      case 'above':
+        conditionEnum = InsightConditionEnum.above;
+        break;
+      case 'below':
+        conditionEnum = InsightConditionEnum.below;
+        break;
+      case 'equal':
+        conditionEnum = InsightConditionEnum.equal;
+        break;
+      default:
+        return false; // Invalid condition, skip this insight
+    }
+
+    // Evaluate the condition using the mapped enum
     switch (trigger.type) {
       case 'mood':
       case 'stress':
       case 'sleep':
       case 'activity':
-        return evaluateCondition(averages[trigger.type], trigger.condition, trigger.value);
+        return evaluateCondition(averages[trigger.type], conditionEnum, trigger.value);
       default:
         return false;
     }
@@ -47,14 +67,15 @@ export function evaluateInsights(averages: Record<string, number>, insights: Ins
  * @param value - The value to compare against.
  * @returns Whether the condition is met.
  */
-function evaluateCondition(average: number, condition: string, value: number | string): boolean {
+function evaluateCondition(average: number, condition: InsightConditionEnum, value: number | string): boolean {
+  const numericValue = typeof value === 'string' ? Number(value) : value;
   switch (condition) {
-    case 'below':
-      return average < value;
-    case 'above':
-      return average > value;
-    case 'equal':
-      return Math.abs(average - Number(value)) < 0.5; // Adjust tolerance as needed
+    case InsightConditionEnum.below:
+      return average < numericValue;
+    case InsightConditionEnum.above:
+      return average > numericValue;
+    case InsightConditionEnum.equal:
+      return Math.abs(average - Number(numericValue)) < 0.5; // Adjust tolerance as needed
     default:
       return false;
   }
