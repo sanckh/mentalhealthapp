@@ -36,6 +36,7 @@
 
 # firebase
 /backend/src/firebase_options.ts
+/backend/src/serviceAccountKey.json
 
 # dist
 /backend/dist
