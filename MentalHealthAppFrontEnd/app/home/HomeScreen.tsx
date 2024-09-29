@@ -9,25 +9,25 @@ export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [insights, setInsights] = useState<any>(null);
 
   useEffect(() => {
-    const fetchUserAndCheckinStatus = async () => {
+    const initialize = async () => {
       try {
-        const fetchedUser = await getCurrentUser();
-        setUser(fetchedUser);
-
-        if (fetchedUser) {
-          const checkedIn = await hasSubmittedDailyCheckin(fetchedUser.uid);
-          setHasCheckedIn(checkedIn);
-        }
+        const user = await getCurrentUser();
+        setUser(user);
+        const checkedIn = await hasSubmittedDailyCheckin(user.uid);
+        setHasCheckedIn(checkedIn);
+        const insights = await getPersonalizedInsights(user.uid);
+        setInsights(insights);
       } catch (error) {
-        console.error("Error fetching user or check-in status:", error);
+        console.error('Error initializing home screen:', error);
       } finally {
-        setLoading(false); // Set loading to false after fetching is complete
+        setLoading(false);
       }
     };
 
-    fetchUserAndCheckinStatus();
+    initialize();
   }, []);
 
   const handleSignout = async () => {
@@ -63,10 +63,16 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <View style={styles.card}>
-        <Text style={styles.title}>Personalized Insights</Text>
-        <Text style={styles.contentText}>Recent mood trends and tips...</Text>
-      </View>
+      {insights.length > 0 && (
+        <View style={styles.insightsContainer}>
+          <Text style={styles.insightsHeader}>Personalized Insights</Text>
+          {insights.map((insight: any, index: any) => {
+            <View key={index} style={styles.insightCard}>
+              <Text style={styles.insightText}>{insight.description}</Text>
+              </View>
+          })}
+        </View>
+      )}
 
       <View style={styles.card}>
         <Text style={styles.title}>Mindfulness Exercise</Text>
@@ -166,5 +172,26 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  insightsContainer: {
+    marginTop: 16,
+  },
+  insightsHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  insightCard: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  insightText: {
+    fontSize: 16,
   },
 });

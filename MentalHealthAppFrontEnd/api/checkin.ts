@@ -2,6 +2,7 @@ const API_URL = 'http://localhost:3000/checkin';
 
 export const submitCheckIn = async (data: {
   userId: string;
+  general: string;
   mood: string;
   notes: string;
   stress: string;

@@ -5,6 +5,7 @@ import { CheckinData } from '../interfaces/checkinData';
 
 export const saveCheckIn = async (
   userId: string,
+  general: string,
   mood: string,
   notes: string,
   stress: string,
@@ -15,6 +16,7 @@ export const saveCheckIn = async (
   try {
     const checkInData = {
       userId,
+      general,
       mood,
       notes,
       stress,
@@ -64,7 +66,7 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
     // Query the `checkins` collection where the userId matches and date is within the specified range
     const snapshot = await checkinRef
       .where('userId', '==', userId)
-      .where('date', '>=', startDate)
+      .where('timestamp', '>=', startDate)
       .get();
   
     if (snapshot.empty) {

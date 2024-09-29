@@ -6,6 +6,7 @@ import { submitCheckIn } from '../../api/checkin';
 
 export default function DailyCheckInScreen() {
   const [mood, setMood] = useState('');
+  const [general, setGeneral] = useState('');
   const [notes, setNotes] = useState('');
   const [stress, setStress] = useState('5');
   const [sleep, setSleep] = useState('5');
@@ -13,6 +14,19 @@ export default function DailyCheckInScreen() {
   const [gratitude, setGratitude] = useState('');
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
+
+  const emojis = [
+    { label: '😃', value: 1 },
+    { label: '😊', value: 2 },
+    { label: '😌', value: 3 },
+    { label: '😐', value: 4 },
+    { label: '😕', value: 5 },
+    { label: '😟', value: 6 },
+    { label: '😢', value: 7 },
+    { label: '😭', value: 8 },
+    { label: '😡', value: 9 },
+    { label: '🤯', value: 10 },
+  ];
 
   useEffect(() => {
     getCurrentUser()
@@ -27,7 +41,7 @@ export default function DailyCheckInScreen() {
 
   const handleCheckIn = async () => {
     try {
-      await submitCheckIn({ userId: user.uid, mood, notes, stress, sleep, activity, gratitude });
+      await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
       Alert.alert('Success', 'Check-in completed');
       router.replace({pathname: '/home'});
     } catch (error: any) {
@@ -39,12 +53,12 @@ export default function DailyCheckInScreen() {
     <ScrollView contentContainerStyle={styles.container}>
     <Text style={styles.title}>Daily Check-In</Text>
     
-    <Text style={styles.label}>Mood</Text>
+    <Text style={styles.label}>General</Text>
     <TextInput
       style={styles.input}
       placeholder="How are you feeling today?"
-      value={mood}
-      onChangeText={setMood}
+      value={general}
+      onChangeText={setGeneral}
     />
 
     <Text style={styles.label}>Stress Level</Text>
@@ -55,6 +69,17 @@ export default function DailyCheckInScreen() {
       >
         {[...Array(10)].map((_, i) => (
           <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
+        ))}
+      </Picker>
+
+      <Text style={styles.label}>Mood</Text>
+      <Picker
+        selectedValue={mood}
+        style={styles.picker}
+        onValueChange={(itemValue: string) => setMood(itemValue)}
+      >
+        {emojis.map((emoji, i) => (
+          <Picker.Item key={i} label={emoji.label} value={emoji.value} />
         ))}
       </Picker>
 
