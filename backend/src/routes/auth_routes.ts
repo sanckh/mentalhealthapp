@@ -37,4 +37,13 @@ router.get('/user', async (req, res) => {
     }
 });
 
+router.post('/signout', async (req, res) => {
+    try {
+        await auth.signOut();
+        res.status(200).send({ message: 'User signed out' });
+    } catch (error: any) {
+        res.status(400).send({ error: error.message });
+    }
+});
+
 export default router;

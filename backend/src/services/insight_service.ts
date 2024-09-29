@@ -1,7 +1,7 @@
 import { firestore } from 'firebase-admin';
 import { Insight } from '../interfaces/insight';
 import { Averages } from '../interfaces/averages';
-
+import { InsightConditionEnum } from '../enums/insightConditionEnum';
 /**
  * Fetches personalized insights from the database.
  * @returns Promise of an array of personalized insights.

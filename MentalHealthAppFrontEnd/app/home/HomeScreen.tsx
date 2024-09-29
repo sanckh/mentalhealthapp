@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
-import { getCurrentUser } from "@/api/auth";
+import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 
 export default function HomeScreen() {
@@ -29,6 +29,15 @@ export default function HomeScreen() {
 
     fetchUserAndCheckinStatus();
   }, []);
+
+  const handleSignout = async () => {
+    try {
+      await signout();
+      router.replace({ pathname: "/login" })
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -88,6 +97,15 @@ export default function HomeScreen() {
         <Text style={styles.title}>Progress Overview</Text>
         <Text style={styles.contentText}>Your recent progress...</Text>
       </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          handleSignout();
+        }}
+      >
+        <Text style={styles.buttonText}>Sign Out</Text>
+      </TouchableOpacity>
     </View>
   );
 }

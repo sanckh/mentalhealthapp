@@ -47,3 +47,18 @@ export const getCurrentUser = async () => {
   }
 };
 
+export const signout = async () => {
+  try {
+    const response = await fetch(`${API_URL}/signout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      throw new Error('Failed to sign out');
+    }
+  } catch (error) {
+    console.error('Error signing out:', error);
+    throw error;
+  }
+};
+
