@@ -40,8 +40,8 @@ export function evaluateInsights(averages: Averages, insights: Insight[]): Insig
       case 'below':
         conditionEnum = InsightConditionEnum.below;
         break;
-      case 'equal':
-        conditionEnum = InsightConditionEnum.equal;
+      case 'equals':
+        conditionEnum = InsightConditionEnum.equals;
         break;
       default:
         return false; // Invalid condition, skip this insight
@@ -74,7 +74,7 @@ function evaluateCondition(average: number, condition: InsightConditionEnum, val
       return average < numericValue;
     case InsightConditionEnum.above:
       return average > numericValue;
-    case InsightConditionEnum.equal:
+    case InsightConditionEnum.equals:
       return Math.abs(average - Number(numericValue)) < 0.5; // Adjust tolerance as needed
     default:
       return false;

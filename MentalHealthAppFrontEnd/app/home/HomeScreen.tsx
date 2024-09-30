@@ -1,9 +1,11 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
+import { insightModel } from "@/models/insightModel";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
@@ -19,6 +21,7 @@ export default function HomeScreen() {
         const checkedIn = await hasSubmittedDailyCheckin(user.uid);
         setHasCheckedIn(checkedIn);
         const insights = await getPersonalizedInsights(user.uid);
+        console.log(insights)
         setInsights(insights);
       } catch (error) {
         console.error('Error initializing home screen:', error);
@@ -63,16 +66,28 @@ export default function HomeScreen() {
         </View>
       )}
 
-      {insights.length > 0 && (
-        <View style={styles.insightsContainer}>
-          <Text style={styles.insightsHeader}>Personalized Insights</Text>
-          {insights.map((insight: any, index: any) => {
-            <View key={index} style={styles.insightCard}>
-              <Text style={styles.insightText}>{insight.description}</Text>
-              </View>
-          })}
+{insights.length > 0 && (
+  <View style={styles.card}>
+    <View style={styles.insightsContainer}>
+    <Text style={styles.insightsHeader}>Personalized Insights</Text>
+    {insights.map((insight: insightModel, index: number) => (
+      <View key={index} style={styles.insightCard}>
+        <View style={styles.insightIconContainer}>
+          <Icon
+            name={insight.icon}
+            size={30}
+          />
         </View>
-      )}
+        <View style={styles.insightTextContainer}>
+          <Text style={styles.insightTitle}>{insight.title}</Text>
+          <Text style={styles.insightCategory}>{insight.category}</Text>
+          <Text style={styles.insightDescription}>{insight.description}</Text>
+        </View>
+      </View>
+    ))}
+  </View>
+  </View>
+)}
 
       <View style={styles.card}>
         <Text style={styles.title}>Mindfulness Exercise</Text>
@@ -181,17 +196,48 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  insightCard: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  insightText: {
-    fontSize: 16,
-  },
+    insightCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+      marginBottom: 10,
+      backgroundColor: '#fff',
+      borderRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+  
+    insightIconContainer: {
+      marginRight: 10,
+    },
+  
+    insightIcon: {
+      width: 50,
+      height: 50,
+      resizeMode: 'contain',
+    },
+  
+    insightTextContainer: {
+      flex: 1,
+    },
+  
+    insightTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+  
+    insightCategory: {
+      fontSize: 14,
+      color: '#666',
+      marginBottom: 5,
+    },
+  
+    insightDescription: {
+      fontSize: 14,
+      color: '#333',
+    },
 });

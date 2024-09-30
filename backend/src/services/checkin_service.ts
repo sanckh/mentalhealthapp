@@ -90,7 +90,6 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
     const count = { mood: 0, stress: 0, sleep: 0, activity: 0 };
   
     checkinData.forEach(checkin => {
-      console.log(typeof checkin.mood);
       if (checkin.mood !== undefined) {
         totals.mood += checkin.mood;
         count.mood += 1;
