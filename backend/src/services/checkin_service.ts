@@ -6,11 +6,11 @@ import { CheckinData } from '../interfaces/checkinData';
 export const saveCheckIn = async (
   userId: string,
   general: string,
-  mood: string,
+  mood: number,
   notes: string,
-  stress: string,
-  sleep: string,
-  activity: string,
+  stress: number,
+  sleep: number,
+  activity: number,
   gratitude: string
 ) => {
   try {
@@ -90,6 +90,7 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
     const count = { mood: 0, stress: 0, sleep: 0, activity: 0 };
   
     checkinData.forEach(checkin => {
+      console.log(typeof checkin.mood);
       if (checkin.mood !== undefined) {
         totals.mood += checkin.mood;
         count.mood += 1;
@@ -107,6 +108,9 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
         count.activity += 1;
       }
     });
+
+    console.log('Totals:', totals); // Add this line for debugging
+    console.log('Counts:', count); // Add this line for debugging
   
     return {
       mood: count.mood ? totals.mood / count.mood : 0,
