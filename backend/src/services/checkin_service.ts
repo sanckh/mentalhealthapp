@@ -108,14 +108,11 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
         count.activity += 1;
       }
     });
-
-    console.log('Totals:', totals); // Add this line for debugging
-    console.log('Counts:', count); // Add this line for debugging
   
     return {
-      mood: count.mood ? totals.mood / count.mood : 0,
-      stress: count.stress ? totals.stress / count.stress : 0,
-      sleep: count.sleep ? totals.sleep / count.sleep : 0,
-      activity: count.activity ? totals.activity / count.activity : 0,
+      mood: count.mood ? Math.round(totals.mood / count.mood) : 0,
+      stress: count.stress ? Math.round(totals.stress / count.stress) : 0,
+      sleep: count.sleep ? Math.round(totals.sleep / count.sleep) : 0,
+      activity: count.activity ? Math.round(totals.activity / count.activity) : 0,
     };
   }
