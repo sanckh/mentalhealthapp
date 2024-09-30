@@ -2,11 +2,12 @@ const API_URL = 'http://localhost:3000/checkin';
 
 export const submitCheckIn = async (data: {
   userId: string;
-  mood: string;
+  general: string;
+  mood: number;
   notes: string;
-  stress: string;
-  sleep: string;
-  activity: string;
+  stress: number;
+  sleep: number;
+  activity: number;
   gratitude: string;
 }) => {
     const response = await fetch(`${API_URL}/submit`, {

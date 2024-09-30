@@ -5,16 +5,18 @@ import { CheckinData } from '../interfaces/checkinData';
 
 export const saveCheckIn = async (
   userId: string,
-  mood: string,
+  general: string,
+  mood: number,
   notes: string,
-  stress: string,
-  sleep: string,
-  activity: string,
+  stress: number,
+  sleep: number,
+  activity: number,
   gratitude: string
 ) => {
   try {
     const checkInData = {
       userId,
+      general,
       mood,
       notes,
       stress,
@@ -64,7 +66,7 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
     // Query the `checkins` collection where the userId matches and date is within the specified range
     const snapshot = await checkinRef
       .where('userId', '==', userId)
-      .where('date', '>=', startDate)
+      .where('timestamp', '>=', startDate)
       .get();
   
     if (snapshot.empty) {
@@ -107,9 +109,9 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
     });
   
     return {
-      mood: count.mood ? totals.mood / count.mood : 0,
-      stress: count.stress ? totals.stress / count.stress : 0,
-      sleep: count.sleep ? totals.sleep / count.sleep : 0,
-      activity: count.activity ? totals.activity / count.activity : 0,
+      mood: count.mood ? Math.round(totals.mood / count.mood) : 0,
+      stress: count.stress ? Math.round(totals.stress / count.stress) : 0,
+      sleep: count.sleep ? Math.round(totals.sleep / count.sleep) : 0,
+      activity: count.activity ? Math.round(totals.activity / count.activity) : 0,
     };
   }

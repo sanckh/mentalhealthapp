@@ -1,34 +1,46 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
-import { getCurrentUser } from "@/api/auth";
+import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
+import { insightModel } from "@/models/insightModel";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [insights, setInsights] = useState<any>(null);
 
   useEffect(() => {
-    const fetchUserAndCheckinStatus = async () => {
+    const initialize = async () => {
       try {
-        const fetchedUser = await getCurrentUser();
-        setUser(fetchedUser);
-
-        if (fetchedUser) {
-          const checkedIn = await hasSubmittedDailyCheckin(fetchedUser.uid);
-          setHasCheckedIn(checkedIn);
-        }
+        const user = await getCurrentUser();
+        setUser(user);
+        const checkedIn = await hasSubmittedDailyCheckin(user.uid);
+        setHasCheckedIn(checkedIn);
+        const insights = await getPersonalizedInsights(user.uid);
+        console.log(insights)
+        setInsights(insights);
       } catch (error) {
-        console.error("Error fetching user or check-in status:", error);
+        console.error('Error initializing home screen:', error);
       } finally {
-        setLoading(false); // Set loading to false after fetching is complete
+        setLoading(false);
       }
     };
 
-    fetchUserAndCheckinStatus();
+    initialize();
   }, []);
+
+  const handleSignout = async () => {
+    try {
+      await signout();
+      router.replace({ pathname: "/login" })
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -54,10 +66,28 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <View style={styles.card}>
-        <Text style={styles.title}>Personalized Insights</Text>
-        <Text style={styles.contentText}>Recent mood trends and tips...</Text>
+{insights.length > 0 && (
+  <View style={styles.card}>
+    <View style={styles.insightsContainer}>
+    <Text style={styles.insightsHeader}>Personalized Insights</Text>
+    {insights.map((insight: insightModel, index: number) => (
+      <View key={index} style={styles.insightCard}>
+        <View style={styles.insightIconContainer}>
+          <Icon
+            name={insight.icon}
+            size={30}
+          />
+        </View>
+        <View style={styles.insightTextContainer}>
+          <Text style={styles.insightTitle}>{insight.title}</Text>
+          <Text style={styles.insightCategory}>{insight.category}</Text>
+          <Text style={styles.insightDescription}>{insight.description}</Text>
+        </View>
       </View>
+    ))}
+  </View>
+  </View>
+)}
 
       <View style={styles.card}>
         <Text style={styles.title}>Mindfulness Exercise</Text>
@@ -88,6 +118,15 @@ export default function HomeScreen() {
         <Text style={styles.title}>Progress Overview</Text>
         <Text style={styles.contentText}>Your recent progress...</Text>
       </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          handleSignout();
+        }}
+      >
+        <Text style={styles.buttonText}>Sign Out</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -149,4 +188,56 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  insightsContainer: {
+    marginTop: 16,
+  },
+  insightsHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+    insightCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+      marginBottom: 10,
+      backgroundColor: '#fff',
+      borderRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+  
+    insightIconContainer: {
+      marginRight: 10,
+    },
+  
+    insightIcon: {
+      width: 50,
+      height: 50,
+      resizeMode: 'contain',
+    },
+  
+    insightTextContainer: {
+      flex: 1,
+    },
+  
+    insightTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+  
+    insightCategory: {
+      fontSize: 14,
+      color: '#666',
+      marginBottom: 5,
+    },
+  
+    insightDescription: {
+      fontSize: 14,
+      color: '#333',
+    },
 });

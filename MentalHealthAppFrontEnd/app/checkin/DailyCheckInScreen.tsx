@@ -5,15 +5,28 @@ import { getCurrentUser } from '../../api/auth';
 import { submitCheckIn } from '../../api/checkin';
 
 export default function DailyCheckInScreen() {
-  const [mood, setMood] = useState('');
+  const [mood, setMood] = useState(5);
+  const [general, setGeneral] = useState('');
   const [notes, setNotes] = useState('');
-  const [stress, setStress] = useState('5');
-  const [sleep, setSleep] = useState('5');
-  const [activity, setActivity] = useState('5');
+  const [stress, setStress] = useState(5);
+  const [sleep, setSleep] = useState(5);
+  const [activity, setActivity] = useState(5);
   const [gratitude, setGratitude] = useState('');
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
 
+  const emojis = [
+    { label: '😃', value: 10 },
+    { label: '😊', value: 9 },
+    { label: '😌', value: 8 },
+    { label: '😐', value: 7 },
+    { label: '😕', value: 6 },
+    { label: '😟', value: 5 },
+    { label: '😢', value: 4 },
+    { label: '😭', value: 3 },
+    { label: '😡', value: 2 },
+    { label: '🤯', value: 1 },
+  ];
   useEffect(() => {
     getCurrentUser()
       .then(user => {
@@ -27,7 +40,8 @@ export default function DailyCheckInScreen() {
 
   const handleCheckIn = async () => {
     try {
-      await submitCheckIn({ userId: user.uid, mood, notes, stress, sleep, activity, gratitude });
+      await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
+      console.log(mood);
       Alert.alert('Success', 'Check-in completed');
       router.replace({pathname: '/home'});
     } catch (error: any) {
@@ -39,22 +53,33 @@ export default function DailyCheckInScreen() {
     <ScrollView contentContainerStyle={styles.container}>
     <Text style={styles.title}>Daily Check-In</Text>
     
-    <Text style={styles.label}>Mood</Text>
+    <Text style={styles.label}>General</Text>
     <TextInput
       style={styles.input}
       placeholder="How are you feeling today?"
-      value={mood}
-      onChangeText={setMood}
+      value={general}
+      onChangeText={setGeneral}
     />
 
     <Text style={styles.label}>Stress Level</Text>
       <Picker
         selectedValue={stress}
         style={styles.picker}
-        onValueChange={(itemValue: string) => setStress(itemValue)}
+        onValueChange={(itemValue: any) => setStress(parseInt(itemValue))}
       >
         {[...Array(10)].map((_, i) => (
           <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
+        ))}
+      </Picker>
+
+      <Text style={styles.label}>Mood</Text>
+      <Picker
+        selectedValue={mood}
+        style={styles.picker}
+        onValueChange={(itemValue: any) => setMood(parseInt(itemValue))}
+      >
+        {emojis.map((emoji, i) => (
+          <Picker.Item key={i} label={emoji.label} value={emoji.value} />
         ))}
       </Picker>
 
@@ -62,7 +87,7 @@ export default function DailyCheckInScreen() {
       <Picker
         selectedValue={sleep}
         style={styles.picker}
-        onValueChange={(itemValue: string) => setSleep(itemValue)}
+        onValueChange={(itemValue: any) => (parseInt(itemValue))}
       >
         {[...Array(10)].map((_, i) => (
           <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
@@ -73,7 +98,7 @@ export default function DailyCheckInScreen() {
       <Picker
         selectedValue={activity}
         style={styles.picker}
-        onValueChange={(itemValue: string) => setActivity(itemValue)}
+        onValueChange={(itemValue: any) => setActivity(parseInt(itemValue))}
       >
         {[...Array(10)].map((_, i) => (
           <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />

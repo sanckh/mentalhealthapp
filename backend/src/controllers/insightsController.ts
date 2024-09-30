@@ -17,7 +17,7 @@ export const getUserPersonalizedInsights = async (req: Request, res: Response) =
     const checkinData = await getUserCheckinData(userId, 7);
 
     // Step 2: Calculate averages for the user's metrics
-    const averages = calculateAverages(checkinData);
+    const averages =  calculateAverages(checkinData);
 
     // Step 3: Fetch all available insights
     const insights = await getPersonalizedInsights();
