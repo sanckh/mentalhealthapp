@@ -27,6 +27,13 @@ export async function getPersonalizedInsights(): Promise<Insight[]> {
  * @returns Array of applicable insights.
  */
 export function evaluateInsights(averages: Averages, insights: Insight[]): Insight[] {
+
+  //A new user may skip the daily check in, resulting in 0 for the averages.
+  //If that is the case, we need to break out of this method.
+  if (averages.activity == 0) {
+    return []; // Return an empty array
+  } 
+  
   return insights.filter(insight => {
     const { trigger } = insight;
 
