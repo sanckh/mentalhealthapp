@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
@@ -17,11 +17,11 @@ export default function HomeScreen() {
     const initialize = async () => {
       try {
         const user = await getCurrentUser();
+        console.log(user);
         setUser(user);
         const checkedIn = await hasSubmittedDailyCheckin(user.uid);
         setHasCheckedIn(checkedIn);
         const insights = await getPersonalizedInsights(user.uid);
-        console.log(insights)
         setInsights(insights);
       } catch (error) {
         console.error('Error initializing home screen:', error);
@@ -51,7 +51,8 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
+      <View style={styles.container}>
       <Text style={styles.header}>Welcome Back!</Text>
 
       {user && !hasCheckedIn && (
@@ -128,6 +129,7 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>Sign Out</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 }
 

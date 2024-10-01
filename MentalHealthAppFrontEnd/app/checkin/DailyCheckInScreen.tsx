@@ -41,7 +41,6 @@ export default function DailyCheckInScreen() {
   const handleCheckIn = async () => {
     try {
       await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
-      console.log(mood);
       Alert.alert('Success', 'Check-in completed');
       router.replace({pathname: '/home'});
     } catch (error: any) {
@@ -50,7 +49,7 @@ export default function DailyCheckInScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView >
     <Text style={styles.title}>Daily Check-In</Text>
     
     <Text style={styles.label}>General</Text>
@@ -133,13 +132,13 @@ export default function DailyCheckInScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    paddingBottom: 20
-  },
+  // not using right now
+  // container: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   padding: 16,
+  //   backgroundColor: '#f5f5f5',
+  // },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -176,7 +175,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#ff0000',
     borderRadius: 5,
-    marginBottom: 200,
+    marginBottom: 20
   },
   buttonText: {
     color: '#fff',
