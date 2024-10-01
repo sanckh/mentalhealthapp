@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, Alert, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { login } from '../../api/auth';
 import { hasSubmittedDailyCheckin } from '@/api/checkin';
@@ -51,8 +51,14 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Register" onPress={() => router.replace({pathname: '/register'})} />
+        <Pressable style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </Pressable>
+      <View style={styles.button}>
+        <Pressable onPress={() => router.replace({pathname: '/register'})}>
+          <Text style={styles.buttonText}>Register</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -77,5 +83,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+  },
+  button: {
+    marginTop: 20,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#007aff',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
