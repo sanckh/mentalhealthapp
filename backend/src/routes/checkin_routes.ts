@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { submitCheckIn } from '../controllers/checkinsController';
-import { authenticateUser } from '../middleware/authMiddleware';
+import { getHasSubmittedDailyCheckin, submitCheckIn } from '../controllers/checkinsController';
+
 const router = Router();
 
-router.post('/checkin', authenticateUser, submitCheckIn);
+router.post('/submit', submitCheckIn);
+
+router.get('/hassubmitteddailycheckin/:userId', getHasSubmittedDailyCheckin);
 
 export default router;
