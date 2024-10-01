@@ -13,7 +13,6 @@ export default function LoginScreen() {
   
     login(email, password)
       .then((response) => {
-        console.log('Login successful:', response);
         hasSubmittedDailyCheckin(response.uid)
         .then((hasSubmitted) => {
           if (hasSubmitted) {
@@ -53,6 +52,7 @@ export default function LoginScreen() {
         secureTextEntry
       />
       <Button title="Login" onPress={handleLogin} />
+      <Button title="Register" onPress={() => router.replace({pathname: '/register'})} />
     </View>
   );
 }

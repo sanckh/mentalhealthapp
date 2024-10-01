@@ -41,7 +41,6 @@ export default function DailyCheckInScreen() {
   const handleCheckIn = async () => {
     try {
       await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
-      console.log(mood);
       Alert.alert('Success', 'Check-in completed');
       router.replace({pathname: '/home'});
     } catch (error: any) {

@@ -10,7 +10,7 @@ const auth = getAuth(app);
 
 // Register a new user
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
     if (!email) {
       res.status(400).send({ error: 'Email is required' });
@@ -24,6 +24,7 @@ router.post('/register', async (req, res) => {
     }
     const userData = {
       uid: userCredential.user.uid,
+      name: name,
       email: userCredential.user.email,
       // add any other user data you want to store
     };
