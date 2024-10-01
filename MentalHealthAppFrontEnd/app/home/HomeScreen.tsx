@@ -91,6 +91,11 @@ export default function HomeScreen() {
 )}
 
       <View style={styles.card}>
+        <Text style={styles.title}>Recommended Resources</Text>
+        <Text style={styles.contentText}>Suggested articles, videos, etc.</Text>
+      </View>
+
+      <View style={styles.card}>
         <Text style={styles.title}>Mindfulness Exercise</Text>
         <TouchableOpacity
           style={styles.button}
@@ -98,11 +103,6 @@ export default function HomeScreen() {
         >
           <Text style={styles.buttonText}>Start Meditation</Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.title}>Recommended Resources</Text>
-        <Text style={styles.contentText}>Suggested articles, videos, etc.</Text>
       </View>
 
       <View style={styles.card}>
