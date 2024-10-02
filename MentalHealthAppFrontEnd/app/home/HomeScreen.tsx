@@ -14,24 +14,24 @@ export default function HomeScreen() {
   const [insights, setInsights] = useState<any>(null);
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const user = await getCurrentUser();
-        setUser(user);
-        const checkedIn = await hasSubmittedDailyCheckin(user.uid);
-        setHasCheckedIn(checkedIn);
-        const insights = await getPersonalizedInsights(user.uid);
-        console.log(insights)
-        setInsights(insights);
-      } catch (error) {
-        console.error('Error initializing home screen:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const initialize = async () => {
+    try {
+      const user = await getCurrentUser();
+      setUser(user);
+      console.log(user)
+      const checkedIn = await hasSubmittedDailyCheckin(user.uid);
+      setHasCheckedIn(checkedIn);
+      const insights = await getPersonalizedInsights(user.uid);
+      setInsights(insights);
+    } catch (error) {
+      console.error('Error initializing user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    initialize();
-  }, []);
+  initialize();
+}, []);
 
   const handleSignout = async () => {
     try {
@@ -52,7 +52,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Welcome Back!</Text>
+      <Text style={styles.header}>Welcome Back, {user?.name}</Text>
 
       {user && !hasCheckedIn && (
         <View style={styles.card}>
