@@ -27,7 +27,6 @@ export const saveCheckIn = async (
     };
 
     await db.collection('checkins').add(checkInData);
-    console.log(`Check-in saved for user ${userId}`);
   } catch (error) {
     console.error('Error saving check-in:', error);
     throw new Error('Failed to save check-in');
@@ -70,7 +69,6 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
       .get();
   
     if (snapshot.empty) {
-      console.log('No matching documents.');
       return [];
     }
   

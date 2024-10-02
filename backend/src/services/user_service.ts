@@ -1,6 +1,6 @@
 import { app, db } from '../firebase_options';
 import admin from 'firebase-admin';
-
+import { addDoc, collection, doc, getFirestore, setDoc } from 'firebase/firestore';
 /**
  * Fetches a user from the 'users' collection.
  * @param uid - The UID of the user to fetch.
@@ -20,3 +20,7 @@ export async function getAdditionalUserInfo(uid: string) {
         throw new Error('User not found');
     }
 }
+
+export const saveUserToFirestore = async (userData: { uid: string; name: string; email: string }) => {
+    await addDoc(collection(getFirestore(app), 'users'), userData);
+  };

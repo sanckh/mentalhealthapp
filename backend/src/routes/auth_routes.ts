@@ -1,7 +1,7 @@
 import express from 'express';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase_options';
-import { getAdditionalUserInfo } from '../services/user_service';
+import { getAdditionalUserInfo, saveUserToFirestore } from '../services/user_service';
 
 
 const router = express.Router();
@@ -9,9 +9,27 @@ const auth = getAuth(app);
 
 // Register a new user
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    if (!email) {
+      res.status(400).send({ error: 'Email is required' });
+      return;
+    }
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email ?? '', password);
+    
+    if (!userCredential.user.email) {
+      throw new Error('Email is required');
+    }
+    const userData = {
+      uid: userCredential.user.uid,
+      name: name,
+      email: userCredential.user.email,
+      // add any other user data you want to store
+    };
+
+    await saveUserToFirestore(userData);
+
     res.status(201).send({ uid: userCredential.user.uid });
   } catch (error: any) {
     res.status(400).send({ error: error.message });

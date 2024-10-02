@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
@@ -14,21 +14,21 @@ export default function HomeScreen() {
   const [insights, setInsights] = useState<any>(null);
 
   useEffect(() => {
-  const initialize = async () => {
-    try {
-      const user = await getCurrentUser();
-      setUser(user);
-      console.log(user)
-      const checkedIn = await hasSubmittedDailyCheckin(user.uid);
-      setHasCheckedIn(checkedIn);
-      const insights = await getPersonalizedInsights(user.uid);
-      setInsights(insights);
-    } catch (error) {
-      console.error('Error initializing user data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const initialize = async () => {
+      try {
+        const user = await getCurrentUser();
+        console.log(user);
+        setUser(user);
+        const checkedIn = await hasSubmittedDailyCheckin(user.uid);
+        setHasCheckedIn(checkedIn);
+        const insights = await getPersonalizedInsights(user.uid);
+        setInsights(insights);
+      } catch (error) {
+        console.error('Error initializing home screen:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   initialize();
 }, []);
@@ -51,8 +51,9 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Welcome Back, {user?.name}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+      <Text style={styles.header}>Welcome Back!</Text>
 
       {user && !hasCheckedIn && (
         <View style={styles.card}>
@@ -128,6 +129,7 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>Sign Out</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 }
 
