@@ -1,6 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -27,16 +28,16 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ title: 'Login' }} />
-        <Stack.Screen name="register" options={{ title: 'Register' }} />
-        <Stack.Screen name="home" options={{ title: 'Home' }} />
-        <Stack.Screen name="profile" options={{ title: 'Profile' }} />
-        <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-        <Stack.Screen name="dailycheckin" options={{ title: 'Daily Check-in' }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <Drawer>
+        <Drawer.Screen name="index" options={{ headerShown: false }} />
+        <Drawer.Screen name="login" options={{ title: 'Login' }} />
+        <Drawer.Screen name="register" options={{ title: 'Register' }} />
+        <Drawer.Screen name="home" options={{ title: 'Home' }} />
+        <Drawer.Screen name="profile" options={{ title: 'Profile' }} />
+        <Drawer.Screen name="settings" options={{ title: 'Settings' }} />
+        <Drawer.Screen name="dailycheckin" options={{ title: 'Daily Check-in' }} />
+        <Drawer.Screen name="+not-found" />
+      </Drawer>
     </ThemeProvider>
   );
 }
