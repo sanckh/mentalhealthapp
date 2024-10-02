@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Picker, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
 import { getCurrentUser } from '../../api/auth';
 import { submitCheckIn } from '../../api/checkin';
+import { useNavigation } from '@react-navigation/native';
 
 export default function DailyCheckInScreen() {
   const [mood, setMood] = useState(5);
@@ -13,7 +13,7 @@ export default function DailyCheckInScreen() {
   const [activity, setActivity] = useState(5);
   const [gratitude, setGratitude] = useState('');
   const [user, setUser] = useState<any>(null);
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const emojis = [
     { label: '😃', value: 10 },
@@ -34,7 +34,7 @@ export default function DailyCheckInScreen() {
       })
       .catch(error => {
         console.error('Error fetching user:', error);
-        router.replace({pathname: '/login'});
+        navigation.navigate('login');
       });
   }, []);
 
@@ -42,7 +42,7 @@ export default function DailyCheckInScreen() {
     try {
       await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
       Alert.alert('Success', 'Check-in completed');
-      router.replace({pathname: '/home'});
+      navigation.navigate('home');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
@@ -124,7 +124,7 @@ export default function DailyCheckInScreen() {
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={ () => router.replace({pathname: '/home'})} style={styles.buttonTwo}>
+      <TouchableOpacity onPress={ () => navigation.navigate('home')} style={styles.buttonTwo}>
         <Text style={styles.buttonText} >Skip for Today</Text>
       </TouchableOpacity>
     </ScrollView>

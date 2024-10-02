@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -6,13 +6,15 @@ import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<any>(null);
-
+  const navigation = useNavigation();
+  
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -36,7 +38,6 @@ export default function HomeScreen() {
   const handleSignout = async () => {
     try {
       await signout();
-      router.replace({ pathname: "/login" })
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -60,7 +61,7 @@ export default function HomeScreen() {
           <Text style={styles.title}>Complete your daily check-in</Text>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.replace({ pathname: "/dailycheckin" })}
+            onPress={() => navigation.navigate('dailycheckin')}
           >
             <Text style={styles.buttonText}>Go to Check-in</Text>
           </TouchableOpacity>

@@ -1,70 +1,75 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { Drawer } from 'expo-router/drawer';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-import { useColorScheme } from '../hooks/useColorScheme';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+// _layout.tsx
+
+import { NavigationContainer } from '@react-navigation/native';
+import MainDrawerNavigator from './navigation/MainDrawerNavigator';
+import { getCurrentUser } from '@/api/auth'; 
+import { View, Text, StyleSheet } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { useEffect, useState } from 'react';
+import LoginScreen from './authentication/LoginScreen';
+import RegisterScreen from './authentication/RegisterScreen';
 import HomeScreen from './home/HomeScreen';
 import ProfileScreen from './profile/ProfileScreen';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import SettingsScreen from './settings/SettingsScreen';
-
-// Prevent the splash screen from hiding before the app is ready
-SplashScreen.preventAutoHideAsync();
-
-const Drawer = createDrawerNavigator();
-const Stack = createNativeStackNavigator();
-
-// Stack Navigator
-function StackNavigator() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="index" component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="login" component={ProfileScreen} options={{ title: 'Login' }} />
-      <Stack.Screen name="register" component={ProfileScreen} options={{ title: 'Register' }} />
-      <Stack.Screen name="home" component={HomeScreen} options={{ title: 'Home' }} />
-      <Stack.Screen name="profile" component={ProfileScreen} options={{ title: 'Profile' }} />
-      <Stack.Screen name="settings" component={ProfileScreen} options={{ title: 'Settings' }} />
-      <Stack.Screen name="dailycheckin" component={ProfileScreen} options={{ title: 'Daily Check-in' }} />
-      <Stack.Screen name="+not-found" component={ProfileScreen} />
-    </Stack.Navigator>
-  );
-}
-
-// Drawer Navigator
-function DrawerContent() {
-  return (
-    <Drawer.Navigator initialRouteName="home">
-      <Drawer.Screen name="home" component={HomeScreen} />
-      <Drawer.Screen name="profile" component={ProfileScreen} />
-      <Drawer.Screen name="settings" component={SettingsScreen} />
-      {/* Here is the stack navigator as part of the drawer */}
-      {/* Add more drawer screens if needed */}
-    </Drawer.Navigator>
-  );
-}
+import DailyCheckInScreen from './checkin/DailyCheckInScreen';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const Drawer = createDrawerNavigator();
+  const Stack = createNativeStackNavigator()
+  
+  const [user, setUser] = useState(null); 
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    const checkUser = async () => {
+      try {
+        const currentUser = await getCurrentUser(); 
+        setUser(currentUser); 
+      } catch (error) {
+        console.error('Error fetching user session:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!loaded) {
-    return null;
+    // Poll every 10 minutes to check for session updates (optional)
+    const interval = setInterval(checkUser, 600000); // Poll every 10 minutes
+    
+    checkUser(); 
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <DrawerContent />
-    </ThemeProvider>
+      <Stack.Navigator>
+        <Stack.Screen name='login' component={LoginScreen} options={{headerShown: false}} />
+        <Stack.Screen name='register' component={RegisterScreen} options={{headerShown: false}} />
+        <Stack.Screen name='dailycheckin' component={DailyCheckInScreen} options={{headerShown: false}} />
+        <Stack.Screen name='home' component={MainDrawerNavigator} options={{headerShown: false}} />
+        <Stack.Screen name='profile' component={MainDrawerNavigator} options={{headerShown: false}} />
+      </Stack.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+  },
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
+  },
+});

@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Alert, TextInput, Button } from 'react-native';
 import { register } from '../../api/auth';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
 export default function RegisterScreen() {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
-  const router = useRouter();
+  const navigation = useNavigation();
   
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -21,7 +21,7 @@ export default function RegisterScreen() {
       .then((response) => {
         if(response){
           Alert.alert('Success', 'User registered successfully');
-          router.replace({pathname: '/home'});
+          navigation.navigate('home');
         }
       })
     } catch (error: any) {

@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-
+import { useNavigation } from '@react-navigation/native';
 export default function Index() {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   useEffect(() => {
     // Delay navigation slightly
     setTimeout(() => {
-      router.replace({pathname: '/login'});
+      navigation.navigate('login');;
     }, 0); // You can increase the delay slightly if necessary
-  }, [router]);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
