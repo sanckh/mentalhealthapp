@@ -1,9 +1,8 @@
 import express from 'express';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase_options';
-import { saveUserToFirestore } from '../services/user_service';
-import { addDoc, collection } from 'firebase/firestore';
-import { getFirestore } from 'firebase/firestore';
+import { getAdditionalUserInfo, saveUserToFirestore } from '../services/user_service';
+
 
 const router = express.Router();
 const auth = getAuth(app);
@@ -51,11 +50,17 @@ router.post('/login', async (req, res) => {
 router.get('/user', async (req, res) => {
     const user = auth.currentUser;
     if (user) {
-        res.status(200).send({ uid: user.uid });
+      try {
+        const userInfo = await getAdditionalUserInfo(user.uid);
+        res.status(200).send({ uid: user.uid, ...userInfo });
+      } catch (error) {
+        res.status(500).send({ error: 'Error fetching additional user info' });
+      }
     } else {
-        res.status(400).send({ error: 'User not logged in' });
+      res.status(400).send({ error: 'User not logged in' });
     }
 });
+
 
 router.post('/signout', async (req, res) => {
     try {

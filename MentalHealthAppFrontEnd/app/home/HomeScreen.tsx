@@ -30,8 +30,8 @@ export default function HomeScreen() {
       }
     };
 
-    initialize();
-  }, []);
+  initialize();
+}, []);
 
   const handleSignout = async () => {
     try {
