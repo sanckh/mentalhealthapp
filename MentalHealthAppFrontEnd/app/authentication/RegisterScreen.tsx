@@ -21,7 +21,7 @@ export default function RegisterScreen() {
       .then((response) => {
         if(response){
           Alert.alert('Success', 'User registered successfully');
-          navigation.navigate('home');
+          navigation.navigate('index');
         }
       })
     } catch (error: any) {

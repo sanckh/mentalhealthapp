@@ -42,7 +42,7 @@ export default function DailyCheckInScreen() {
     try {
       await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
       Alert.alert('Success', 'Check-in completed');
-      navigation.navigate('home');
+      navigation.navigate('index');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
@@ -124,7 +124,7 @@ export default function DailyCheckInScreen() {
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={ () => navigation.navigate('home')} style={styles.buttonTwo}>
+      <TouchableOpacity onPress={ () => navigation.navigate('index')} style={styles.buttonTwo}>
         <Text style={styles.buttonText} >Skip for Today</Text>
       </TouchableOpacity>
     </ScrollView>

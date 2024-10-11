@@ -10,8 +10,8 @@ const MainDrawerNavigator = () => {
   const Drawer = createDrawerNavigator();
 
   return (
-    <Drawer.Navigator initialRouteName="home">
-      <Drawer.Screen name="home" component={HomeScreen} options={{ title: 'Home' }} />
+    <Drawer.Navigator>
+      <Drawer.Screen name="index" component={HomeScreen} options={{ title: 'Home' }} />
       <Drawer.Screen name="profile" component={ProfileScreen} options={{ title: 'Profile' }} />
       <Drawer.Screen name="settings" component={SettingsScreen} options={{ title: 'Settings' }} />
     </Drawer.Navigator>

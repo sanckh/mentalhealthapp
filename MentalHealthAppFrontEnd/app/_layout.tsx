@@ -1,5 +1,3 @@
-// _layout.tsx
-
 import { NavigationContainer } from '@react-navigation/native';
 import MainDrawerNavigator from './navigation/MainDrawerNavigator';
 import { getCurrentUser } from '@/api/auth'; 
@@ -13,6 +11,7 @@ import ProfileScreen from './profile/ProfileScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import SettingsScreen from './settings/SettingsScreen';
 import DailyCheckInScreen from './checkin/DailyCheckInScreen';
+import Profile from './profile';
 
 export default function RootLayout() {
   const Drawer = createDrawerNavigator();
@@ -51,14 +50,42 @@ export default function RootLayout() {
   }
 
   return (
-      <Stack.Navigator>
-        <Stack.Screen name='login' component={LoginScreen} options={{headerShown: false}} />
-        <Stack.Screen name='register' component={RegisterScreen} options={{headerShown: false}} />
-        <Stack.Screen name='dailycheckin' component={DailyCheckInScreen} options={{headerShown: false}} />
-        <Stack.Screen name='home' component={MainDrawerNavigator} options={{headerShown: false}} />
-        <Stack.Screen name='profile' component={MainDrawerNavigator} options={{headerShown: false}} />
-      </Stack.Navigator>
+    <Stack.Navigator>
+      {user ? (
+        <>
+          <Stack.Screen
+            name="index"
+            component={MainDrawerNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="profile"
+            component={ProfileScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="dailycheckin"
+            component={DailyCheckInScreen}
+            options={{ headerShown: false }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name="login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="register"
+            component={RegisterScreen}
+            options={{ headerShown: false }}
+          />
+        </>
+      )}
+    </Stack.Navigator>
   );
+  
 }
 
 const styles = StyleSheet.create({

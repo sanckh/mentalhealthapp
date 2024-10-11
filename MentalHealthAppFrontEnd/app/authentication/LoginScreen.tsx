@@ -17,7 +17,7 @@ export default function LoginScreen() {
         hasSubmittedDailyCheckin(response.uid)
         .then((hasSubmitted) => {
           if (hasSubmitted) {
-            navigation.navigate('home');
+            navigation.navigate('index');
           } else {
             navigation.navigate('dailycheckin');
           }
