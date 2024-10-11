@@ -51,8 +51,6 @@ export default function RootLayout() {
 
   return (
     <Stack.Navigator>
-      {user ? (
-        <>
           <Stack.Screen
             name="index"
             component={MainDrawerNavigator}
@@ -68,9 +66,6 @@ export default function RootLayout() {
             component={DailyCheckInScreen}
             options={{ headerShown: false }}
           />
-        </>
-      ) : (
-        <>
           <Stack.Screen
             name="login"
             component={LoginScreen}
@@ -81,11 +76,8 @@ export default function RootLayout() {
             component={RegisterScreen}
             options={{ headerShown: false }}
           />
-        </>
-      )}
     </Stack.Navigator>
   );
-  
 }
 
 const styles = StyleSheet.create({

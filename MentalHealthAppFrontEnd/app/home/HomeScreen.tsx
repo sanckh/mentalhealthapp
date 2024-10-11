@@ -37,6 +37,11 @@ export default function HomeScreen() {
   const handleSignout = async () => {
     try {
       await signout();
+      setUser(null);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'login' }],
+      });
     } catch (error) {
       console.error("Error signing out:", error);
     }
