@@ -10,7 +10,6 @@ export async function getPersonalizedInsights(): Promise<Insight[]> {
   const insightsRef = firestore().collection('personalizedinsights');
   const snapshot = await insightsRef.get();
   if (snapshot.empty) {
-    console.log('No matching insights.');
     return [];
   }
 

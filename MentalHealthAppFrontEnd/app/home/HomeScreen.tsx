@@ -19,7 +19,6 @@ export default function HomeScreen() {
     const initialize = async () => {
       try {
         const user = await getCurrentUser();
-        console.log(user);
         setUser(user);
         const checkedIn = await hasSubmittedDailyCheckin(user.uid);
         setHasCheckedIn(checkedIn);
