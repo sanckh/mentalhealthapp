@@ -2,6 +2,7 @@ import { firestore } from 'firebase-admin';
 import { Insight } from '../interfaces/insight';
 import { Averages } from '../interfaces/averages';
 import { InsightConditionEnum } from '../enums/insightConditionEnum';
+
 /**
  * Fetches personalized insights from the database.
  * @returns Promise of an array of personalized insights.
@@ -26,62 +27,55 @@ export async function getPersonalizedInsights(): Promise<Insight[]> {
  * @returns Array of applicable insights.
  */
 export function evaluateInsights(averages: Averages, insights: Insight[]): Insight[] {
+  if (averages.activity === 0) {
+    return [];
+  }
 
-  //A new user may skip the daily check in, resulting in 0 for the averages.
-  //If that is the case, we need to break out of this method.
-  if (averages.activity == 0) {
-    return []; // Return an empty array
-  } 
-  
-  return insights.filter(insight => {
-    const { trigger } = insight;
+  return insights
+    .filter(insight => {
+      const { trigger } = insight;
 
-    // Map string condition to InsightConditionEnum
-    let conditionEnum: InsightConditionEnum;
+      let conditionEnum: InsightConditionEnum;
 
-    switch (trigger.condition) {
-      case 'above':
-        conditionEnum = InsightConditionEnum.above;
-        break;
-      case 'below':
-        conditionEnum = InsightConditionEnum.below;
-        break;
-      case 'equals':
-        conditionEnum = InsightConditionEnum.equals;
-        break;
-      default:
-        return false; // Invalid condition, skip this insight
-    }
+      switch (trigger.condition) {
+        case 'above':
+          conditionEnum = InsightConditionEnum.above;
+          break;
+        case 'below':
+          conditionEnum = InsightConditionEnum.below;
+          break;
+        case 'equals':
+          conditionEnum = InsightConditionEnum.equals;
+          break;
+        default:
+          return false;
+      }
 
-    // Evaluate the condition using the mapped enum
-    switch (trigger.type) {
-      case 'mood':
-      case 'stress':
-      case 'sleep':
-      case 'activity':
-        return evaluateCondition(averages[trigger.type], conditionEnum, trigger.value);
-      default:
-        return false;
-    }
-  });
+      return evaluateCondition(averages[trigger.type], conditionEnum, Number(trigger.value));
+    })
+    .sort((a, b) => {
+      const aValue = Number(a.trigger.value);
+      const bValue = Number(b.trigger.value);
+      return Math.abs(averages[a.trigger.type] - aValue) - Math.abs(averages[b.trigger.type] - bValue);
+    })
+    .slice(0, 1); // Take only the closest match
 }
 
 /**
- * Evaluates a specific condition.
- * @param average - The average value of the metric.
- * @param condition - The condition to evaluate ("below", "above", "equal").
- * @param value - The value to compare against.
- * @returns Whether the condition is met.
+ * Evaluates whether a condition is met based on the given value and condition.
+ * @param averageValue - The average value to compare against.
+ * @param condition - The condition to evaluate.
+ * @param triggerValue - The value to compare with.
+ * @returns Boolean indicating whether the condition is met.
  */
-function evaluateCondition(average: number, condition: InsightConditionEnum, value: number | string): boolean {
-  const numericValue = typeof value === 'string' ? Number(value) : value;
+function evaluateCondition(averageValue: number, condition: InsightConditionEnum, triggerValue: number): boolean {
   switch (condition) {
-    case InsightConditionEnum.below:
-      return average < numericValue;
     case InsightConditionEnum.above:
-      return average > numericValue;
+      return averageValue > triggerValue;
+    case InsightConditionEnum.below:
+      return averageValue < triggerValue;
     case InsightConditionEnum.equals:
-      return Math.abs(average - Number(numericValue)) < 0.5; // Adjust tolerance as needed
+      return Math.abs(averageValue - Number(triggerValue)) < 0.5;
     default:
       return false;
   }
