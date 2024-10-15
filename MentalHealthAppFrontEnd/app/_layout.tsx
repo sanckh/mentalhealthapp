@@ -1,4 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native';
 import MainDrawerNavigator from './navigation/MainDrawerNavigator';
 import { getCurrentUser } from '@/api/auth'; 
 import { View, Text, StyleSheet } from 'react-native';
@@ -6,17 +5,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useEffect, useState } from 'react';
 import LoginScreen from './authentication/LoginScreen';
 import RegisterScreen from './authentication/RegisterScreen';
-import HomeScreen from './home/HomeScreen';
 import ProfileScreen from './profile/ProfileScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import SettingsScreen from './settings/SettingsScreen';
 import DailyCheckInScreen from './checkin/DailyCheckInScreen';
-import Profile from './profile';
+import { AuthProvider, useAuth } from './AuthContext';
 
 export default function RootLayout() {
   const Drawer = createDrawerNavigator();
   const Stack = createNativeStackNavigator()
   
+  // const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true); 
 
@@ -49,7 +47,8 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack.Navigator>
+    <AuthProvider>
+      <Stack.Navigator>
       {isAuthenticated ? (
         <>
           <Stack.Screen
@@ -83,6 +82,7 @@ export default function RootLayout() {
         </>
       )}
     </Stack.Navigator>
+    </AuthProvider>
   );
 }
 

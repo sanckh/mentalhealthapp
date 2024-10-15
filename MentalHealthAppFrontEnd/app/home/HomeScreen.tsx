@@ -7,6 +7,7 @@ import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from "../AuthContext";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
@@ -14,6 +15,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<any>(null);
   const navigation = useNavigation();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   
   useEffect(() => {
     const initialize = async () => {
@@ -34,18 +36,27 @@ export default function HomeScreen() {
   initialize();
 }, []);
 
-  const handleSignout = async () => {
-    try {
-      await signout();
-      setUser(null);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'login' }],
-      });
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
+useEffect(() => {
+  console.log("useEffect triggered: isAuthenticated", isAuthenticated);
+  if (!isAuthenticated) {
+    console.log("Navigating to login");
+    navigation.navigate('login');
+  }
+}, [isAuthenticated]);
+
+const handleSignout = async () => {
+  try {
+    console.log("Signing out...");
+    await signout();
+    setUser(null);
+
+    // Log state changes
+    console.log("Setting isAuthenticated to false");
+    setIsAuthenticated(false);
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+};
 
   if (loading) {
     return (
