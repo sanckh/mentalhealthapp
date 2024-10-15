@@ -58,7 +58,7 @@ export default function HomeScreen() {
   return (
     <ScrollView>
       <View style={styles.container}>
-      <Text style={styles.header}>Welcome Back!</Text>
+      <Text style={styles.header}>Welcome Back, {user?.name}!</Text>
 
       {user && !hasCheckedIn && (
         <View style={styles.card}>

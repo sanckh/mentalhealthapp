@@ -17,17 +17,16 @@ export default function RootLayout() {
   const Drawer = createDrawerNavigator();
   const Stack = createNativeStackNavigator()
   
-  const [user, setUser] = useState(null); 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const checkUser = async () => {
       try {
         const currentUser = await getCurrentUser(); 
-        setUser(currentUser); 
+        setIsAuthenticated(!!currentUser); 
       } catch (error) {
         console.error('Error fetching user session:', error);
-        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -51,6 +50,8 @@ export default function RootLayout() {
 
   return (
     <Stack.Navigator>
+      {isAuthenticated ? (
+        <>
           <Stack.Screen
             name="index"
             component={MainDrawerNavigator}
@@ -66,6 +67,9 @@ export default function RootLayout() {
             component={DailyCheckInScreen}
             options={{ headerShown: false }}
           />
+        </>
+      ) : (
+        <>
           <Stack.Screen
             name="login"
             component={LoginScreen}
@@ -76,6 +80,8 @@ export default function RootLayout() {
             component={RegisterScreen}
             options={{ headerShown: false }}
           />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
