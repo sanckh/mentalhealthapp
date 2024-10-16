@@ -2,24 +2,25 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, Alert, Pressable } from 'react-native';
 import { login } from '../../api/auth';
 import { hasSubmittedDailyCheckin } from '@/api/checkin';
-import { useNavigation } from '@react-navigation/native';
-import { AuthContext } from '../AuthContext';
+import { useAuth } from '../AuthContext';
+import { router } from 'expo-router';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
 
   const handleLogin = () => {
   
     login(email, password)
       .then((response) => {
+        setIsAuthenticated(true);
         hasSubmittedDailyCheckin(response.uid)
         .then((hasSubmitted) => {
           if (hasSubmitted) {
-            navigation.navigate('index');
+            router.replace('/home');
           } else {
-            navigation.navigate('dailycheckin');
+            router.replace('/dailycheckin');
           }
         })
       })
@@ -56,7 +57,7 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
       <View style={styles.button}>
-        <Pressable onPress={() => navigation.navigate('register')}>
+        <Pressable onPress={() => router.replace('/register')}>
           <Text style={styles.buttonText}>Register</Text>
         </Pressable>
       </View>

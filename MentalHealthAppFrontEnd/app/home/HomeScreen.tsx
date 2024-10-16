@@ -6,15 +6,14 @@ import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
-import { useNavigation } from '@react-navigation/native';
 import { useAuth } from "../AuthContext";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<any>(null);
-  const navigation = useNavigation();
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   
   useEffect(() => {
@@ -37,21 +36,15 @@ export default function HomeScreen() {
 }, []);
 
 useEffect(() => {
-  console.log("useEffect triggered: isAuthenticated", isAuthenticated);
   if (!isAuthenticated) {
-    console.log("Navigating to login");
-    navigation.navigate('login');
+    router.replace('/login');
   }
 }, [isAuthenticated]);
 
 const handleSignout = async () => {
   try {
-    console.log("Signing out...");
     await signout();
     setUser(null);
-
-    // Log state changes
-    console.log("Setting isAuthenticated to false");
     setIsAuthenticated(false);
   } catch (error) {
     console.error("Error signing out:", error);
@@ -76,7 +69,7 @@ const handleSignout = async () => {
           <Text style={styles.title}>Complete your daily check-in</Text>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('dailycheckin')}
+            onPress={() => router.replace('/dailycheckin')}
           >
             <Text style={styles.buttonText}>Go to Check-in</Text>
           </TouchableOpacity>
@@ -125,9 +118,9 @@ const handleSignout = async () => {
         <Text style={styles.title}>Crisis Support</Text>
         <TouchableOpacity
           style={styles.button}
-          //onPress={() => router.replace({ pathname: '/crisisscreen' })}
+          onPress={() => router.replace({ pathname: '/crisis' })}
         >
-          <Text style={styles.buttonText}>Emergency Contacts</Text>
+          <Text style={styles.buttonText}>Crisis Support</Text>
         </TouchableOpacity>
       </View>
 
