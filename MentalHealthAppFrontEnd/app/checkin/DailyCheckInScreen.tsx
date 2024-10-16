@@ -35,7 +35,7 @@ export default function DailyCheckInScreen() {
       })
       .catch(error => {
         console.error('Error fetching user:', error);
-        router.replace('/login');
+        router.push('/login');
       });
   }, []);
 
@@ -44,7 +44,7 @@ export default function DailyCheckInScreen() {
       await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
       console.log("I am here")
       Alert.alert('Success', 'Check-in completed');
-      router.replace('/home');
+      router.push('/home');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
@@ -126,7 +126,7 @@ export default function DailyCheckInScreen() {
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={ () => router.replace('/home')} style={styles.buttonTwo}>
+      <TouchableOpacity onPress={ () => router.push('/home')} style={styles.buttonTwo}>
         <Text style={styles.buttonText} >Skip for Today</Text>
       </TouchableOpacity>
     </ScrollView>

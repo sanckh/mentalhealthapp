@@ -1,4 +1,3 @@
-//app/(auth)/(app)/_layout.tsx
 import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from './home';

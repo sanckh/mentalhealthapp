@@ -7,7 +7,7 @@ import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
 import { useAuth } from "../AuthContext";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
@@ -15,7 +15,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<any>(null);
   const { isAuthenticated, setIsAuthenticated } = useAuth();
-  
+  const router = useRouter();
+
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -118,7 +119,7 @@ const handleSignout = async () => {
         <Text style={styles.title}>Crisis Support</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.replace({ pathname: '/crisis' })}
+          onPress={() => router.push('/crisis')}
         >
           <Text style={styles.buttonText}>Crisis Support</Text>
         </TouchableOpacity>
