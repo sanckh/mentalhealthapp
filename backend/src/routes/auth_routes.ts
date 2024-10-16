@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
     }
 
     const userCredential = await createUserWithEmailAndPassword(auth, email ?? '', password);
-    
+
     if (!userCredential.user.email) {
       throw new Error('Email is required');
     }
