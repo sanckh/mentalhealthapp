@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, TextStyle } from 'react-native';
+import { Text, StyleSheet, TextStyle, Pressable } from 'react-native';
 
 type ButtonProps = {
   title: string;
@@ -15,28 +15,25 @@ const Button: React.FC<ButtonProps> = ({
   isLoading,
 }) => {
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
+    <Pressable
       onPress={handlePress}
-      style={[styles.buttonContainer, isLoading && styles.loading]}
+      style={[styles.button, isLoading && styles.loading]}
       disabled={isLoading}>
-      <Text style={[styles.buttonText, textStyles]}>{title}</Text>
-    </TouchableOpacity>
+      <Text style={[styles.text, textStyles]}>{title}</Text>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    backgroundColor: 'gray',
-    borderRadius: 12,
-    minHeight: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'row',
-    marginTop: 12,
+  button: {
+    height: 40,
+    padding: 10,
+    backgroundColor: '#007aff',
+    borderRadius: 5,
+    marginTop: 20,
+    marginBottom: 10,
   },
-  buttonText: {
+  text: {
     color: '#11181C',
     fontSize: 18,
   },

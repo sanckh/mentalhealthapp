@@ -7,8 +7,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
   const { isLoading, user } = useAuth();
+  console.log('user from here', user)
 
-  if (!isLoading && user) return <Redirect href='/home' />;
+  if (isLoading) {
+    return (
+      <SafeAreaView>
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (user) {
+    return <Redirect href='/home' />;
+  }
 
   return (
     <SafeAreaView>

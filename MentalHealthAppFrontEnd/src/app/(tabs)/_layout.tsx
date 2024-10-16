@@ -1,28 +1,31 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { Tabs, Redirect } from 'expo-router';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { Tabs } from 'expo-router';
 import { icons } from '@/constants';
+import ProtectedRoute from '@/utils/ProtectedRoute';
 
 type TabIconProps = {
   icon: any;
   color: string;
   name: string;
-
   focused: boolean;
 };
-//className='items-center justify-center gap-2'
+
 const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
   return (
-    <View>
+    <View style={styles.iconContainer}>
       <Image
         source={icon}
         resizeMethod='resize'
-        tintColor={color}
-        // className='w-6 h-6'
+        style={[styles.icon, { tintColor: color }]}
       />
+
       <Text
-        // className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}
-        style={{ color }}>
+        style={[
+          styles.iconText,
+          { color },
+          focused ? styles.focusedText : styles.regularText,
+        ]}>
         {name}
       </Text>
     </View>
@@ -31,14 +34,14 @@ const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
 
 const TabsLayout: React.FC = () => {
   return (
-    <>
+    <ProtectedRoute>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#FFA001',
-          tabBarInactiveTintColor: '#CDCDE0',
+          // tabBarActiveTintColor: '#FFA001',
+          // tabBarInactiveTintColor: '#CDCDE0',
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: '#161622',
+            // backgroundColor: '#161622',
             borderTopWidth: 1,
             borderTopColor: '#232533',
             height: 84,
@@ -105,8 +108,29 @@ const TabsLayout: React.FC = () => {
           }}
         />
       </Tabs>
-    </>
+    </ProtectedRoute>
   );
 };
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+  iconText: {
+    fontSize: 12,
+  },
+  focusedText: {
+    fontWeight: 'bold',
+  },
+  regularText: {
+    fontFamily: 'System',
+  },
+});
 
 export default TabsLayout;

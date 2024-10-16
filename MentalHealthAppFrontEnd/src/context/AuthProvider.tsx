@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@/lib/authService';
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 interface AuthContextProps {
@@ -21,8 +22,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const response = await fetch('/api/current-user');
-        const currentUser = await response.json();
+        const currentUser = await getCurrentUser();
+        console.log(currentUser);
 
         if (currentUser) {
           setUser(currentUser);
