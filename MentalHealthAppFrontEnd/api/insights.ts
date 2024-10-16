@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/insight'; 
+import { API_URL } from '@env';
 
 export const getPersonalizedInsights = async (userId: string) => {
     const response = await fetch(`${API_URL}/personalizedinsights/${userId}`, {
