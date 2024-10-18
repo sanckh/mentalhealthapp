@@ -109,7 +109,7 @@ const handleSignout = async () => {
         <Text style={styles.title}>Mindfulness Exercise</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {} /* Navigation or function to start meditation */}
+          onPress={() => router.push('/meditation')}
         >
           <Text style={styles.buttonText}>Start Meditation</Text>
         </TouchableOpacity>

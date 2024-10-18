@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   Linking,
   ImageBackground,
+  Platform,
 } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel'; // Make sure to install this package
+import Carousel from 'react-native-reanimated-carousel';
+import Slick from 'react-slick';
 
 const CrisisScreen = () => {
   const [carouselItems] = useState([
@@ -33,6 +35,50 @@ const CrisisScreen = () => {
     const url = `tel:${number}`;
     Linking.openURL(url).catch((err) => console.error('Failed to open URL:', err));
   };
+
+  const isWeb = Platform.OS === 'web';
+
+  const renderCarouselItem = (item: any) => (
+    <TouchableOpacity
+      onPress={() => Linking.openURL(item.link)}
+      style={styles.carouselCard}
+    >
+      <ImageBackground
+        source={{ uri: item.image }}
+        style={styles.cardImage}
+        imageStyle={{ borderRadius: 10 }}
+      >
+        <Text style={styles.cardTitle}>{item.title}</Text>
+      </ImageBackground>
+    </TouchableOpacity>
+  );
+
+  // const webCarousel = () => (
+  //   <Slick
+  //     dots
+  //     infinite
+  //     slidesToShow={3}
+  //     slidesToScroll={1}
+  //     arrows
+  //   >
+  //     {carouselItems.map((item, index) => (
+  //       <div key={index} style={{ padding: 10 }}>
+  //         {renderCarouselItem(item)}
+  //       </div>
+  //     ))}
+  //   </Slick>
+  // );
+
+  const mobileCarousel = () => (
+    <Carousel
+      data={carouselItems}
+      renderItem={({ item }) => renderCarouselItem(item)}
+      width={350}
+      height={200}
+      mode="parallax"
+      style={styles.carousel}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -61,7 +107,10 @@ const CrisisScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <Carousel
+      
+
+      {/* {isWeb ? webCarousel() : mobileCarousel()} */}
+      {/* <Carousel
         loop
         width={300}
         height={200}
@@ -83,7 +132,7 @@ const CrisisScreen = () => {
             </ImageBackground>
           </TouchableOpacity>
         )}
-      />
+      /> */}
     </View>
   );
 };
@@ -93,6 +142,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 16,
+  },
+  webContainer: {
+    flex: 1,
+    backgroundColor: '#e0f7fa',
+    padding: 20,
   },
   header: {
     fontSize: 24,
@@ -109,6 +163,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
   },
+  webCallButton: {
+    backgroundColor: '#03A9F4',
+    padding: 15,
+    marginVertical: 10,
+    borderRadius: 8,
+  },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
@@ -116,14 +176,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   carouselCard: {
-    flex: 1,
-    borderWidth: 1,
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 20,
   },
   cardImage: {
-    height: '100%',
+    height: 200,
     justifyContent: 'flex-end',
     padding: 10,
   },
@@ -134,6 +192,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     paddingHorizontal: 8,
     borderRadius: 5,
+  },
+  carousel: {
+    marginTop: 20,
   },
 });
 

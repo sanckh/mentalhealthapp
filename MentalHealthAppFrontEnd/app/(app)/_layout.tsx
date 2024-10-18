@@ -8,6 +8,7 @@ import { getCurrentUser } from '@/api/auth';
 import { useAuth } from '../AuthContext';
 import { Redirect } from 'expo-router';
 import CrisisScreen from '../crisis/CrisisScreen';
+import MeditationScreen from '../meditation/MeditationScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -29,6 +30,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="settings" component={SettingsScreen} />
       <Drawer.Screen name="dailycheckin" component={DailyCheckInScreen} />
       <Drawer.Screen name="crisis" component={CrisisScreen} />
+      <Drawer.Screen name="meditation" component={MeditationScreen} />
     </Drawer.Navigator>
   );
 };
