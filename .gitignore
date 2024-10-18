@@ -40,3 +40,7 @@
 
 # dist
 /backend/dist
+
+#environment files
+.env.development
+.env.prod

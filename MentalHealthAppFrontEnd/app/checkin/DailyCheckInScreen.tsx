@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Picker, ScrollView, TouchableOpacity } from 'react-native';
 import { getCurrentUser } from '../../api/auth';
 import { submitCheckIn } from '../../api/checkin';
-import { useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
 
 export default function DailyCheckInScreen() {
   const [mood, setMood] = useState(5);
@@ -13,7 +13,6 @@ export default function DailyCheckInScreen() {
   const [activity, setActivity] = useState(5);
   const [gratitude, setGratitude] = useState('');
   const [user, setUser] = useState<any>(null);
-  const navigation = useNavigation();
 
   const emojis = [
     { label: '😃', value: 10 },
@@ -27,6 +26,8 @@ export default function DailyCheckInScreen() {
     { label: '😡', value: 2 },
     { label: '🤯', value: 1 },
   ];
+
+  //With global state I think this is redundant, look into this later
   useEffect(() => {
     getCurrentUser()
       .then(user => {
@@ -34,7 +35,7 @@ export default function DailyCheckInScreen() {
       })
       .catch(error => {
         console.error('Error fetching user:', error);
-        navigation.navigate('login');
+        router.push('/login');
       });
   }, []);
 
@@ -42,7 +43,7 @@ export default function DailyCheckInScreen() {
     try {
       await submitCheckIn({ userId: user.uid, general, mood, notes, stress, sleep, activity, gratitude });
       Alert.alert('Success', 'Check-in completed');
-      navigation.navigate('index');
+      router.push('/home');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
@@ -124,7 +125,7 @@ export default function DailyCheckInScreen() {
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={ () => navigation.navigate('index')} style={styles.buttonTwo}>
+      <TouchableOpacity onPress={ () => router.push('/home')} style={styles.buttonTwo}>
         <Text style={styles.buttonText} >Skip for Today</Text>
       </TouchableOpacity>
     </ScrollView>

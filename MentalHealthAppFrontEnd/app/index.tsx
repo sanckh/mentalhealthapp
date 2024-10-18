@@ -1,15 +1,16 @@
+
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 export default function Index() {
-  const navigation = useNavigation();
 
+  const router = useRouter();
   useEffect(() => {
     // Delay navigation slightly
     setTimeout(() => {
-      navigation.navigate('login');;
+      router.replace('/login');
     }, 0); // You can increase the delay slightly if necessary
-  }, [navigation]);
+  }, [router]);
 
   return (
     <View style={styles.container}>
@@ -29,3 +30,27 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+
+
+// // //Switching to react native from expo below: 
+
+// // /*
+// // import React from 'react';
+// // import { AppRegistry } from 'react-native';
+// // import { NavigationContainer } from '@react-navigation/native';
+// // import { AuthProvider } from './AuthContext';
+// // import RootLayout from './_layout';
+
+// // function App() {
+// //   return (
+// //     <AuthProvider>
+// //       <NavigationContainer>
+// //         <RootLayout />
+// //       </NavigationContainer>
+// //     </AuthProvider>
+// //   );
+// // }
+
+// // AppRegistry.registerComponent('MentalHealthAppFrontEnd', () => App);
+
+// // */

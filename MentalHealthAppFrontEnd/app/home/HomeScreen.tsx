@@ -6,15 +6,17 @@ import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
-import { useNavigation } from '@react-navigation/native';
+import { useAuth } from "../AuthContext";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<any>(null);
-  const navigation = useNavigation();
-  
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const router = useRouter();
+
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -34,18 +36,21 @@ export default function HomeScreen() {
   initialize();
 }, []);
 
-  const handleSignout = async () => {
-    try {
-      await signout();
-      setUser(null);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'login' }],
-      });
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
+useEffect(() => {
+  if (!isAuthenticated) {
+    router.replace('/login');
+  }
+}, [isAuthenticated]);
+
+const handleSignout = async () => {
+  try {
+    await signout();
+    setUser(null);
+    setIsAuthenticated(false);
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+};
 
   if (loading) {
     return (
@@ -58,21 +63,21 @@ export default function HomeScreen() {
   return (
     <ScrollView>
       <View style={styles.container}>
-      <Text style={styles.header}>Welcome Back!</Text>
+      <Text style={styles.header}>Welcome Back, {user?.name}!</Text>
 
       {user && !hasCheckedIn && (
         <View style={styles.card}>
           <Text style={styles.title}>Complete your daily check-in</Text>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('dailycheckin')}
+            onPress={() => router.replace('/dailycheckin')}
           >
             <Text style={styles.buttonText}>Go to Check-in</Text>
           </TouchableOpacity>
         </View>
       )}
 
-{insights.length > 0 && (
+{insights !== null && insights !== undefined && insights.length > 0 && (
   <View style={styles.card}>
     <View style={styles.insightsContainer}>
     <Text style={styles.insightsHeader}>Personalized Insights</Text>
@@ -104,7 +109,7 @@ export default function HomeScreen() {
         <Text style={styles.title}>Mindfulness Exercise</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {} /* Navigation or function to start meditation */}
+          onPress={() => router.push('/meditation')}
         >
           <Text style={styles.buttonText}>Start Meditation</Text>
         </TouchableOpacity>
@@ -114,9 +119,9 @@ export default function HomeScreen() {
         <Text style={styles.title}>Crisis Support</Text>
         <TouchableOpacity
           style={styles.button}
-          //onPress={() => router.replace({ pathname: '/crisisscreen' })}
+          onPress={() => router.push('/crisis')}
         >
-          <Text style={styles.buttonText}>Emergency Contacts</Text>
+          <Text style={styles.buttonText}>Crisis Support</Text>
         </TouchableOpacity>
       </View>
 

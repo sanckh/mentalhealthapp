@@ -1,7 +1,6 @@
-const API_URL = 'http://localhost:3000/auth'; 
-
+import { API_URL } from '@env';
 export const register = async (name: string, email: string, password: string) => {
-  const response = await fetch(`${API_URL}/register`, {
+  const response = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -16,7 +15,7 @@ export const register = async (name: string, email: string, password: string) =>
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,7 +31,7 @@ export const login = async (email: string, password: string) => {
 
 export const getCurrentUser = async () => {
   try {
-    const response = await fetch(`${API_URL}/user`, {
+    const response = await fetch(`${API_URL}/auth/user`, {
       method: 'GET',
       credentials: 'include',
     });
@@ -49,7 +48,7 @@ export const getCurrentUser = async () => {
 
 export const signout = async () => {
   try {
-    const response = await fetch(`${API_URL}/signout`, {
+    const response = await fetch(`${API_URL}/auth/signout`, {
       method: 'POST',
       credentials: 'include',
     });
