@@ -9,7 +9,7 @@ export const getPersonalizedInsights = async (userId: string) => {
       credentials: 'include',
     });
     if (!response.ok) {
-      throw new Error('Failed to fetch check-ins');
+      throw new Error('Failed to fetch personalized insights');
     }
     const data = await response.json();
     return data.insights;

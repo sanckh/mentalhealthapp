@@ -1,5 +1,4 @@
 import { API_URL } from '@env';
-//const API_URL = 'http://localhost:3000'; 
 export const register = async (name: string, email: string, password: string) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',

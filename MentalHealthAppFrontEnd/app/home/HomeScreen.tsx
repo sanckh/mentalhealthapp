@@ -77,7 +77,7 @@ const handleSignout = async () => {
         </View>
       )}
 
-{insights.length > 0 && (
+{insights !== null && insights !== undefined && insights.length > 0 && (
   <View style={styles.card}>
     <View style={styles.insightsContainer}>
     <Text style={styles.insightsHeader}>Personalized Insights</Text>

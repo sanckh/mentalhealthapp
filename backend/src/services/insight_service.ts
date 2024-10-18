@@ -31,7 +31,7 @@ export function evaluateInsights(averages: Averages, insights: Insight[]): Insig
     return [];
   }
 
-  return insights
+  const applicableInsights = insights
     .filter(insight => {
       const { trigger } = insight;
 
@@ -57,8 +57,17 @@ export function evaluateInsights(averages: Averages, insights: Insight[]): Insig
       const aValue = Number(a.trigger.value);
       const bValue = Number(b.trigger.value);
       return Math.abs(averages[a.trigger.type] - aValue) - Math.abs(averages[b.trigger.type] - bValue);
-    })
-    .slice(0, 1); // Take only the closest match
+    });
+
+  const insightsByCategory: { [category: string]: Insight } = {};
+
+  applicableInsights.forEach(insight => {
+    if (!insightsByCategory[insight.category]) {
+      insightsByCategory[insight.category] = insight;
+    }
+  });
+
+  return Object.values(insightsByCategory);
 }
 
 /**
