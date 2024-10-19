@@ -9,14 +9,11 @@ import {
   ImageBackground,
   Platform,
 } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const CrisisScreen = () => {
-  
-  const isWeb = Platform.OS === 'web';
 
   const makePhoneCall = (number: string) => {
     const url = `tel:${number}`;
@@ -61,31 +58,31 @@ const CrisisScreen = () => {
       <div className="slider-container">
       <Slider {...settings}>
         <div>
-          <h3>1</h3>
+          <h3 style={styles.h3}>1</h3>
         </div>
         <div>
-          <h3>2</h3>
+          <h3 style={styles.h3}>2</h3>
         </div>
         <div>
-          <h3>3</h3>
+          <h3 style={styles.h3}>3</h3>
         </div>
         <div>
-          <h3>4</h3>
+          <h3 style={styles.h3}>4</h3>
         </div>
         <div>
-          <h3>5</h3>
+          <h3 style={styles.h3}>5</h3>
         </div>
         <div>
-          <h3>6</h3>
+          <h3 style={styles.h3}>6</h3>
         </div>
         <div>
-          <h3>7</h3>
+          <h3 style={styles.h3}>7</h3>
         </div>
         <div>
-          <h3>8</h3>
+          <h3 style={styles.h3}>8</h3>
         </div>
         <div>
-          <h3>9</h3>
+          <h3 style={styles.h3}>9</h3>
         </div>
       </Slider>
     </div>
@@ -152,6 +149,16 @@ const styles = StyleSheet.create({
   },
   carousel: {
     marginTop: 20,
+  },
+  h3: {
+    fontSize: 40,
+    backgroundColor: '#FF0000',
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: 5,
+    padding: 15,
+    margin: 5,
+    fontFamily: 'sans-serif',
   },
 });
 
