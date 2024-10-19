@@ -1,48 +1,46 @@
 import React from "react";
-import Carousel from "react-native-reanimated-carousel";
-import type { ICarouselInstance } from "react-native-reanimated-carousel";
-import { Button, Text, View } from "react-native";
+import Slider from "react-slick";
 
-const data = [
-    {
-      title: "Slide 1",
-      content: "Slide 1 Content",
-    },
-    {
-      title: "Slide 2",
-      content: "Slide 2 Content",
-    },
-    {
-      title: "Slide 3",
-      content: "Slide 3 Content",
-    },
-  ];
- 
-  
-export default function MeditationScreen() {
-    const ref = React.useRef<ICarouselInstance>(null); // 2. Create a ref for the Carousel component
+function MeditationScreen() {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3
+  };
   return (
-    <View>
-      {/* 3. Add the Carousel component with the ref */}
-      <Carousel
-        ref={ref}
-        data={data}
-        width={300} // 4. Add the required "width" prop
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.title}</Text>
-            <Text>{item.content}</Text>
-          </View>
-        )}
-      />
-      {/* 5. Add a button to trigger the next slide */}
-      <Button
-        title="Next"
-        onPress={() => {
-          ref.current?.next(); // 6. Call the "next" method on the ref
-        }}
-      />
-    </View>
+    <div className="slider-container">
+      <Slider {...settings}>
+        <div>
+          <h3>1</h3>
+        </div>
+        <div>
+          <h3>2</h3>
+        </div>
+        <div>
+          <h3>3</h3>
+        </div>
+        <div>
+          <h3>4</h3>
+        </div>
+        <div>
+          <h3>5</h3>
+        </div>
+        <div>
+          <h3>6</h3>
+        </div>
+        <div>
+          <h3>7</h3>
+        </div>
+        <div>
+          <h3>8</h3>
+        </div>
+        <div>
+          <h3>9</h3>
+        </div>
+      </Slider>
+    </div>
   );
-
 }
+export default MeditationScreen;

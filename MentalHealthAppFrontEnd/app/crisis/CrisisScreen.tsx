@@ -10,75 +10,26 @@ import {
   Platform,
 } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import Slick from 'react-slick';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const CrisisScreen = () => {
-  const [carouselItems] = useState([
-    {
-      title: 'Managing Anxiety',
-      image: 'https://via.placeholder.com/300',
-      link: 'https://example.com/anxiety',
-    },
-    {
-      title: 'Mindfulness Techniques',
-      image: 'https://via.placeholder.com/300',
-      link: 'https://example.com/mindfulness',
-    },
-    {
-      title: 'Dealing with Stress',
-      image: 'https://via.placeholder.com/300',
-      link: 'https://example.com/stress',
-    },
-  ]);
+  
+  const isWeb = Platform.OS === 'web';
 
   const makePhoneCall = (number: string) => {
     const url = `tel:${number}`;
     Linking.openURL(url).catch((err) => console.error('Failed to open URL:', err));
   };
 
-  const isWeb = Platform.OS === 'web';
-
-  const renderCarouselItem = (item: any) => (
-    <TouchableOpacity
-      onPress={() => Linking.openURL(item.link)}
-      style={styles.carouselCard}
-    >
-      <ImageBackground
-        source={{ uri: item.image }}
-        style={styles.cardImage}
-        imageStyle={{ borderRadius: 10 }}
-      >
-        <Text style={styles.cardTitle}>{item.title}</Text>
-      </ImageBackground>
-    </TouchableOpacity>
-  );
-
-  // const webCarousel = () => (
-  //   <Slick
-  //     dots
-  //     infinite
-  //     slidesToShow={3}
-  //     slidesToScroll={1}
-  //     arrows
-  //   >
-  //     {carouselItems.map((item, index) => (
-  //       <div key={index} style={{ padding: 10 }}>
-  //         {renderCarouselItem(item)}
-  //       </div>
-  //     ))}
-  //   </Slick>
-  // );
-
-  const mobileCarousel = () => (
-    <Carousel
-      data={carouselItems}
-      renderItem={({ item }) => renderCarouselItem(item)}
-      width={350}
-      height={200}
-      mode="parallax"
-      style={styles.carousel}
-    />
-  );
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3
+  };
 
   return (
     <View style={styles.container}>
@@ -107,32 +58,38 @@ const CrisisScreen = () => {
         </TouchableOpacity>
       </View>
 
-      
+      <div className="slider-container">
+      <Slider {...settings}>
+        <div>
+          <h3>1</h3>
+        </div>
+        <div>
+          <h3>2</h3>
+        </div>
+        <div>
+          <h3>3</h3>
+        </div>
+        <div>
+          <h3>4</h3>
+        </div>
+        <div>
+          <h3>5</h3>
+        </div>
+        <div>
+          <h3>6</h3>
+        </div>
+        <div>
+          <h3>7</h3>
+        </div>
+        <div>
+          <h3>8</h3>
+        </div>
+        <div>
+          <h3>9</h3>
+        </div>
+      </Slider>
+    </div>
 
-      {/* {isWeb ? webCarousel() : mobileCarousel()} */}
-      {/* <Carousel
-        loop
-        width={300}
-        height={200}
-        autoPlay={true}
-        data={carouselItems}
-        scrollAnimationDuration={1000}
-        onSnapToItem={(index) => console.log('current index:', index)}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => Linking.openURL(item.link)}
-            style={styles.carouselCard}
-          >
-            <ImageBackground
-              source={{ uri: item.image }}
-              style={styles.cardImage}
-              imageStyle={{ borderRadius: 10 }}
-            >
-              <Text style={styles.cardTitle}>{item.title}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-        )}
-      /> */}
     </View>
   );
 };
