@@ -87,11 +87,6 @@ const CrisisScreen = () => {
           ))}
         </Slider>
       )}
-      <Slider>
-          <h3>
-            hey
-          </h3>
-        </Slider>
     </div>
 
     </View>
