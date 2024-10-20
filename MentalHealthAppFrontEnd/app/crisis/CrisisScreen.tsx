@@ -12,8 +12,27 @@ import {
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useEffect } from 'react';
+import { getCrisisDocuments } from '../../api/crisis';
+import { crisisDocumentModel } from '@/models/crisisDocumentModel';
+
 
 const CrisisScreen = () => {
+  const [crisisDocuments, setCrisisDocuments] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchCrisisDocuments = async () => {
+      try {
+        const crisisDocuments = await getCrisisDocuments();
+        setCrisisDocuments(crisisDocuments);
+        console.log(crisisDocuments)
+      } catch (error) {
+        console.error('Error fetching crisis documents:', error);
+      }
+    };
+
+    fetchCrisisDocuments();
+  }, []);
 
   const makePhoneCall = (number: string) => {
     const url = `tel:${number}`;
@@ -56,35 +75,23 @@ const CrisisScreen = () => {
       </View>
 
       <div className="slider-container">
-      <Slider {...settings}>
-        <div>
-          <h3 style={styles.h3}>1</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>2</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>3</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>4</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>5</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>6</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>7</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>8</h3>
-        </div>
-        <div>
-          <h3 style={styles.h3}>9</h3>
-        </div>
-      </Slider>
+      {crisisDocuments !== null && crisisDocuments !== undefined && crisisDocuments.length > 0 && (
+        <Slider {...settings}>
+          {crisisDocuments.map((crisisDocument: crisisDocumentModel, index: number) => (
+            <TouchableOpacity key={index} onPress={() => Linking.openURL(crisisDocument.link)}>
+              <View style={styles.carouselCard}>
+                <Text style={styles.cardTitle}>{crisisDocument.title}</Text>
+                <Text>{crisisDocument.description}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </Slider>
+      )}
+      <Slider>
+          <h3>
+            hey
+          </h3>
+        </Slider>
     </div>
 
     </View>
