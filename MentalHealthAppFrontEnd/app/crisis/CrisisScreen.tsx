@@ -44,7 +44,24 @@ const CrisisScreen = () => {
     infinite: true,
     speed: 500,
     slidesToShow: 3,
-    slidesToScroll: 3
+    slidesToScroll: 3,
+    arrows: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
   return (
@@ -81,7 +98,7 @@ const CrisisScreen = () => {
             <TouchableOpacity key={index} onPress={() => Linking.openURL(crisisDocument.link)}>
               <View style={styles.carouselCard}>
                 <Text style={styles.cardTitle}>{crisisDocument.title}</Text>
-                <Text>{crisisDocument.description}</Text>
+                <Text style={styles.cardDescription}>{crisisDocument.description}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -135,33 +152,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 20,
-  },
-  cardImage: {
-    height: 200,
-    justifyContent: 'flex-end',
-    padding: 10,
+    padding: 20,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingHorizontal: 8,
-    borderRadius: 5,
+    color: '#333',
+    marginBottom: 10,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
   carousel: {
     marginTop: 20,
   },
-  h3: {
-    fontSize: 40,
-    backgroundColor: '#FF0000',
-    display: 'flex',
-    justifyContent: 'center',
-    borderRadius: 5,
-    padding: 15,
-    margin: 5,
-    fontFamily: 'sans-serif',
-  },
+
 });
 
 export default CrisisScreen;
