@@ -6,6 +6,7 @@ import insightRoutes from './routes/insight_routes';
 import crisisRoutes from './routes/crisis_routes';
 import admin from 'firebase-admin';
 import cors from 'cors';
+import userContactRoutes from './routes/userContacts_routes';
 
 const app = express();
 const firebase = require('./firebase_options');
@@ -27,6 +28,7 @@ app.use('/auth', authRoutes);
 app.use('/checkin', checkinRoutes); 
 app.use('/insight', insightRoutes);
 app.use('/crisis', crisisRoutes);
+app.use('/contacts', userContactRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

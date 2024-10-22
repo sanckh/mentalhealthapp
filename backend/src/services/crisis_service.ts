@@ -11,3 +11,4 @@ export const crisisDocuments = async () => {
     throw new Error('Failed to retrieve crisis documents');
   }
 };
+

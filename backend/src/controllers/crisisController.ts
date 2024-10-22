@@ -4,3 +4,4 @@ export const getCrisisDocuments = async (req: Request, res: Response) => {
     const crisisDocs = await crisisDocuments();
     res.json({ crisisDocs });
   }
+
