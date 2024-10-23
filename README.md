@@ -20,7 +20,7 @@ npm install
 
 Set Up Environment Variables:
 
-Create a firebase_options.ts file in the backend directory.
+Create a firebase_options.ts file and serviceAccountKey.json in the backend directory.
 
 Add your Firebase credentials and other environment variables.
 
@@ -38,6 +38,8 @@ cd mentalhealthappfrontend
 Install Dependencies:
 
 npm install
+
+add a .env* file with your API_URL
 
 Start the React Native App:
 
