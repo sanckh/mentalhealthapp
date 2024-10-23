@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
-import AddCrisisContactModal from '../components/AddCrisisContactModal';
+import AddCrisisContactModal from '../../components/shared/AddCrisisContactModal';
 import { getCurrentUser } from '@/api/auth';
 
 export default function SettingsScreen() {
