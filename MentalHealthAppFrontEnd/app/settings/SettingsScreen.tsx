@@ -1,40 +1,50 @@
-import React from 'react';
-import { View, Text, StyleSheet, Switch } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import AddCrisisContactModal from '../components/AddCrisisContactModal';
+import { getCurrentUser } from '@/api/auth';
 
 export default function SettingsScreen() {
-    return (
-        <View style={styles.container}>
-          <Text style={styles.title}>Settings</Text>
-          <View style={styles.settingRow}>
-            <Text>Dark Mode</Text>
-            <Switch value={false} onValueChange={() => { /* toggle dark mode */ }} />
-          </View>
-          <View style={styles.settingRow}>
-            <Text>Notifications</Text>
-            <Switch value={true} onValueChange={() => { /* toggle notifications */ }} />
-          </View>
-          <View style={styles.settingRow}>
-            <Text>Language</Text>
-            <Text>English</Text>
-          </View>
-        </View>
-      );
-    }
+  const [modalVisible, setModalVisible] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        const user = await getCurrentUser();
+        setUser(user);
+        console.log(user);
+      } catch (error) {
+        console.error('Error initializing home screen:', error);
+      }
+    };
+  initialize();
+}, []);
+  
+  const handleAddCrisisContact = () => {
+    setModalVisible(true);
+  };
+
+  return (
+    <View>
+    <TouchableOpacity onPress={handleAddCrisisContact}>
+      <Text>Add Crisis Contact</Text>
+    </TouchableOpacity>
+    {user && (
+      <AddCrisisContactModal
+      visible={modalVisible}
+      onClose={() => setModalVisible(false)}
+      userId={user.uid}
+    />
+    )}
+  </View>
+    );
+  }
     
-    const styles = StyleSheet.create({
-      container: {
-        flex: 1,
-        padding: 16,
-      },
-      title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-      },
-      settingRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 12,
-      },
-    });
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 16,
+    },
+    
+  });

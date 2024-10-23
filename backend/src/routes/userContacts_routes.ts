@@ -1,6 +1,7 @@
-import { getUserContacts } from "../controllers/userContactsController";
+import { getUserContacts, saveUserContact } from "../controllers/userContactsController";
 import router from "./auth_routes";
 
-router.get('/usercontacts/:userId', getUserContacts);
+router.get('/getusercontacts/:userId', getUserContacts);
+router.post('/saveusercontact/:userId', saveUserContact);
 
 export default router;

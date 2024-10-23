@@ -1,6 +1,6 @@
 import { app, db } from '../firebase_options';
 
-export const userContacts = async (userId: string) => {
+export const retrieveUserContacts = async (userId: string) => {
     try {
       const phoneNumberRef = db.collection('usercontacts').where('userId', '==', userId);
       const snapshot = await phoneNumberRef.get();
@@ -11,3 +11,15 @@ export const userContacts = async (userId: string) => {
       throw new Error('Failed to retrieve user contacts');
     }
   }
+
+export const saveUserContactToDatabase = async (userId: string, phoneNumber: string, phoneNumberType: string) => {
+    try {
+      const userContactRef = db.collection('usercontacts').doc();
+      await userContactRef.set({ userId, phoneNumber, phoneNumberType });
+      return userContactRef.id;
+    } catch (error) {
+      console.error('Error saving user contact:', error);
+      throw new Error('Failed to save user contact');
+    }
+  }
+
