@@ -19,6 +19,7 @@ interface Props {
 }
 
 const AddCrisisContactModal: React.FC<Props> = ({ visible, onClose, userId }) => {
+  const [contactName, setContactName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberType, setPhoneNumberType] = useState('home');
   const [error, setError] = useState<string | null>(null);
@@ -26,10 +27,10 @@ const AddCrisisContactModal: React.FC<Props> = ({ visible, onClose, userId }) =>
   // Dropdown state
   const [openPicker, setOpenPicker] = useState(false);
   const [items, setItems] = useState([
-    { label: 'Therapist', value: 'Therapist' },
-    { label: 'Parent/Other Family', value: 'Family' },
-    { label: 'Emergency Contact', value: 'Emergency Contact' },
-    { label: 'Other', value: 'Other' },
+    { label: 'Home', value: 'home' },
+    { label: 'Mobile', value: 'mobile' },
+    { label: 'Work', value: 'work' },
+    { label: 'Other', value: 'other' },
   ]);
 
   // Close keyboard when dropdown opens
@@ -38,13 +39,18 @@ const AddCrisisContactModal: React.FC<Props> = ({ visible, onClose, userId }) =>
   }, []);
 
   const handleSubmit = async () => {
+    if (!contactName) {
+      setError('Please enter a contact name.');
+      return;
+    }
     if (!phoneNumber) {
       setError('Please enter a phone number.');
       return;
     }
 
     try {
-      await saveUserContact(userId, phoneNumber, phoneNumberType);
+      await saveUserContact(userId, contactName,phoneNumber, phoneNumberType);
+      
       onClose();
     } catch (error: any) {
       setError(error.message);
@@ -60,6 +66,14 @@ const AddCrisisContactModal: React.FC<Props> = ({ visible, onClose, userId }) =>
 
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Add Crisis Contact</Text>
+
+          <TextInput
+            value={contactName}
+            onChangeText={setContactName}
+            placeholder="Contact Name"
+            style={styles.input}
+          />
+
           <TextInput
             value={phoneNumber}
             onChangeText={setPhoneNumber}
@@ -67,6 +81,7 @@ const AddCrisisContactModal: React.FC<Props> = ({ visible, onClose, userId }) =>
             keyboardType="phone-pad"
             style={styles.input}
           />
+
           <View style={styles.dropdownContainer}>
             <DropDownPicker
               open={openPicker}
@@ -116,7 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 20,
     width: '90%',
-    zIndex: 10000, 
+    zIndex: 10000,
   },
   title: {
     fontSize: 22,

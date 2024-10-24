@@ -6,8 +6,8 @@ export const getUserContacts = async (req: Request, res: Response) => {
     if (!userId || typeof userId !== 'string') {
       throw new Error('User ID must be a string');
     }
-    const userPhoneNumbers = await retrieveUserContacts(userId);
-    res.json({ userPhoneNumbers });
+    const userContacts = await retrieveUserContacts(userId);
+    res.json({ userContacts });
 }
 
 export const saveUserContact = async (req: Request, res: Response) => {

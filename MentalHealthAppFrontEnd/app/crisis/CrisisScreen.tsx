@@ -32,10 +32,10 @@ const CrisisScreen = () => {
   
         const crisisDocuments = await getCrisisDocuments();
         setCrisisDocuments(crisisDocuments);
-        console.log(crisisDocuments);
   
         const userContacts = await getUserContacts(user.uid);
         setUserContacts(userContacts);
+        console.log(userContacts)
       } catch (error) {
         console.error('Error initializing home screen:', error);
       }
@@ -107,7 +107,7 @@ const CrisisScreen = () => {
                   onPress={() => makePhoneCall(contact.phoneNumber)}
                 >
                   <Text style={styles.buttonText}>
-                    {contact.phoneNumberType}
+                    {contact.contactName}
                   </Text>
                 </TouchableOpacity>
               ))}

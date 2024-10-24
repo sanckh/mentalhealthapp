@@ -37,6 +37,6 @@ export const submitCheckIn = async (data: {
       throw new Error('Failed to fetch check-ins');
     }
     const data = await response.json();
-    await new Promise(resolve => setTimeout(resolve, 0)); // add this line
+    await new Promise(resolve => setTimeout(resolve, 0));
     return data.hasSubmitted;
   };

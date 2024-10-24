@@ -12,6 +12,5 @@ export const getCrisisDocuments = async () => {
       throw new Error('Failed to fetch crisis documents');
     }
     const data = await response.json();
-    console.log(data)
     return data.crisisDocs;
   };
