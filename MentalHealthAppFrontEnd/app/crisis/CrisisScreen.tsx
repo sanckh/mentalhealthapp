@@ -35,9 +35,8 @@ const CrisisScreen = () => {
   
         const userContacts = await getUserContacts(user.uid);
         setUserContacts(userContacts);
-        console.log(userContacts)
       } catch (error) {
-        console.error('Error initializing home screen:', error);
+        console.error('Error initializing crisis screen:', error);
       }
     };
     initialize();
@@ -115,7 +114,7 @@ const CrisisScreen = () => {
           )}
       </View>
 
-      <div className="slider-container">
+      <View>
         {crisisDocuments !== null &&
           crisisDocuments !== undefined &&
           crisisDocuments.length > 0 && (
@@ -139,7 +138,7 @@ const CrisisScreen = () => {
               )}
             </Slider>
           )}
-      </div>
+      </View>
     </View>
   );
 };

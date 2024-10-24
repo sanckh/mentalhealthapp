@@ -25,7 +25,6 @@ router.post('/register', async (req, res) => {
       uid: userCredential.user.uid,
       name: name,
       email: userCredential.user.email,
-      // add any other user data you want to store
     };
 
     await saveUserToFirestore(userData);
@@ -40,18 +39,23 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-      const userRecord = await signInWithEmailAndPassword(auth, email, password);
-      res.status(200).send({ uid: userRecord.user.uid });
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken();
+
+      res.status(200).send({ uid: userCredential.user.uid, token });
     } catch (error: any) {
       res.status(400).send({ error: error.message });
     }
   });
 
-router.get('/user', async (req, res) => {
+  router.get('/user', async (req, res) => {
     const user = auth.currentUser;
     if (user) {
       try {
         const userInfo = await getAdditionalUserInfo(user.uid);
+  
+        await new Promise((resolve) => setTimeout(resolve, 0));
+  
         res.status(200).send({ uid: user.uid, ...userInfo });
       } catch (error) {
         res.status(500).send({ error: 'Error fetching additional user info' });
@@ -59,8 +63,8 @@ router.get('/user', async (req, res) => {
     } else {
       res.status(400).send({ error: 'User not logged in' });
     }
-});
-
+  });
+  
 
 router.post('/signout', async (req, res) => {
     try {

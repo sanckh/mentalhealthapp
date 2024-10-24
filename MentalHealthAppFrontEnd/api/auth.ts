@@ -15,19 +15,31 @@ export const register = async (name: string, email: string, password: string) =>
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error);
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    // Check if the response is OK before parsing JSON
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Login failed');
+    }
+
+    return data;
+    
+  } catch (error: any) {
+    console.error('Network request failed:', error.message);
+    throw error;
   }
-  return data;
 };
+
 
 export const getCurrentUser = async () => {
   try {

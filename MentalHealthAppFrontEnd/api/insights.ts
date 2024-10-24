@@ -12,5 +12,6 @@ export const getPersonalizedInsights = async (userId: string) => {
       throw new Error('Failed to fetch personalized insights');
     }
     const data = await response.json();
+    await new Promise(resolve => setTimeout(resolve, 10));
     return data.insights;
   };

@@ -13,9 +13,8 @@ export default function SettingsScreen() {
       try {
         const user = await getCurrentUser();
         setUser(user);
-        console.log(user);
       } catch (error) {
-        console.error('Error initializing home screen:', error);
+        console.error('Error initializing settings screen:', error);
       }
     };
   initialize();
