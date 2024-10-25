@@ -120,28 +120,36 @@ export const signout = async (req: Request, res: Response) => {
 };
 
 // Get User Info
-export const getUserInfo = async (uid: string) => {
-  try {
-    const userInfo = await getAdditionalUserInfo(uid);
+export const getUserInfo = async (req: Request, res: Response) => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const userInfo = await getAdditionalUserInfo(user.uid);
+  
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'Fetched user info successfully',
-      data: { uid },
-      timestamp: new Date().toISOString(),
-    });
+        await logToFirestore({
+          eventType: 'SUCCESS',
+          message: 'Receieved user info successfully',
+          data: { uid: user.uid },
+          timestamp: new Date().toISOString(),
+        });
 
-    return { uid, ...userInfo };
-  } catch (error: any) {
-    console.error('Error fetching user info:', error);
+  
+        res.status(200).send({ uid: user.uid, ...userInfo });
+      } catch (error: any) {
+        console.error('Error fetching user info:', error);
 
-    await logToFirestore({
-      eventType: 'ERROR',
-      message: 'Failed to fetch user info',
-      data: { error: error.message },
-      timestamp: new Date().toISOString(),
-    });
+        await logToFirestore({
+          eventType: 'ERROR',
+          message: 'Failed to fetch user info',
+          data: { error: error.message},
+          timestamp: new Date().toISOString(),
+        });
 
-    throw new Error('Error fetching additional user info');
+        res.status(500).send({ error: 'Error fetching additional user info' });
+      }
+    } else {
+      res.status(400).send({ error: 'User not logged in' });
+    }
   }
-};

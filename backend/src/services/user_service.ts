@@ -8,7 +8,8 @@ import { addDoc, collection, doc, getFirestore, setDoc } from 'firebase/firestor
  */
 export async function getAdditionalUserInfo(uid: string) {
     const usersRef = db.collection('users');
-    const querySnapshot = await usersRef.where('uid', '==', uid).get();
+    const querySnapshot = await usersRef.where('uid', '==', uid).limit(1).get();
+
 
     if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0];
