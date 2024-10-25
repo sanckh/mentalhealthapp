@@ -20,7 +20,6 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
       correlationId,
     },
     timestamp: new Date().toISOString(),
-    correlationId,
   }).catch((error) => console.error('Failed to log incoming request:', error));
 
   res.on('finish', () => {
@@ -36,7 +35,6 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
         statusCode: res.statusCode,
         duration,
       },
-      correlationId,
       timestamp: new Date().toISOString(),
     }).catch((error) => console.error('Failed to log outgoing response:', error));
   });

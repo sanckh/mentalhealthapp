@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+import { LogEntry } from '../interfaces/logEntry';
 
 // Initialize Firestore instance
 const db = admin.firestore();

@@ -1,4 +1,5 @@
-import { API_URL } from '@env';
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 
 export const getPersonalizedInsights = async (userId: string) => {
     const response = await fetch(`${API_URL}/insight/personalizedinsights/${userId}`, {

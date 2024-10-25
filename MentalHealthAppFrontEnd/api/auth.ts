@@ -1,4 +1,4 @@
-import { API_URL } from '@env';
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export const register = async (name: string, email: string, password: string) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',

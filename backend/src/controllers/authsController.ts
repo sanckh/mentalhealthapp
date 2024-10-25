@@ -8,13 +8,11 @@ import { Request, Response } from 'express';
 import { app } from '../firebase_options';
 import { getAdditionalUserInfo, saveUserToFirestore } from '../services/user_service';
 import { logToFirestore } from '../services/logs_service';  // Logging service
-import { generateCorrelationId } from '../utilities/logUtils';
 
 const auth = getAuth(app);
 
 // Register User
 export const register = async (req: Request, res: Response) => {
-  const correlationId = req.headers['correlation-id'] as string || generateCorrelationId();
   try {
     const { name, email, password } = req.body;
 
@@ -22,12 +20,10 @@ export const register = async (req: Request, res: Response) => {
       await logToFirestore({
         eventType: 'ERROR',
         message: 'Email is required',
-        data: { correlationId },
+        data: {},
         timestamp: new Date().toISOString(),
-        correlationId,
       });
-      res.status(400).send({ error: 'Email is required' });
-      return;
+      return res.status(400).send({ error: 'Email is required' });
     }
 
     const userCredential = await createUserWithEmailAndPassword(auth, email ?? '', password);
@@ -47,9 +43,8 @@ export const register = async (req: Request, res: Response) => {
     await logToFirestore({
       eventType: 'SUCCESS',
       message: 'User registered successfully',
-      data: { uid: userCredential.user.uid, email, correlationId },
+      data: { uid: userCredential.user.uid, email },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     res.status(201).send({ uid: userCredential.user.uid });
@@ -59,9 +54,8 @@ export const register = async (req: Request, res: Response) => {
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Registration failed',
-      data: { error: error.message, correlationId },
+      data: { error: error.message },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     res.status(400).send({ error: error.message });
@@ -70,7 +64,6 @@ export const register = async (req: Request, res: Response) => {
 
 // Login User
 export const login = async (req: Request, res: Response) => {
-  const correlationId = req.headers['correlation-id'] as string || generateCorrelationId();
   const { email, password } = req.body;
 
   try {
@@ -80,9 +73,8 @@ export const login = async (req: Request, res: Response) => {
     await logToFirestore({
       eventType: 'SUCCESS',
       message: 'User logged in successfully',
-      data: { uid: userCredential.user.uid, correlationId },
+      data: { uid: userCredential.user.uid },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     res.status(200).send({ uid: userCredential.user.uid, token });
@@ -92,9 +84,8 @@ export const login = async (req: Request, res: Response) => {
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Login failed',
-      data: { error: error.message, correlationId },
+      data: { error: error.message },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     res.status(400).send({ error: error.message });
@@ -103,16 +94,14 @@ export const login = async (req: Request, res: Response) => {
 
 // Sign Out User
 export const signout = async (req: Request, res: Response) => {
-  const correlationId = req.headers['correlation-id'] as string || generateCorrelationId();
   try {
     await auth.signOut();
 
     await logToFirestore({
       eventType: 'SUCCESS',
       message: 'User signed out successfully',
-      data: { correlationId },
+      data: {},
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     res.status(200).send({ message: 'User signed out' });
@@ -122,9 +111,8 @@ export const signout = async (req: Request, res: Response) => {
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Signout failed',
-      data: { error: error.message, correlationId },
+      data: { error: error.message },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     res.status(400).send({ error: error.message });
@@ -133,16 +121,14 @@ export const signout = async (req: Request, res: Response) => {
 
 // Get User Info
 export const getUserInfo = async (uid: string) => {
-  const correlationId = generateCorrelationId();
   try {
     const userInfo = await getAdditionalUserInfo(uid);
 
     await logToFirestore({
       eventType: 'SUCCESS',
       message: 'Fetched user info successfully',
-      data: { uid, correlationId },
+      data: { uid },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     return { uid, ...userInfo };
@@ -152,9 +138,8 @@ export const getUserInfo = async (uid: string) => {
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Failed to fetch user info',
-      data: { error: error.message, correlationId },
+      data: { error: error.message },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     throw new Error('Error fetching additional user info');

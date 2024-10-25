@@ -30,27 +30,3 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
-
-
-// // //Switching to react native from expo below: 
-
-// // /*
-// // import React from 'react';
-// // import { AppRegistry } from 'react-native';
-// // import { NavigationContainer } from '@react-navigation/native';
-// // import { AuthProvider } from './AuthContext';
-// // import RootLayout from './_layout';
-
-// // function App() {
-// //   return (
-// //     <AuthProvider>
-// //       <NavigationContainer>
-// //         <RootLayout />
-// //       </NavigationContainer>
-// //     </AuthProvider>
-// //   );
-// // }
-
-// // AppRegistry.registerComponent('MentalHealthAppFrontEnd', () => App);
-
-// // */

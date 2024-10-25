@@ -1,5 +1,7 @@
 import { db } from '../firebase_options';
 import admin from 'firebase-admin';
+import { Averages } from '../interfaces/averages';
+import { CheckinData } from '../interfaces/checkinData';
 import { logToFirestore } from '../services/logs_service';  // Import logging service
 
 export const saveCheckIn = async (
@@ -10,8 +12,7 @@ export const saveCheckIn = async (
   stress: number,
   sleep: number,
   activity: number,
-  gratitude: string,
-  correlationId: string
+  gratitude: string
 ) => {
   try {
     const checkInData = {
@@ -31,9 +32,8 @@ export const saveCheckIn = async (
     await logToFirestore({
       eventType: 'SUCCESS',
       message: 'Check-in saved successfully',
-      data: { userId, correlationId },
+      data: { userId },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
   } catch (error: any) {
     console.error('Error saving check-in:', error);
@@ -41,16 +41,15 @@ export const saveCheckIn = async (
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Failed to save check-in',
-      data: { error: error.message, userId, correlationId },
+      data: { error: error.message, userId },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     throw new Error('Failed to save check-in');
   }
 };
 
-export const hasSubmittedDailyCheckin = async (userId: string, correlationId: string) => {
+export const hasSubmittedDailyCheckin = async (userId: string) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
@@ -68,9 +67,8 @@ export const hasSubmittedDailyCheckin = async (userId: string, correlationId: st
     await logToFirestore({
       eventType: 'SUCCESS',
       message: 'Fetched daily check-in status',
-      data: { userId, hasSubmitted, correlationId },
+      data: { userId, hasSubmitted },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
     return hasSubmitted;
@@ -80,11 +78,107 @@ export const hasSubmittedDailyCheckin = async (userId: string, correlationId: st
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Failed to fetch daily check-in status',
-      data: { error: error.message, userId, correlationId },
+      data: { error: error.message, userId },
       timestamp: new Date().toISOString(),
-      correlationId,
     });
 
-    throw new Error('Failed to fetch check-in status');
+    throw new Error('Failed to fetch daily check-in status');
   }
 };
+
+/**
+ * Fetches user check-in data for a specific number of days.
+ * @param userId - The ID of the user.
+ * @param days - Number of days to fetch data for.
+ * @returns Promise of an array of check-in data.
+ */
+export async function getUserCheckinData(userId: string, days: number): Promise<CheckinData[]> {
+  const checkinRef = db.collection('checkins');
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  try {
+    const snapshot = await checkinRef
+      .where('userId', '==', userId)
+      .where('timestamp', '>=', startDate)
+      .get();
+
+    if (snapshot.empty) {
+      await logToFirestore({
+        eventType: 'INFO',
+        message: 'No check-in data found',
+        data: { userId, days },
+        timestamp: new Date().toISOString(),
+      });
+      return [];
+    }
+
+    const checkinData: CheckinData[] = [];
+    snapshot.forEach(doc => checkinData.push(doc.data() as CheckinData));
+
+    await logToFirestore({
+      eventType: 'SUCCESS',
+      message: 'Fetched user check-in data',
+      data: { userId, days },
+      timestamp: new Date().toISOString(),
+    });
+
+    return checkinData;
+  } catch (error: any) {
+    console.error('Error fetching user check-in data:', error);
+
+    await logToFirestore({
+      eventType: 'ERROR',
+      message: 'Failed to fetch user check-in data',
+      data: { error: error.message, userId, days },
+      timestamp: new Date().toISOString(),
+    });
+
+    throw new Error('Failed to fetch user check-in data');
+  }
+}
+
+/**
+ * Calculates the average for each metric (mood, stress, sleep, activity).
+ * @param checkinData - Array of check-in data.
+ * @returns Object containing averages for each metric.
+ */
+export function calculateAverages(checkinData: CheckinData[]): Averages {
+  const totals = { mood: 0, stress: 0, sleep: 0, activity: 0 };
+  const count = { mood: 0, stress: 0, sleep: 0, activity: 0 };
+
+  checkinData.forEach(checkin => {
+    if (checkin.mood !== undefined) {
+      totals.mood += checkin.mood;
+      count.mood += 1;
+    }
+    if (checkin.stress !== undefined) {
+      totals.stress += checkin.stress;
+      count.stress += 1;
+    }
+    if (checkin.sleep !== undefined) {
+      totals.sleep += checkin.sleep;
+      count.sleep += 1;
+    }
+    if (checkin.activity !== undefined) {
+      totals.activity += checkin.activity;
+      count.activity += 1;
+    }
+  });
+
+  const averages: Averages = {
+    mood: count.mood ? Math.round(totals.mood / count.mood) : 0,
+    stress: count.stress ? Math.round(totals.stress / count.stress) : 0,
+    sleep: count.sleep ? Math.round(totals.sleep / count.sleep) : 0,
+    activity: count.activity ? Math.round(totals.activity / count.activity) : 0,
+  };
+
+  logToFirestore({
+    eventType: 'INFO',
+    message: 'Calculated averages',
+    data: { averages },
+    timestamp: new Date().toISOString(),
+  }).catch(error => console.error('Error logging averages:', error));
+
+  return averages;
+}
