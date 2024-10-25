@@ -7,15 +7,14 @@ import crisisRoutes from './routes/crisis_routes';
 import admin from 'firebase-admin';
 import cors from 'cors';
 import userContactRoutes from './routes/userContacts_routes';
-
+import logRoutes from './routes/log_routes';
 const app = express();
 const firebase = require('./firebase_options');
 const port = process.env.PORT || 3000;
 
-// CORS configuration to allow requests from the frontend
 const corsOptions = {
   origin: true,
-  credentials: true, // Allow credentials (cookies, headers)
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -29,6 +28,7 @@ app.use('/checkin', checkinRoutes);
 app.use('/insight', insightRoutes);
 app.use('/crisis', crisisRoutes);
 app.use('/contacts', userContactRoutes);
+app.use('/log', logRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

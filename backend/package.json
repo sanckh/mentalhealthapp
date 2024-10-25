@@ -15,6 +15,7 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.4.1",
     "firebase": "^10.12.5",
     "firebase-admin": "^12.2.0",
     "firestore": "^1.1.6",
