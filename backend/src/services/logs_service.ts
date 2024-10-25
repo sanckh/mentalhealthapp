@@ -3,13 +3,6 @@ const admin = require('firebase-admin');
 // Initialize Firestore instance
 const db = admin.firestore();
 
-interface LogEntry {
-  eventType: string;
-  message: string;
-  data?: any;
-  timestamp: string;
-}
-
 // Store log entry in Firestore
 export const logToFirestore = async (log: LogEntry): Promise<void> => {
   try {

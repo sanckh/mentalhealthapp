@@ -1,12 +1,45 @@
-import rateLimit from 'express-rate-limit';
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import { logToFirestore } from '../services/logs_service';
 
-const app = express();
+export const generateCorrelationId = (): string => uuidv4();
 
-const logRateLimiter = rateLimit({
-  windowMs: 60 * 1000,  // 1 minute window
-  max: 100,              // Max 100 requests per minute
-  message: 'Too many log requests. Please try again later.',
-});
+export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+  const correlationId = req.headers['correlation-id'] as string || generateCorrelationId();
+  req.headers['correlation-id'] = correlationId;
 
-app.use('/log', logRateLimiter);
+  const startTime = Date.now();
+
+  // Log the incoming request asynchronously
+  logToFirestore({
+    eventType: 'INCOMING_REQUEST',
+    message: 'Received request',
+    data: {
+      endpoint: req.originalUrl,
+      method: req.method,
+      correlationId,
+    },
+    timestamp: new Date().toISOString(),
+    correlationId,
+  }).catch((error) => console.error('Failed to log incoming request:', error));
+
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+
+    // Log the outgoing response asynchronously
+    logToFirestore({
+      eventType: 'RESPONSE',
+      message: 'Sent response',
+      data: {
+        endpoint: req.originalUrl,
+        method: req.method,
+        statusCode: res.statusCode,
+        duration,
+      },
+      correlationId,
+      timestamp: new Date().toISOString(),
+    }).catch((error) => console.error('Failed to log outgoing response:', error));
+  });
+
+  next();
+};

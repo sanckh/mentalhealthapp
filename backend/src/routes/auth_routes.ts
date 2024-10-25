@@ -1,78 +1,18 @@
 import express from 'express';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase_options';
-import { getAdditionalUserInfo, saveUserToFirestore } from '../services/user_service';
-
+import {login, register, signout, getUserInfo} from '../controllers/authsController';
 
 const router = express.Router();
 const auth = getAuth(app);
 
-// Register a new user
-router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
-  try {
-    if (!email) {
-      res.status(400).send({ error: 'Email is required' });
-      return;
-    }
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email ?? '', password);
-    
-    if (!userCredential.user.email) {
-      throw new Error('Email is required');
-    }
-    const userData = {
-      uid: userCredential.user.uid,
-      name: name,
-      email: userCredential.user.email,
-    };
+router.post('/register', register);
 
-    await saveUserToFirestore(userData);
+router.post('/login', login);
 
-    res.status(201).send({ uid: userCredential.user.uid });
-  } catch (error: any) {
-    res.status(400).send({ error: error.message });
-  }
-});
+router.get('/user', getUserInfo);
 
-// Login user and return custom token
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCredential.user.getIdToken();
-
-      res.status(200).send({ uid: userCredential.user.uid, token });
-    } catch (error: any) {
-      res.status(400).send({ error: error.message });
-    }
-  });
-
-  router.get('/user', async (req, res) => {
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        const userInfo = await getAdditionalUserInfo(user.uid);
-  
-        await new Promise((resolve) => setTimeout(resolve, 0));
-  
-        res.status(200).send({ uid: user.uid, ...userInfo });
-      } catch (error) {
-        res.status(500).send({ error: 'Error fetching additional user info' });
-      }
-    } else {
-      res.status(400).send({ error: 'User not logged in' });
-    }
-  });
-  
-
-router.post('/signout', async (req, res) => {
-    try {
-        await auth.signOut();
-        res.status(200).send({ message: 'User signed out' });
-    } catch (error: any) {
-        res.status(400).send({ error: error.message });
-    }
-});
+router.post('/signout', signout);
 
 export default router;

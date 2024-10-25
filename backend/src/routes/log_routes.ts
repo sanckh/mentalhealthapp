@@ -4,6 +4,6 @@ import { logEvent } from '../controllers/logsController';
 const router = express.Router();
 
 // Route for logging events
-router.post('/api/log', logEvent);
+router.post('/log', logEvent);
 
 export default router;
