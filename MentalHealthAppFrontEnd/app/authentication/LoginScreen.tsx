@@ -79,7 +79,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back!</Text>
+      <Text style={styles.title}>Mental Health App Placeholder</Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.input, emailError ? styles.errorInput : {}]}

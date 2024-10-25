@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert, TextInput, Button } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { register } from '../../api/auth';
 import { router } from 'expo-router';
 import { useAuth } from '../AuthContext';
@@ -9,39 +17,54 @@ export default function RegisterScreen() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
-  
+  const { setIsAuthenticated } = useAuth();
+
+  const validatePassword = (pass: string) => {
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return regex.test(pass);
+  };
+
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
+    if (!validatePassword(password)) {
+      Alert.alert(
+        'Error',
+        'Password must be at least 8 characters long and include at least one letter and one number'
+      );
+      return;
+    }
+
     try {
-      await register(name, email, password)
-      .then((response) => {
+      const response = await register(name, email, password);
+      if (response) {
         setIsAuthenticated(true);
-        if(response){
-          Alert.alert('Success', 'User registered successfully');
-          router.replace('/home');
-        }
-      })
+        Alert.alert('Success', 'User registered successfully');
+        router.replace('/home');
+      }
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
   };
 
+  const handleGoBack = () => {
+    router.replace('/login');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Register</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.headerText}>Create Account</Text>
       <TextInput
-        placeholder="Name"
+        placeholder="Display Name"
         value={name}
         onChangeText={setName}
         style={styles.input}
       />
       <TextInput
-        placeholder="Email"
+        placeholder="Email Address"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
@@ -62,26 +85,59 @@ export default function RegisterScreen() {
         style={styles.input}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
-    </View>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+        <Text style={styles.backButtonText}>Already have an account? Log In</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
+    paddingHorizontal: 30,
+    paddingTop: 80,
+    backgroundColor: '#f7f7f7',
     alignItems: 'center',
   },
-  text: {
-    fontSize: 24,
+  headerText: {
+    fontSize: 32,
+    fontWeight: '600',
+    marginBottom: 40,
+    color: '#333',
   },
   input: {
-    width: '80%',
-    padding: 10,
+    width: '100%',
+    padding: 15,
     marginVertical: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    fontSize: 16,
+    borderColor: '#ddd',
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+  },
+  registerButton: {
+    backgroundColor: '#4e9c81',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 30,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  backButton: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  backButtonText: {
+    color: '#4e9c81',
+    fontSize: 16,
+    textDecorationLine: 'underline',
   },
 });
