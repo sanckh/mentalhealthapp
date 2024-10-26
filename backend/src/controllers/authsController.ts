@@ -83,13 +83,6 @@ export const signout = async (req: Request, res: Response) => {
   try {
     await auth.signOut();
 
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'User signed out successfully',
-      data: {},
-      timestamp: new Date().toISOString(),
-    });
-
     res.status(200).send({ message: 'User signed out' });
   } catch (error: any) {
     console.error('Signout error:', error);
