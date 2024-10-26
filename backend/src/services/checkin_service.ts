@@ -29,12 +29,6 @@ export const saveCheckIn = async (
 
     await db.collection('checkins').add(checkInData);
 
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'Check-in saved successfully',
-      data: { userId },
-      timestamp: new Date().toISOString(),
-    });
   } catch (error: any) {
     console.error('Error saving check-in:', error);
 
@@ -63,13 +57,6 @@ export const hasSubmittedDailyCheckin = async (userId: string) => {
       .where('timestamp', '<', tomorrow);
     const querySnapshot = await query.get();
     const hasSubmitted = querySnapshot.docs.length > 0;
-
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'Fetched daily check-in status',
-      data: { userId, hasSubmitted },
-      timestamp: new Date().toISOString(),
-    });
 
     return hasSubmitted;
   } catch (error: any) {
@@ -115,13 +102,6 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
 
     const checkinData: CheckinData[] = [];
     snapshot.forEach(doc => checkinData.push(doc.data() as CheckinData));
-
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'Fetched user check-in data',
-      data: { userId, days },
-      timestamp: new Date().toISOString(),
-    });
 
     return checkinData;
   } catch (error: any) {

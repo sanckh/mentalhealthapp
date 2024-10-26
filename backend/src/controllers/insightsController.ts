@@ -1,34 +1,51 @@
 import { Request, Response } from 'express';
 import { getUserCheckinData, calculateAverages } from '../services/checkin_service';
 import { getPersonalizedInsights, evaluateInsights } from '../services/insight_service';
+import { logToFirestore } from '../services/logs_service';  // Import logging
 
-/**
- * Controller method to fetch and return personalized insights for a user.
- */
 export const getUserPersonalizedInsights = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId?.toString();
-    
-    if (!userId || typeof userId !== 'string') {
+
+    if (!userId) {
+      await logToFirestore({
+        eventType: 'ERROR',
+        message: 'Invalid or missing User ID',
+        data: { params: req.params },
+        timestamp: new Date().toISOString(),
+      });
+
       return res.status(400).json({ message: 'Invalid User ID' });
     }
 
-    // Step 1: Fetch user check-in data for the last week
+    // Fetch user check-in data for the last week
     const checkinData = await getUserCheckinData(userId, 7);
 
-    // Step 2: Calculate averages for the user's metrics
-    const averages =  calculateAverages(checkinData);
+    // Log if no check-in data found
+    if (checkinData.length === 0) {
+      await logToFirestore({
+        eventType: 'INFO',
+        message: 'No check-in data available for user',
+        data: { userId },
+        timestamp: new Date().toISOString(),
+      });
+    }
 
-    // Step 3: Fetch all available insights
+    const averages = calculateAverages(checkinData);
     const insights = await getPersonalizedInsights();
-
-    // Step 4: Evaluate which insights apply to the user
     const applicableInsights = evaluateInsights(averages, insights);
 
-    // Step 5: Return the applicable insights
     res.json({ insights: applicableInsights });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching personalized insights:', error);
+
+    await logToFirestore({
+      eventType: 'ERROR',
+      message: 'Failed to fetch personalized insights',
+      data: { error: error.message },
+      timestamp: new Date().toISOString(),
+    });
+
     res.status(500).json({ message: 'Error fetching personalized insights' });
   }
 };

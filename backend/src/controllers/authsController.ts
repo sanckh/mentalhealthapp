@@ -39,14 +39,7 @@ export const register = async (req: Request, res: Response) => {
     };
 
     await saveUserToFirestore(userData);
-
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'User registered successfully',
-      data: { uid: userCredential.user.uid, email },
-      timestamp: new Date().toISOString(),
-    });
-
+    
     res.status(201).send({ uid: userCredential.user.uid });
   } catch (error: any) {
     console.error('Registration error:', error);
@@ -69,13 +62,6 @@ export const login = async (req: Request, res: Response) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const token = await userCredential.user.getIdToken();
-
-    await logToFirestore({
-      eventType: 'SUCCESS',
-      message: 'User logged in successfully',
-      data: { uid: userCredential.user.uid },
-      timestamp: new Date().toISOString(),
-    });
 
     res.status(200).send({ uid: userCredential.user.uid, token });
   } catch (error: any) {
@@ -128,21 +114,13 @@ export const getUserInfo = async (req: Request, res: Response) => {
   
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        await logToFirestore({
-          eventType: 'SUCCESS',
-          message: 'Receieved user info successfully',
-          data: { uid: user.uid },
-          timestamp: new Date().toISOString(),
-        });
-
-  
         res.status(200).send({ uid: user.uid, ...userInfo });
       } catch (error: any) {
         console.error('Error fetching user info:', error);
 
         await logToFirestore({
           eventType: 'ERROR',
-          message: 'Failed to fetch user info',
+          message: 'Failed to fetch user info at getUserInfo',
           data: { error: error.message},
           timestamp: new Date().toISOString(),
         });

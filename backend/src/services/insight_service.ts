@@ -2,23 +2,46 @@ import { firestore } from 'firebase-admin';
 import { Insight } from '../interfaces/insight';
 import { Averages } from '../interfaces/averages';
 import { InsightConditionEnum } from '../enums/insightConditionEnum';
+import { logToFirestore } from './logs_service';
 
 /**
  * Fetches personalized insights from the database.
  * @returns Promise of an array of personalized insights.
  */
+
+
 export async function getPersonalizedInsights(): Promise<Insight[]> {
-  const insightsRef = firestore().collection('personalizedinsights');
-  const snapshot = await insightsRef.get();
-  if (snapshot.empty) {
-    return [];
+  try {
+    const insightsRef = firestore().collection('personalizedinsights');
+    const snapshot = await insightsRef.get();
+
+    if (snapshot.empty) {
+      await logToFirestore({
+        eventType: 'INFO',
+        message: 'No personalized insights found',
+        data: {},
+        timestamp: new Date().toISOString(),
+      });
+      return [];
+    }
+
+    const insights: Insight[] = snapshot.docs.map(doc => ({ ...doc.data() as Insight }));
+
+    return insights;
+  } catch (error: any) {
+    console.error('Error fetching personalized insights:', error);
+
+    await logToFirestore({
+      eventType: 'ERROR',
+      message: 'Failed to fetch personalized insights',
+      data: { error: error.message },
+      timestamp: new Date().toISOString(),
+    });
+
+    throw new Error('Failed to retrieve insights');
   }
-
-  const insights: Insight[] = [];
-  snapshot.forEach(doc => insights.push({ ...doc.data() as Insight }));
-
-  return insights;
 }
+
 
 /**
  * Evaluates which insights should be displayed based on user data.
