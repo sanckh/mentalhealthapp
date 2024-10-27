@@ -44,3 +44,4 @@
 #environment files
 .env.development
 .env.prod
+/backend/.env
