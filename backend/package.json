@@ -22,7 +22,8 @@
     "firebase": "^10.12.5",
     "firebase-admin": "^12.2.0",
     "firestore": "^1.1.6",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "@types/cors": "^2.8.17",
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
