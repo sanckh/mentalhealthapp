@@ -18,6 +18,7 @@ export const login = async (email: string, password: string) => {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

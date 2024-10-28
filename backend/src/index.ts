@@ -29,7 +29,7 @@ const allowedOrigins = [
 ];
 
 const corsOptions: CorsOptions = {
-  origin: (origin, callback) => {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -49,7 +49,7 @@ app.options('*', (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(204); // No content for preflight
+  res.sendStatus(204);
 });
 
 app.use(requestLogger);
