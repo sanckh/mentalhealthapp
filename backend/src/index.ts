@@ -23,7 +23,7 @@ const logRateLimiter = rateLimit({
 
 // List of allowed origins
 const allowedOrigins = [
-  'http://localhost:3000',
+  'http://localhost:8081',
   'http://10.0.2.2:3000', 
   'http://192.168.1.79:3000',
 ];
