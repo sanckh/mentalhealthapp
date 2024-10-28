@@ -22,41 +22,20 @@ const logRateLimiter = rateLimit({
   message: 'Too many log requests. Please try again later.',
 });
 
+const corsOptions = {
+  origin: '*', // Allow all origins (change to specific origins later)
+  credentials: true, // Allow cookies and other credentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204, 
+};
 
-app.use(cors())
-
-
-// const allowedOrigins = [
-//   'http://localhost:3000', 
-//   '10.0.2.2:3000',
-//   'https://mentalhealthapp-id5p.onrender.com',
-// ];
-
-// const corsOptions: cors.CorsOptions = {
-//   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// };
+app.use(cors(corsOptions))
 
 
-// app.use(cors.default(corsOptions));
 
-// app.options('*', (req: Request, res: Response) => {
-//   res.header('Access-Control-Allow-Origin', req.headers.origin || '');
-//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   res.sendStatus(204);
-// });
-
-app.options('*', cors());
+// Handle preflight requests (OPTIONS method)
+app.options('*', cors(corsOptions));
 
 app.use(requestLogger);
 
