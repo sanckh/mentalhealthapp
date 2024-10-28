@@ -10,11 +10,11 @@ import logRoutes from './routes/log_routes';
 import { requestLogger } from './utilities/logUtils';
 import rateLimit from 'express-rate-limit';
 import { Request, Response } from 'express';
+import cors from 'cors';
 
 const app = express();
 const firebase = require('./firebase_options');
 const port = process.env.PORT || 3000;
-var cors = require('cors')
 
 const logRateLimiter = rateLimit({
   windowMs: 60 * 1000,  // 1 minute window
@@ -22,12 +22,28 @@ const logRateLimiter = rateLimit({
   message: 'Too many log requests. Please try again later.',
 });
 
-const corsOptions = {
-  origin: '*', // Allow all origins (change to specific origins later)
-  credentials: true, // Allow cookies and other credentials
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://10.0.2.2:3000', 
+  'http://192.168.1.79:3000',
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+
+    // Allow if origin is in the allowed list
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy does not allow access from origin: ${origin}`), false); // Block request
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 204, 
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions))
