@@ -30,7 +30,6 @@ export const submitCheckIn = async (data: {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Failed to fetch check-ins');
