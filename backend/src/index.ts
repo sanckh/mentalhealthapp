@@ -5,7 +5,7 @@ import checkinRoutes from './routes/checkin_routes';
 import insightRoutes from './routes/insight_routes';
 import crisisRoutes from './routes/crisis_routes';
 import admin from 'firebase-admin';
-import cors, { CorsOptions } from 'cors';
+import * as cors from 'cors';
 import userContactRoutes from './routes/userContacts_routes';
 import logRoutes from './routes/log_routes';
 import { requestLogger } from './utilities/logUtils';
@@ -28,7 +28,7 @@ const allowedOrigins = [
   'https://mentalhealthapp-id5p.onrender.com',
 ];
 
-const corsOptions: CorsOptions = {
+const corsOptions: cors.CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -42,7 +42,7 @@ const corsOptions: CorsOptions = {
 };
 
 
-app.use(cors(corsOptions));
+app.use(cors.default(corsOptions));
 
 app.options('*', (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '');
