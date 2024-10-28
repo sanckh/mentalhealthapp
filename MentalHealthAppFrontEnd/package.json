@@ -3,7 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "cross-env APP_ENV=development expo start",
+    "start": "cross-env NODE_ENV=production expo start",
+    "dev": "cross-env NODE_ENV=development expo start",
+    "start:prod-api": "cross-env EXPO_PUBLIC_API_URL=https://mentalhealthapp-id5p.onrender.com expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",

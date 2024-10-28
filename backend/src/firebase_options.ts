@@ -4,6 +4,8 @@ import admin from 'firebase-admin';
 import dotenv from 'dotenv';
 import fs from 'fs';
 
+
+//We don't need this is prod because the server holds the env variables
 if (process.env.NODE_ENV !== 'production') {
   console.log('Loading .env for development...');
   dotenv.config();

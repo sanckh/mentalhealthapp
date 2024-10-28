@@ -6,7 +6,6 @@ export const getCrisisDocuments = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
     });
     if (!response.ok) {
       throw new Error('Failed to fetch crisis documents');
