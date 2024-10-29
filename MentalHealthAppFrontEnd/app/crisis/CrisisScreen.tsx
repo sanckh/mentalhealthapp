@@ -19,11 +19,15 @@ import { getUserContacts } from "@/api/userContacts";
 import { getCurrentUser } from "@/api/auth";
 
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 60) / 2; 
+const CARD_WIDTH = (width - 60) / 2;
 
 const CrisisScreen = () => {
-  const [crisisDocuments, setCrisisDocuments] = useState<crisisDocumentModel[] | null>(null);
-  const [userContacts, setUserContacts] = useState<userContactModel[] | null>(null);
+  const [crisisDocuments, setCrisisDocuments] = useState<
+    crisisDocumentModel[] | null
+  >(null);
+  const [userContacts, setUserContacts] = useState<userContactModel[] | null>(
+    null
+  );
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -69,7 +73,10 @@ const CrisisScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 20 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 20 }}
+    >
       <Text style={styles.header}>Crisis Support</Text>
 
       <View style={styles.section}>
@@ -87,16 +94,17 @@ const CrisisScreen = () => {
             phoneNumber="911"
             onPress={() => makePhoneCall("911")}
           />
-          {userContacts && userContacts.length > 0 && (
+          {userContacts &&
+            userContacts.length > 0 &&
             userContacts.map((contact) => (
               <CallButton
+                key={contact.contactId}
                 iconName="person"
                 title={contact.contactName}
                 phoneNumber={contact.phoneNumber}
                 onPress={() => makePhoneCall(contact.phoneNumber)}
               />
-            ))
-          )}
+            ))}
         </View>
       </View>
 
@@ -109,7 +117,9 @@ const CrisisScreen = () => {
             ))}
           </View>
         ) : (
-          <Text style={styles.noDataText}>No documents available at the moment.</Text>
+          <Text style={styles.noDataText}>
+            No documents available at the moment.
+          </Text>
         )}
       </View>
     </ScrollView>
@@ -123,8 +133,16 @@ interface CallButtonProps {
   onPress: () => void;
 }
 
-const CallButton: React.FC<CallButtonProps> = ({ iconName, title, onPress }) => (
-  <TouchableOpacity style={styles.callButton} onPress={onPress} accessibilityLabel={title}>
+const CallButton: React.FC<CallButtonProps> = ({
+  iconName,
+  title,
+  onPress,
+}) => (
+  <TouchableOpacity
+    style={styles.callButton}
+    onPress={onPress}
+    accessibilityLabel={title}
+  >
     <Icon name={iconName} size={20} color="#fff" style={styles.buttonIcon} />
     <Text style={styles.buttonText}>{title}</Text>
   </TouchableOpacity>
@@ -146,7 +164,12 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document }) => (
         {document.description}
       </Text>
     </View>
-    <Icon name="arrow-forward-ios" size={16} color="#6200EE" style={styles.cardIcon} />
+    <Icon
+      name="arrow-forward-ios"
+      size={16}
+      color="#6200EE"
+      style={styles.cardIcon}
+    />
   </TouchableOpacity>
 );
 

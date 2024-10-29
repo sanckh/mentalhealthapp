@@ -16,7 +16,7 @@ export const getUserContacts = async (userId: string) => {
     return data.userContacts;
   };
 
-export const saveUserContact = async (userId: string, phoneNumber: string, phoneNumberType: string, contactName: string) => {
+export const saveUserContact = async (userId: string, contactName: string, phoneNumber: string, phoneNumberType: string) => {
     const response = await fetch(`${API_URL}/contacts/saveusercontact/${userId}`, {
       method: 'POST',
       headers: {
@@ -30,4 +30,19 @@ export const saveUserContact = async (userId: string, phoneNumber: string, phone
     }
     const data = await response.json();
     return data;
+  };
+
+  
+export const deleteUserContact = async (userId: string, contactId: string) => {
+    const response = await fetch(`${API_URL}/contacts/deleteusercontact/${userId}/${contactId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete user contact');
+    }
+    return true;
   };
