@@ -1,13 +1,16 @@
-// ThemeContext.js
-import React, { createContext, useState, useEffect } from 'react';
+// ThemeContext.tsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Appearance } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Define the shape of the context
 const ThemeContext = createContext({
-  theme: 'light', // default value
-  toggleTheme: () => {}, // function to toggle theme
+  theme: 'light',
+  toggleTheme: () => {},
 });
+
+// Export a hook for easy usage of ThemeContext
+export const useThemeContext = () => useContext(ThemeContext);
 
 // ThemeProvider component to wrap around the app
 export const ThemeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {

@@ -14,8 +14,12 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { getCurrentUser } from '../../api/auth';
 import { submitCheckIn } from '../../api/checkin';
 import { useRouter } from 'expo-router';
+import { useThemeContext } from '@/components/ThemeContext';
 
 export default function DailyCheckInScreen() {
+  const { theme } = useThemeContext();
+  const styles = createStyles(theme);
+  
   const [general, setGeneral] = useState('');
   const [notes, setNotes] = useState('');
   const [gratitude, setGratitude] = useState('');
@@ -126,6 +130,7 @@ export default function DailyCheckInScreen() {
         <TextInput
           style={styles.input}
           placeholder="Write a few words..."
+          placeholderTextColor={theme === 'dark' ? '#888888' : '#999999'}
           value={general}
           onChangeText={setGeneral}
           multiline
@@ -195,6 +200,7 @@ export default function DailyCheckInScreen() {
         <TextInput
           style={styles.input}
           placeholder="Express your gratitude..."
+          placeholderTextColor={theme === 'dark' ? '#888888' : '#999999'}
           value={gratitude}
           onChangeText={setGratitude}
           multiline
@@ -204,6 +210,7 @@ export default function DailyCheckInScreen() {
         <TextInput
           style={styles.input}
           placeholder="Any additional notes..."
+          placeholderTextColor={theme === 'dark' ? '#888888' : '#999999'}
           value={notes}
           onChangeText={setNotes}
           multiline
@@ -224,65 +231,70 @@ export default function DailyCheckInScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    padding: 16,
-    paddingBottom: 30,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
-  label: {
-    fontSize: 18,
-    marginVertical: 10,
-    color: '#555',
-  },
-  input: {
-    width: '100%',
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    fontSize: 16,
-    textAlignVertical: 'top',
-    marginBottom: 15,
-  },
-  dropdown: {
-    marginBottom: 15,
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 15,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    paddingVertical: 15,
-    borderRadius: 8,
-    marginTop: 10,
-    alignItems: 'center',
-    borderColor: '#6c757d',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    color: '#6c757d',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-});
+const createStyles = (theme: string) => {
+  const isDark = theme === 'dark';
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark ? '#121212' : '#ffffff',
+    },
+    contentContainer: {
+      padding: 16,
+      paddingBottom: 30,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      textAlign: 'center',
+      color: isDark ? '#e0e0e0' : '#333',
+    },
+    label: {
+      fontSize: 18,
+      marginVertical: 10,
+      color: isDark ? '#bbbbbb' : '#555',
+    },
+    input: {
+      width: '100%',
+      padding: 12,
+      borderWidth: 1,
+      borderColor: isDark ? '#444444' : '#ddd',
+      borderRadius: 8,
+      backgroundColor: isDark ? '#1e1e1e' : '#fff',
+      fontSize: 16,
+      color: isDark ? '#e0e0e0' : '#000',
+      textAlignVertical: 'top',
+      marginBottom: 15,
+    },
+    dropdown: {
+      marginBottom: 15,
+      borderColor: isDark ? '#444444' : '#ddd',
+      borderRadius: 8,
+    },
+    button: {
+      backgroundColor: isDark ? '#005bb5' : '#007BFF',
+      paddingVertical: 15,
+      borderRadius: 8,
+      marginTop: 20,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    secondaryButton: {
+      paddingVertical: 15,
+      borderRadius: 8,
+      marginTop: 10,
+      alignItems: 'center',
+      borderColor: isDark ? '#888888' : '#6c757d',
+      borderWidth: 1,
+    },
+    secondaryButtonText: {
+      color: isDark ? '#bbbbbb' : '#6c757d',
+      fontSize: 18,
+      fontWeight: '600',
+    },
+  });
+};

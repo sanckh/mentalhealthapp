@@ -8,8 +8,12 @@ import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
 import { useAuth } from "../AuthContext";
 import { useRouter } from "expo-router";
+import { useThemeContext } from "@/components/ThemeContext";
 
 export default function HomeScreen() {
+  const { theme } = useThemeContext();
+  const styles = createStyles(theme);
+  
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -143,113 +147,113 @@ const handleSignout = async () => {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#ffffff",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-  },
-  loadingText: {
-    fontSize: 18,
-    color: "#666",
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 24,
-    color: "#333",
-    textAlign: "center",
-  },
-  card: {
-    backgroundColor: "#fafafa",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 8,
-    color: "#333",
-  },
-  contentText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  button: {
-    backgroundColor: "#007bff",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 12,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  insightsContainer: {
-    marginTop: 16,
-  },
-  insightsHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
+const createStyles = (theme: string) => {
+  const isDark = theme === 'dark';
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: isDark ? '#121212' : '#ffffff',
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: isDark ? '#1e1e1e' : '#f5f5f5',
+    },
+    loadingText: {
+      fontSize: 18,
+      color: isDark ? '#cccccc' : '#666',
+    },
+    header: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      marginBottom: 24,
+      color: isDark ? '#e0e0e0' : '#333',
+      textAlign: 'center',
+    },
+    card: {
+      backgroundColor: isDark ? '#1e1e1e' : '#fafafa',
+      padding: 16,
+      borderRadius: 8,
+      marginBottom: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '600',
+      marginBottom: 8,
+      color: isDark ? '#e0e0e0' : '#333',
+    },
+    contentText: {
+      fontSize: 16,
+      color: isDark ? '#bbbbbb' : '#666',
+    },
+    button: {
+      backgroundColor: isDark ? '#005bb5' : '#007bff',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 12,
+    },
+    buttonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    insightsContainer: {
+      marginTop: 16,
+    },
+    insightsHeader: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      color: isDark ? '#e0e0e0' : '#333',
+    },
     insightCard: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 10,
       marginBottom: 10,
-      backgroundColor: '#fff',
+      backgroundColor: isDark ? '#2b2b2b' : '#ffffff',
       borderRadius: 5,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
+      shadowOpacity: isDark ? 0.3 : 0.1,
       shadowRadius: 2,
       elevation: 1,
     },
-  
     insightIconContainer: {
       marginRight: 10,
     },
-  
     insightIcon: {
       width: 50,
       height: 50,
       resizeMode: 'contain',
     },
-  
     insightTextContainer: {
       flex: 1,
     },
-  
     insightTitle: {
       fontSize: 18,
       fontWeight: 'bold',
       marginBottom: 5,
+      color: isDark ? '#e0e0e0' : '#333',
     },
-  
     insightCategory: {
       fontSize: 14,
-      color: '#666',
+      color: isDark ? '#bbbbbb' : '#666',
       marginBottom: 5,
     },
-  
     insightDescription: {
       fontSize: 14,
-      color: '#333',
+      color: isDark ? '#e0e0e0' : '#333',
     },
-});
+  });
+};
+
