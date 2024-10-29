@@ -89,8 +89,6 @@ export const resetPassword = async (email: string): Promise<void> => {
     if (!response.ok) {
       throw new Error(data.error || 'Failed to send password reset email');
     }
-
-    console.log('Password reset email sent:', data.message);
   } catch (error: any) {
     console.error('Error resetting password:', error.message);
     throw new Error(error.message || 'Error resetting password');
