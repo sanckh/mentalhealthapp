@@ -42,22 +42,26 @@ export const saveUserContactToDatabase = async (userId: string, contactName: str
     }
   }
 
-export const removeUserContactFromDatabase = async (uniqueId: string) => {
+  export const removeUserContactFromDatabase = async (contactId: string) => {
     try {
-      const contactRef = db.collection('usercontacts').doc(uniqueId);
-      await contactRef.delete();
+      const contactRef = db.collection('usercontacts').where('contactId', '==', contactId);
+      const querySnapshot = await contactRef.get();
+      if (querySnapshot.docs.length > 0) {
+        await querySnapshot.docs[0].ref.delete();
+      } else {
+        console.log('No document found with contactId:', contactId);
+      }
     } catch (error: any) {
       console.error('Error removing user contact:', error);
-
+  
       await logToFirestore({
         eventType: 'ERROR',
         message: 'Failed to remove user contact from database',
-        data: { error: error.message, uniqueId },
+        data: { error: error.message, contactId },
         timestamp: new Date().toISOString(),
       });
-
+  
       throw new Error('Failed to remove user contact');
     }
   }
-
 

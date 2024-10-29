@@ -3,6 +3,6 @@ import router from "./auth_routes";
 
 router.get('/getusercontacts/:userId', getUserContacts);
 router.post('/saveusercontact/:userId', saveUserContact);
-router.delete('/removeusercontact/:userId/:contactId', deleteUserContact);
+router.delete('/deleteusercontact/:userId/:contactId', deleteUserContact);
 
 export default router;

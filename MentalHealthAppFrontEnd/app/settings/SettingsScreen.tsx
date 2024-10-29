@@ -26,6 +26,7 @@ export default function SettingsScreen() {
       try {
         const userData = await getCurrentUser();
         setUser(userData);
+        console.log(userData)
       } catch (error) {
         console.error('Error initializing settings screen:', error);
       }
