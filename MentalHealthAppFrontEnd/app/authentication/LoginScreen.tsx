@@ -14,6 +14,7 @@ import { hasSubmittedDailyCheckin } from '@/api/checkin';
 import { useAuth } from '../AuthContext';
 import { router } from 'expo-router';
 import { useThemeContext } from '@/components/ThemeContext';
+import ResetPasswordModal from '@/components/ResetPasswordModal';
 
 export default function LoginScreen() {
   const { theme } = useThemeContext();
@@ -27,6 +28,7 @@ export default function LoginScreen() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isResetModalVisible, setIsResetModalVisible] = useState(false);
 
   const validate = () => {
     let valid = true;
@@ -141,6 +143,14 @@ export default function LoginScreen() {
       >
         <Text style={styles.registerButtonText}>Don't have an account? Register</Text>
       </Pressable>
+      <Pressable onPress={() => setIsResetModalVisible(true)}>
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </Pressable>
+
+      <ResetPasswordModal
+        visible={isResetModalVisible}
+        onClose={() => setIsResetModalVisible(false)}
+      />
     </View>
   );
 }
@@ -218,6 +228,11 @@ const createStyles = (theme: string) => {
       color: isDark ? '#bb86fc' : '#007aff',
       fontSize: 16,
       fontWeight: '600',
+    },
+    forgotPasswordText: {
+      marginTop: 10,
+      textAlign: 'center',
+      color: isDark ? '#bb86fc' : '#007aff',
     },
   });
 };

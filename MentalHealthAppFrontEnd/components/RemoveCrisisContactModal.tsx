@@ -45,7 +45,6 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
     try {
       const fetchedContacts = await getUserContacts(userId);
       setContacts(fetchedContacts);
-      console.log(fetchedContacts)
     } catch (err: any) {
       console.error('Error fetching contacts:', err);
       setError('Failed to load contacts. Please try again.');

@@ -10,14 +10,21 @@ import {
 } from 'react-native';
 import AddCrisisContactModal from '@/components/AddCrisisContactModal';
 import RemoveCrisisContactModal from '@/components/RemoveCrisisContactModal';
-import { getCurrentUser } from '@/api/auth';
+import ResetPasswordModal from '@/components/ResetPasswordModal';
+import { getCurrentUser, resetPassword, signout } from '@/api/auth';
 import ThemeContext from '../../components/ThemeContext';
+import { useAuth } from '../AuthContext';
 
 export default function SettingsScreen() {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false);
   const [user, setUser] = useState<any>(null);
-  
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
+
   // Access theme and toggleTheme from ThemeContext
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -26,7 +33,6 @@ export default function SettingsScreen() {
       try {
         const userData = await getCurrentUser();
         setUser(userData);
-        console.log(userData)
       } catch (error) {
         console.error('Error initializing settings screen:', error);
       }
@@ -45,13 +51,22 @@ export default function SettingsScreen() {
 
 
   const handleChangePassword = () => {
-    // Navigate to Change Password screen or open modal
-    Alert.alert('Change Password', 'Navigate to Change Password screen.');
+    setResetPasswordModalVisible(true);
   };
 
   const handleChangeDisplayName = () => {
     // Navigate to Change Display Name screen or open modal
     Alert.alert('Change Display Name', 'Navigate to Change Display Name screen.');
+  };
+
+  const handleSignout = async () => {
+    try {
+      await signout();
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   // Define styles based on the current theme
@@ -100,7 +115,7 @@ export default function SettingsScreen() {
           userId={user.uid}
         />
       )}
-      
+
       {/* Remove Crisis Contact */}
       {user && (
         <RemoveCrisisContactModal
@@ -110,6 +125,17 @@ export default function SettingsScreen() {
           onContactRemoved={() => Alert.alert('Contact Removed')}
         />
       )}
+
+      {user && (
+        <ResetPasswordModal
+        visible={resetPasswordModalVisible}
+        onClose={() => setResetPasswordModalVisible(false)}
+        onPasswordReset={() => {
+          handleSignout();
+        }}
+      />
+      )}
+
     </View>
   );
 }

@@ -48,8 +48,6 @@ export const saveUserContactToDatabase = async (userId: string, contactName: str
       const querySnapshot = await contactRef.get();
       if (querySnapshot.docs.length > 0) {
         await querySnapshot.docs[0].ref.delete();
-      } else {
-        console.log('No document found with contactId:', contactId);
       }
     } catch (error: any) {
       console.error('Error removing user contact:', error);
