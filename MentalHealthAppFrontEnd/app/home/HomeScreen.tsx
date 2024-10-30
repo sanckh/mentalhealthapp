@@ -74,7 +74,7 @@ const handleSignout = async () => {
           <Text style={styles.title}>Complete your daily check-in</Text>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.replace('/dailycheckin')}
+            onPress={() => router.push('/dailycheckin')}
           >
             <Text style={styles.buttonText}>Go to Check-in</Text>
           </TouchableOpacity>
@@ -107,16 +107,6 @@ const handleSignout = async () => {
       <View style={styles.card}>
         <Text style={styles.title}>Recommended Resources</Text>
         <Text style={styles.contentText}>Suggested articles, videos, etc.</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.title}>Mindfulness Exercise</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push('/meditation')}
-        >
-          <Text style={styles.buttonText}>Start Meditation</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.card}>
