@@ -26,7 +26,7 @@ export const saveUserContact = async (userId: string, contactName: string, phone
       body: JSON.stringify({ phoneNumber, phoneNumberType, contactName }),
     });
     if (!response.ok) {
-      throw new Error('Failed to fetch personalized insights');
+      throw new Error('Failed to save user contact');
     }
     const data = await response.json();
     return data;

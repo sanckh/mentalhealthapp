@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView, Linking } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";
@@ -9,6 +9,8 @@ import { insightModel } from "@/models/insightModel";
 import { useAuth } from "../AuthContext";
 import { useRouter } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
+import { recommendedResourceModel } from "@/models/recommendedResourceModel";
+import { getRecommendedResources } from "@/api/recommendedResources";
 
 export default function HomeScreen() {
   const { theme } = useThemeContext();
@@ -18,6 +20,7 @@ export default function HomeScreen() {
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<any>(null);
+  const [resources, setResources] = useState<recommendedResourceModel[] | null>(null);
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -30,6 +33,9 @@ export default function HomeScreen() {
         setHasCheckedIn(checkedIn);
         const insights = await getPersonalizedInsights(user.uid);
         setInsights(insights);
+        const resources = await getRecommendedResources();
+        setResources(resources);
+        console.log("resources: ", resources);  
       } catch (error) {
         console.error('Error initializing home screen:', error);
       } finally {
@@ -104,10 +110,31 @@ const handleSignout = async () => {
   </View>
 )}
 
-      <View style={styles.card}>
-        <Text style={styles.title}>Recommended Resources</Text>
-        <Text style={styles.contentText}>Suggested articles, videos, etc.</Text>
-      </View>
+
+{resources && resources.length > 0 ? (
+  <View style={styles.card}>
+    <Text style={styles.header}>Recommended Resources</Text>
+    {resources.map((resource: recommendedResourceModel, index: number) => (
+      <TouchableOpacity
+        key={index}
+        style={styles.insightCard}
+        onPress={() => Linking.openURL(resource.link)}
+      >
+        <View style={styles.insightIconContainer}>
+          <Icon name={resource.icon} size={30} />
+        </View>
+        <View style={styles.insightTextContainer}>
+          <Text style={styles.title}>{resource.title}</Text>
+          <Text style={styles.insightCategory}>{resource.category}</Text>
+          <Text style={styles.insightDescription}>{resource.description}</Text>
+        </View>
+      </TouchableOpacity>
+    ))}
+  </View>
+) : (
+  <Text style={styles.insightDescription}>No recommended resources available today.</Text>  // Provide fallback UI
+)}
+
 
       <View style={styles.card}>
         <Text style={styles.title}>Crisis Support</Text>
