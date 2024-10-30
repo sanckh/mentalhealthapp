@@ -67,7 +67,7 @@ const handleSignout = async () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-      <Text style={styles.header}>Welcome Back, {user?.name}!</Text>
+      <Text style={styles.header}>Welcome Back, {user?.name ?? 'User'}!</Text>
 
       {user && !hasCheckedIn && (
         <View style={styles.card}>

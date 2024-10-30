@@ -14,16 +14,19 @@ import ResetPasswordModal from '@/components/ResetPasswordModal';
 import { getCurrentUser, resetPassword, signout } from '@/api/auth';
 import ThemeContext from '../../components/ThemeContext';
 import { useAuth } from '../AuthContext';
+import ChangeDisplayNameModal from '@/components/ChangeDisplayNameModal';
 
 export default function SettingsScreen() {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false);
+  const [displayNameModalVisible, setDisplayNameModalVisible] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const [displayName, setDisplayName] = useState('');
 
   // Access theme and toggleTheme from ThemeContext
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -33,6 +36,7 @@ export default function SettingsScreen() {
       try {
         const userData = await getCurrentUser();
         setUser(userData);
+        setDisplayName(userData?.name || '')
       } catch (error) {
         console.error('Error initializing settings screen:', error);
       }
@@ -55,8 +59,7 @@ export default function SettingsScreen() {
   };
 
   const handleChangeDisplayName = () => {
-    // Navigate to Change Display Name screen or open modal
-    Alert.alert('Change Display Name', 'Navigate to Change Display Name screen.');
+    setDisplayNameModalVisible(true);
   };
 
   const handleSignout = async () => {
@@ -128,12 +131,21 @@ export default function SettingsScreen() {
 
       {user && (
         <ResetPasswordModal
-        visible={resetPasswordModalVisible}
-        onClose={() => setResetPasswordModalVisible(false)}
-        onPasswordReset={() => {
-          handleSignout();
-        }}
-      />
+          visible={resetPasswordModalVisible}
+          onClose={() => setResetPasswordModalVisible(false)}
+          onPasswordReset={() => {
+            handleSignout();
+          }}
+        />
+      )}
+
+      {user && (
+        <ChangeDisplayNameModal
+          visible={displayNameModalVisible}
+          onClose={() => setDisplayNameModalVisible(false)}
+          currentDisplayName={user?.name}
+          userId={user?.uid}
+        />
       )}
 
     </View>
