@@ -35,7 +35,6 @@ export default function HomeScreen() {
         setInsights(insights);
         const resources = await getRecommendedResources();
         setResources(resources);
-        console.log("resources: ", resources);  
       } catch (error) {
         console.error('Error initializing home screen:', error);
       } finally {
@@ -89,24 +88,22 @@ const handleSignout = async () => {
 
 {insights !== null && insights !== undefined && insights.length > 0 && (
   <View style={styles.card}>
-    <View style={styles.insightsContainer}>
-    <Text style={styles.insightsHeader}>Personalized Insights</Text>
+    <Text style={styles.header}>Personalized Insights</Text>
     {insights.map((insight: insightModel, index: number) => (
-      <View key={index} style={styles.insightCard}>
-        <View style={styles.insightIconContainer}>
+      <View key={index} style={styles.reuseCard}>
+        <View style={styles.cardIconContainer}>
           <Icon
             name={insight.icon}
             size={30}
           />
         </View>
-        <View style={styles.insightTextContainer}>
-          <Text style={styles.insightTitle}>{insight.title}</Text>
-          <Text style={styles.insightCategory}>{insight.category}</Text>
-          <Text style={styles.insightDescription}>{insight.description}</Text>
+        <View style={styles.cardTextContainer}>
+          <Text style={styles.cardTitle}>{insight.title}</Text>
+          <Text style={styles.cardCategory}>{insight.category}</Text>
+          <Text style={styles.cardDescription}>{insight.description}</Text>
         </View>
       </View>
     ))}
-  </View>
   </View>
 )}
 
@@ -114,25 +111,26 @@ const handleSignout = async () => {
 {resources && resources.length > 0 ? (
   <View style={styles.card}>
     <Text style={styles.header}>Recommended Resources</Text>
+    <Text style={styles.textSmall}>Tap to read more</Text>
     {resources.map((resource: recommendedResourceModel, index: number) => (
       <TouchableOpacity
         key={index}
-        style={styles.insightCard}
+        style={styles.reuseCard}
         onPress={() => Linking.openURL(resource.link)}
       >
-        <View style={styles.insightIconContainer}>
+        <View style={styles.cardIconContainer}>
           <Icon name={resource.icon} size={30} />
         </View>
-        <View style={styles.insightTextContainer}>
+        <View style={styles.cardTextContainer}>
           <Text style={styles.title}>{resource.title}</Text>
-          <Text style={styles.insightCategory}>{resource.category}</Text>
-          <Text style={styles.insightDescription}>{resource.description}</Text>
+          <Text style={styles.cardCategory}>{resource.category}</Text>
+          <Text style={styles.cardDescription}>{resource.description}</Text>
         </View>
       </TouchableOpacity>
     ))}
   </View>
 ) : (
-  <Text style={styles.insightDescription}>No recommended resources available today.</Text>  // Provide fallback UI
+  <Text style={styles.cardDescription}>No recommended resources available today.</Text>  // Provide fallback UI
 )}
 
 
@@ -185,7 +183,7 @@ const createStyles = (theme: string) => {
     header: {
       fontSize: 28,
       fontWeight: 'bold',
-      marginBottom: 24,
+      marginBottom: 12,
       color: isDark ? '#e0e0e0' : '#333',
       textAlign: 'center',
     },
@@ -223,16 +221,16 @@ const createStyles = (theme: string) => {
       fontSize: 16,
       fontWeight: '600',
     },
-    insightsContainer: {
+    reuseContainer: {
       marginTop: 16,
     },
-    insightsHeader: {
+    reuseHeader: {
       fontSize: 20,
       fontWeight: 'bold',
       marginBottom: 8,
       color: isDark ? '#e0e0e0' : '#333',
     },
-    insightCard: {
+    reuseCard: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 10,
@@ -245,31 +243,37 @@ const createStyles = (theme: string) => {
       shadowRadius: 2,
       elevation: 1,
     },
-    insightIconContainer: {
+    cardIconContainer: {
       marginRight: 10,
     },
-    insightIcon: {
+    cardIcon: {
       width: 50,
       height: 50,
       resizeMode: 'contain',
     },
-    insightTextContainer: {
+    cardTextContainer: {
       flex: 1,
     },
-    insightTitle: {
+    cardTitle: {
       fontSize: 18,
       fontWeight: 'bold',
       marginBottom: 5,
       color: isDark ? '#e0e0e0' : '#333',
     },
-    insightCategory: {
+    cardCategory: {
       fontSize: 14,
       color: isDark ? '#bbbbbb' : '#666',
       marginBottom: 5,
     },
-    insightDescription: {
+    cardDescription: {
       fontSize: 14,
       color: isDark ? '#e0e0e0' : '#333',
+    },
+    textSmall: {
+      fontSize: 12,
+      color: isDark ? '#e0e0e0' : '#333',
+      marginBottom: 4,
+      textAlign: 'center',
     },
   });
 };
