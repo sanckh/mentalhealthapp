@@ -221,15 +221,6 @@ const createStyles = (theme: string) => {
       fontSize: 16,
       fontWeight: '600',
     },
-    reuseContainer: {
-      marginTop: 16,
-    },
-    reuseHeader: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 8,
-      color: isDark ? '#e0e0e0' : '#333',
-    },
     reuseCard: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -245,11 +236,6 @@ const createStyles = (theme: string) => {
     },
     cardIconContainer: {
       marginRight: 10,
-    },
-    cardIcon: {
-      width: 50,
-      height: 50,
-      resizeMode: 'contain',
     },
     cardTextContainer: {
       flex: 1,
