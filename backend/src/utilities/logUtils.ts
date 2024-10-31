@@ -10,33 +10,24 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
   const startTime = Date.now();
 
-  // Log the incoming request asynchronously
-  logToFirestore({
-    eventType: 'INCOMING_REQUEST',
-    message: 'Received request',
-    data: {
-      endpoint: req.originalUrl,
-      method: req.method,
-      correlationId,
-    },
-    timestamp: new Date().toISOString(),
-  }).catch((error) => console.error('Failed to log incoming request:', error));
-
   res.on('finish', () => {
     const duration = Date.now() - startTime;
 
-    // Log the outgoing response asynchronously
-    logToFirestore({
-      eventType: 'RESPONSE',
-      message: 'Sent response',
-      data: {
-        endpoint: req.originalUrl,
-        method: req.method,
-        statusCode: res.statusCode,
-        duration,
-      },
-      timestamp: new Date().toISOString(),
-    }).catch((error) => console.error('Failed to log outgoing response:', error));
+    // Log only errors (statusCode >= 400)
+    if (res.statusCode >= 400) {
+      logToFirestore({
+        eventType: 'ERROR_RESPONSE',
+        message: 'Error in response',
+        data: {
+          endpoint: req.originalUrl,
+          method: req.method,
+          statusCode: res.statusCode,
+          duration,
+          correlationId,
+        },
+        timestamp: new Date().toISOString(),
+      }).catch((error) => console.error('Failed to log error response:', error));
+    }
   });
 
   next();
