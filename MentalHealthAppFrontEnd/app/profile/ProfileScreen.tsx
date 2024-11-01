@@ -28,7 +28,6 @@ export default function ProfileScreen(){
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Profile Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handlePickImage}>
           <Image
