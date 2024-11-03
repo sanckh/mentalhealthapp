@@ -1,28 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Button, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import * as ImagePicker from 'expo-image-picker';
 import { useThemeContext } from '@/components/ThemeContext';
+import { updateProfilePicture } from '@/api/user';
+import { getCurrentUser } from '@/api/auth';
 
 export default function ProfileScreen(){
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [favoriteResources, setFavoriteResources] = useState([
     { id: 1, title: 'Mindfulness Basics', isFavorite: true },
     { id: 2, title: 'Tips for Better Sleep', isFavorite: true },
     { id: 3, title: 'Managing Stress', isFavorite: true },
   ]);
 
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error initializing settings screen:', error);
+      }
+    };
+    initialize();
+  }, []);
+
   const handlePickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+  
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        setProfileImage(uri);
+  
+        const formData = new FormData();
+  
+        const fileName = uri.split('/').pop();
+  
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        
+        formData.append('profileImage', blob, fileName || 'profile_image.jpg');
+        await updateProfilePicture(formData, user.uid);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
     }
   };
 

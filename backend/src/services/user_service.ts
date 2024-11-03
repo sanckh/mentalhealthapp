@@ -1,8 +1,9 @@
-import { app, db } from '../firebase_options';
+import { app, db, bucket } from '../firebase_options';
 import admin from 'firebase-admin';
 import { addDoc, collection, doc, getFirestore, setDoc, Timestamp } from 'firebase/firestore';
 import { logToFirestore } from './logs_service';
 import { User } from '../interfaces/user';
+
 /**
  * Fetches a user from the 'users' collection.
  * @param uid - The UID of the user to fetch.
@@ -89,27 +90,34 @@ export const updateUserDisplayNameService = async (userId: string, name: string)
     }
   };
 
-  export const updateUserProfilePicture = async (userId: string, profilePicture: string) => {
+  export const uploadProfileImage = async (userId: string, file: any) => {
     try {
-        const userRef = db.collection('users');
-        const querySnapshot = await userRef.where('uid', '==', userId).get();
-        
-        if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0];
-            await userDoc.ref.update({ profilePicture });
-          } else {
-            console.error('User not found');
-          }
-    } catch (error: any) {
-      console.error('Error updating profile picture in Firebase:', error);
-
-      await logToFirestore({
-        eventType: 'ERROR',
-        message: 'Failed to update user profile picture',
-        data: { error: error.message, uid: userId },
-        timestamp: new Date().toISOString(),
-    });
-    
-      throw new Error('Failed to update profile picture');
+      const fileName = `profile_pictures/${userId}.jpg`;
+      const storageFile = bucket.file(fileName);
+  
+      const blobStream = storageFile.createWriteStream({
+        metadata: { contentType: file.mimetype },
+      });
+  
+      await new Promise((resolve, reject) => {
+        blobStream.on('error', reject);
+        blobStream.on('finish', resolve);
+        blobStream.end(file.buffer);
+      });
+  
+      // Generate a signed URL for access
+      const [url] = await storageFile.getSignedUrl({
+        action: 'read',
+        expires: '03-01-2500',
+      });
+  
+      // Update Firestore with the URL
+      const db = admin.firestore();
+      await db.collection('users').doc(userId).update({ profileImageUrl: url });
+  
+      return url;
+    } catch (error) {
+      console.error('Error in uploadProfileImage service:', error);
+      throw new Error('Failed to upload image');
     }
   };

@@ -39,11 +39,13 @@ const firebaseConfig = {
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: firebaseConfig.databaseURL,
+  storageBucket: firebaseConfig.storageBucket
 });
 
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
-export { app, auth, db };
+export { app, auth, db, bucket };
