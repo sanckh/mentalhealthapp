@@ -19,12 +19,9 @@ export const updateDisplayName = async (newDisplayName: string, userId: string) 
 
   export const updateProfilePicture = async (profilePicture: FormData, userId: string) => {
     try {
-      console.log("Profile picture: ", profilePicture)
       const response = await fetch(`${API_URL}/user/updateprofilepicture/${userId}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        credentials: 'include',
         body: profilePicture,
       });
   
@@ -33,7 +30,6 @@ export const updateDisplayName = async (newDisplayName: string, userId: string) 
       }
   
       const data = await response.json();
-      console.log('Profile image uploaded successfully:', data);
     } catch (error) {
       console.error('Error updating profile picture:', error);
     }

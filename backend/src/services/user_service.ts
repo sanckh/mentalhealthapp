@@ -112,9 +112,16 @@ export const updateUserDisplayNameService = async (userId: string, name: string)
       });
   
       // Update Firestore with the URL
-      const db = admin.firestore();
-      await db.collection('users').doc(userId).update({ profileImageUrl: url });
-  
+      const userRef = db.collection('users');
+      const querySnapshot = await userRef.where('uid', '==', userId).get();
+      
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        await userDoc.ref.update({ profileImageUrl: url });
+    } else {
+        console.error('User not found');
+        throw new Error('User not found');
+    }
       return url;
     } catch (error) {
       console.error('Error in uploadProfileImage service:', error);
