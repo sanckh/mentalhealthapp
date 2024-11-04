@@ -10,6 +10,7 @@ import { Request, Response } from 'express';
 import { app } from '../firebase_options';
 import { getAdditionalUserInfo, saveUserToFirestore } from '../services/user_service';
 import { logToFirestore } from '../services/logs_service';  // Logging service
+import { User } from '../interfaces/user';
 
 const auth = getAuth(app);
 
@@ -34,10 +35,13 @@ export const register = async (req: Request, res: Response) => {
       throw new Error('Email is required');
     }
 
-    const userData = {
-      uid: userCredential.user.uid,
-      name: name,
+    // Define `userData` using the `User` type, adding extra properties as needed
+    const userData: User = {
+      userId: userCredential.user.uid,
+      name,
       email: userCredential.user.email,
+      createdAt: new Date(),
+      profilePicture: '',
     };
 
     await saveUserToFirestore(userData);
