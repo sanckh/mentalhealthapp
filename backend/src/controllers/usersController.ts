@@ -1,6 +1,9 @@
 import { updateUserDisplayNameService, uploadProfileImage } from "../services/user_service";
 import { Request, Response } from "express";
-import { Multer } from 'multer';
+//import { Multer } from 'multer';
+//const multer = require('multer')
+import multer from 'multer';
+
 
 
 export const updateDisplayName = async (req: Request, res: Response) => {
