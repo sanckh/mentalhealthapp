@@ -16,10 +16,10 @@ export async function getAdditionalUserInfo(uid: string) {
 
         if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0];
-            const userData = userDoc.data() as { name: string, profilePicture: string } | undefined;
+            const userData = userDoc.data() as { name: string, profileImageUrl: string } | undefined;
             return {
                 name: userData?.name,
-                profilePicture: userData?.profilePicture,
+                profileImageUrl: userData?.profileImageUrl,
             };
         } else {
             await logToFirestore({

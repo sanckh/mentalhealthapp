@@ -21,7 +21,10 @@ export default function ProfileScreen(){
     const initialize = async () => {
       try {
         const userData = await getCurrentUser();
+        console.log
         setUser(userData);
+        setProfileImage(userData.profileImageUrl);
+        console.log("Profile Picture: ", userData.profileImageUrl);
       } catch (error) {
         console.error('Error initializing settings screen:', error);
       }
@@ -43,9 +46,7 @@ export default function ProfileScreen(){
         setProfileImage(uri);
   
         const formData = new FormData();
-  
         const fileName = uri.split('/').pop();
-  
         const response = await fetch(uri);
         const blob = await response.blob();
         
