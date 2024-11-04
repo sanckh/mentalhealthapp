@@ -15,12 +15,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 // Parse the service account JSON from the environment variable
-const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const serviceAccountPath = "F:/web_projects/mentalhealthapp/backend/src/serviceAccountKey.json";
 
-if (!serviceAccountPath || !fs.existsSync(serviceAccountPath)) {
-  console.error('Service account key file not found!');
-  process.exit(1); // Stop the process if the key is missing
-}
+// if (!serviceAccountPath || !fs.existsSync(serviceAccountPath)) {
+//   console.error('Service account key file not found!');
+//   process.exit(1); // Stop the process if the key is missing
+// }
 
 const serviceAccount = require(serviceAccountPath);
 

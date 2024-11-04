@@ -69,6 +69,10 @@ app.use('/log', logRateLimiter, logRoutes);
 app.use('/user', userRoutes);
 app.use('/resources', recommendedResourceRoutes);
 
+app.get('/', (req: Request, res: Response) => {
+  res.send('Backend running...');
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
