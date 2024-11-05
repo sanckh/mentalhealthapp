@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getUserCheckinDataAllTime, hasSubmittedDailyCheckin, saveCheckIn } from '../services/checkin_service';
+import { getUserCheckinData, getUserCheckinDataAllTime, hasSubmittedDailyCheckin, saveCheckIn } from '../services/checkin_service';
 import { logToFirestore } from '../services/logs_service';
 
 // Submit Daily Check-in
@@ -105,6 +105,19 @@ export const getConsecutiveCheckins = async (req: Request, res: Response) => {
   } catch (error: any) {
       console.error('Error processing consecutive check-ins:', error);
       res.status(500).json({ error: error.message });
+  }
+};
+
+export const getRecentCheckinData = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const days = 7;
+
+  try {
+    const checkinData = await getUserCheckinData(userId, days);
+    res.status(200).json(checkinData);
+  } catch (error: any) {
+    console.error('Error fetching last 7 days of check-in data:', error);
+    res.status(500).json({ error: error.message });
   }
 };
 

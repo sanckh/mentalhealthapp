@@ -1,42 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Button, Dimensions } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
-import * as ImagePicker from 'expo-image-picker';
-import { useThemeContext } from '@/components/ThemeContext';
-import { updateProfilePicture } from '@/api/user';
-import { getCurrentUser } from '@/api/auth';
-import { getConsecutiveCheckins } from '@/api/checkin';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Button,
+  Dimensions,
+} from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import * as ImagePicker from "expo-image-picker";
+import { useThemeContext } from "@/components/ThemeContext";
+import { updateProfilePicture } from "@/api/user";
+import { getCurrentUser } from "@/api/auth";
+import { getConsecutiveCheckins, getRecentCheckinData } from "@/api/checkin";
+import ChangeDisplayNameModal from "@/components/ChangeDisplayNameModal";
+import { convertToUserLocalTime } from "../utilities/dateUtils"
 
-export default function ProfileScreen(){
+export default function ProfileScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-  const [consecutiveCheckins, setConsecutiveCheckins] = useState<number | null>(null);
+  const [consecutiveCheckins, setConsecutiveCheckins] = useState<number | null>(
+    null
+  );
+  const [recentCheckinData, setRecentCheckinData] = useState<number[]>([]);
+  const [displayNameModalVisible, setDisplayNameModalVisible] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+
+  const [moodData, setMoodData] = useState<number[]>([]);
+  const [activityData, setActivityData] = useState<number[]>([]);
+  const [stressData, setStressData] = useState<number[]>([]);
+  const [sleepData, setSleepData] = useState<number[]>([]);
 
   const [favoriteResources, setFavoriteResources] = useState([
-    { id: 1, title: 'Mindfulness Basics', isFavorite: true },
-    { id: 2, title: 'Tips for Better Sleep', isFavorite: true },
-    { id: 3, title: 'Managing Stress', isFavorite: true },
+    { id: 1, title: "Mindfulness Basics", isFavorite: true },
+    { id: 2, title: "Tips for Better Sleep", isFavorite: true },
+    { id: 3, title: "Managing Stress", isFavorite: true },
   ]);
 
   useEffect(() => {
     const initialize = async () => {
       try {
         const userData = await getCurrentUser();
-        console.log
         setUser(userData);
+
         setProfileImage(userData.profileImageUrl);
-        
+        setDisplayName(userData?.name || "");
+
         const days = await getConsecutiveCheckins(userData.uid);
         setConsecutiveCheckins(days);
+
+        const checkinData = await getRecentCheckinData(userData.uid);
+        setRecentCheckinData(checkinData);
+
+        console.log("checkin data: ", checkinData)
+        
+        const { mood, activity, stress, sleep } = processCheckinData(checkinData);
+        setMoodData(mood);
+        setActivityData(activity);
+        setStressData(stress);
+        setSleepData(sleep);
         
       } catch (error) {
-        console.error('Error initializing settings screen:', error);
+        console.error("Error initializing settings screen:", error);
       }
     };
     initialize();
   }, []);
+
+  const handleChangeDisplayName = () => {
+    setDisplayNameModalVisible(true);
+  };
 
   const handlePickImage = async () => {
     try {
@@ -46,21 +83,21 @@ export default function ProfileScreen(){
         aspect: [1, 1],
         quality: 1,
       });
-  
+
       if (!result.canceled) {
         const uri = result.assets[0].uri;
         setProfileImage(uri);
-  
+
         const formData = new FormData();
-        const fileName = uri.split('/').pop();
+        const fileName = uri.split("/").pop();
         const response = await fetch(uri);
         const blob = await response.blob();
-        
-        formData.append('profileImage', blob, fileName || 'profile_image.jpg');
+
+        formData.append("profileImage", blob, fileName || "profile_image.jpg");
         await updateProfilePicture(formData, user.uid);
       }
     } catch (error) {
-      console.error('Error picking image:', error);
+      console.error("Error picking image:", error);
     }
   };
 
@@ -69,52 +106,86 @@ export default function ProfileScreen(){
       <View style={styles.header}>
         <TouchableOpacity onPress={handlePickImage}>
           <Image
-            source={{ uri: profileImage || 'https://via.placeholder.com/150' }}
+            source={{ uri: profileImage || "https://via.placeholder.com/150" }}
             style={styles.profileImage}
           />
         </TouchableOpacity>
-        <Text style={styles.userName}>{user?.name}</Text>
+        <View style={styles.nameContainer}>
+          <Text style={styles.userName}>{user?.name}</Text>
+          <TouchableOpacity
+            onPress={handleChangeDisplayName}
+            style={styles.editButton}
+          >
+            <Text style={styles.editButtonText}>✏️</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.userStats}>
-  {consecutiveCheckins !== null ? (
-    consecutiveCheckins > 0 ? (
-      <>
-        🎉 <Text style={styles.highlightText}>{consecutiveCheckins}</Text> days in a row checked in! Keep it up! 💪
-      </>
-    ) : (
-      <Text style={styles.zeroCheckinsNote}>
-        😔 No consecutive days yet. Start today to build your streak! 🚀
-      </Text>
-    )
-  ) : (
-    'Loading...'
-  )}
-</Text>
-
+          {consecutiveCheckins !== null ? (
+            consecutiveCheckins > 0 ? (
+              <>
+                🎉{" "}
+                <Text style={styles.highlightText}>{consecutiveCheckins}</Text>{" "}
+                days in a row checked in! Keep it up! 💪
+              </>
+            ) : (
+              <Text style={styles.zeroCheckinsNote}>
+                😔 No consecutive days yet. Start today to build your streak! 🚀
+              </Text>
+            )
+          ) : (
+            "Loading..."
+          )}
+        </Text>
       </View>
+
+      {user && (
+        <ChangeDisplayNameModal
+          visible={displayNameModalVisible}
+          onClose={() => setDisplayNameModalVisible(false)}
+          currentDisplayName={user?.name}
+          userId={user?.uid}
+        />
+      )}
 
       {/* Graph Section */}
       <View style={styles.graphContainer}>
         <Text style={styles.sectionTitle}>Recent Check-in Stats</Text>
         <LineChart
           data={{
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            legend: ["Mood", "Activity", "Stress", "Sleep"],
             datasets: [
-              { data: [5, 6, 7, 6, 5, 8, 7] },
-              { data: [3, 4, 5, 4, 3, 5, 4] },
-              { data: [4, 3, 2, 3, 4, 3, 2] },
-              { data: [6, 7, 5, 6, 8, 6, 7] },
+              {
+                data: moodData,
+                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`, // Red for Mood
+                strokeWidth: 2,
+              },
+              {
+                data: activityData,
+                color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`, // Blue for Activity
+                strokeWidth: 2,
+              },
+              {
+                data: stressData,
+                color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`, // Yellow for Stress
+                strokeWidth: 2,
+              },
+              {
+                data: sleepData,
+                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`, // Teal for Sleep
+                strokeWidth: 2,
+              },
             ],
           }}
           width={Dimensions.get("window").width}
           height={200}
-          yAxisSuffix="Days"
           chartConfig={{
-            backgroundColor: theme === 'dark' ? '#333' : '#fff',
-            backgroundGradientFrom: theme === 'dark' ? '#333' : '#fff',
-            backgroundGradientTo: theme === 'dark' ? '#333' : '#fff',
+            backgroundColor: theme === "dark" ? "#333" : "#fff",
+            backgroundGradientFrom: theme === "dark" ? "#333" : "#fff",
+            backgroundGradientTo: theme === "dark" ? "#333" : "#fff",
             decimalPlaces: 0,
-            color: () => (theme === 'dark' ? '#fff' : '#333'),
-            labelColor: () => (theme === 'dark' ? '#ccc' : '#666'),
+            color: () => (theme === "dark" ? "#fff" : "#333"),
+            labelColor: () => (theme === "dark" ? "#ccc" : "#666"),
           }}
           bezier
           style={styles.chart}
@@ -124,7 +195,7 @@ export default function ProfileScreen(){
       {/* Favorite Resources */}
       <View style={styles.resourcesContainer}>
         <Text style={styles.sectionTitle}>Favorite Resources</Text>
-        {favoriteResources.map(resource => (
+        {favoriteResources.map((resource) => (
           <TouchableOpacity key={resource.id} style={styles.resourceItem}>
             <Text style={styles.resourceTitle}>{resource.title}</Text>
             <Text style={styles.star}>⭐</Text>
@@ -133,20 +204,50 @@ export default function ProfileScreen(){
       </View>
     </ScrollView>
   );
-};
+}
 
-// Create dynamic styles based on the theme
+function processCheckinData(checkinData: any[]) {
+  const currentDate = new Date();
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(currentDate.getDate() - (6 - i));
+    date.setHours(0, 0, 0, 0);
+    return date.toISOString().split("T")[0];
+  });
+
+  const mood = Array(7).fill(null);
+  const activity = Array(7).fill(null);
+  const stress = Array(7).fill(null);
+  const sleep = Array(7).fill(null);
+  const mappedDays = new Set();
+
+  checkinData.forEach((entry: any) => {
+    const entryDate = convertToUserLocalTime(entry.timestamp._seconds);
+    const dayIndex = last7Days.indexOf(entryDate);
+
+    if (dayIndex !== -1 && !mappedDays.has(entryDate)) {
+      mood[dayIndex] = entry.mood ?? 0;
+      activity[dayIndex] = entry.activity ?? 0;
+      stress[dayIndex] = entry.stress ?? 0;
+      sleep[dayIndex] = entry.sleep ?? 0;
+      mappedDays.add(entryDate);
+    }
+  });
+
+  return { mood, activity, stress, sleep };
+}
+
 const createStyles = (theme: string) => {
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
   return StyleSheet.create({
     container: {
       flexGrow: 1,
-      backgroundColor: isDark ? '#1e1e1e' : '#f5f5f5',
-      alignItems: 'center',
+      backgroundColor: isDark ? "#1e1e1e" : "#f5f5f5",
+      alignItems: "center",
       padding: 20,
     },
     header: {
-      alignItems: 'center',
+      alignItems: "center",
       marginBottom: 20,
     },
     profileImage: {
@@ -154,47 +255,41 @@ const createStyles = (theme: string) => {
       height: 100,
       borderRadius: 50,
       borderWidth: 3,
-      borderColor: isDark ? '#333' : '#fff',
+      borderColor: isDark ? "#333" : "#fff",
       marginBottom: 10,
-    },
-    userName: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: isDark ? '#fff' : '#000',
-      marginBottom: 5,
     },
     userStats: {
       fontSize: 16, // Slightly larger font for better readability
-      color: isDark ? '#eee' : '#222', // Brighter color for more fun
-      textAlign: 'center',
+      color: isDark ? "#eee" : "#222", // Brighter color for more fun
+      textAlign: "center",
       marginBottom: 10,
       padding: 10,
-      backgroundColor: isDark ? '#444' : '#e0f7fa', // Background color for emphasis
+      backgroundColor: isDark ? "#444" : "#e0f7fa", // Background color for emphasis
       borderRadius: 10, // Rounded corners for a more modern look
-      borderColor: isDark ? '#666' : '#00acc1', // Border for a touch of color
+      borderColor: isDark ? "#666" : "#00acc1", // Border for a touch of color
       borderWidth: 1,
     },
-    
+
     highlightText: {
-      fontWeight: 'bold',
-      color: '#ff9800', // Highlight color for emphasis
+      fontWeight: "bold",
+      color: "#ff9800", // Highlight color for emphasis
     },
-    
+
     zeroCheckinsNote: {
       fontSize: 16,
-      color: isDark ? '#f0a' : '#d32f2f', // Bright color for the message
-      textAlign: 'center',
+      color: isDark ? "#f0a" : "#d32f2f", // Bright color for the message
+      textAlign: "center",
       marginTop: 10,
-    },    
+    },
     graphContainer: {
-      width: '100%',
+      width: "100%",
       marginVertical: 20,
-      alignItems: 'center',
+      alignItems: "center",
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: '600',
-      color: isDark ? '#fff' : '#333',
+      fontWeight: "600",
+      color: isDark ? "#fff" : "#333",
       marginBottom: 10,
     },
     chart: {
@@ -202,24 +297,44 @@ const createStyles = (theme: string) => {
       marginBottom: 10,
     },
     resourcesContainer: {
-      width: '100%',
+      width: "100%",
       marginTop: 20,
     },
     resourceItem: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       paddingVertical: 15,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? '#333' : '#ddd',
+      borderBottomColor: isDark ? "#333" : "#ddd",
     },
     resourceTitle: {
       fontSize: 16,
-      color: isDark ? '#ccc' : '#333',
+      color: isDark ? "#ccc" : "#333",
     },
     star: {
       fontSize: 18,
-      color: isDark ? '#ffcc00' : '#ffd700',
+      color: isDark ? "#ffcc00" : "#ffd700",
+    },
+    nameContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    userName: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: isDark ? "#fff" : "#000",
+      marginBottom: 5,
+    },
+    editButton: {
+      marginLeft: 10,
+      padding: 5,
+      backgroundColor: isDark ? "#555" : "#e0f7fa",
+      borderRadius: 5,
+    },
+    editButtonText: {
+      fontSize: 16,
+      color: isDark ? "#fff" : "#00acc1",
     },
   });
 };
