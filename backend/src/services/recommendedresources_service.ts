@@ -3,6 +3,7 @@ import { firestore } from 'firebase-admin';
 import { logToFirestore } from './logs_service';
 import {createCache} from 'cache-manager';
 import { recommendedResources } from '../interfaces/recommendedResources';
+import { favoriteResource } from '../interfaces/favoriteResource';
 
 // Set up in-memory cache with a 24-hour expiration
 const cache = createCache({ ttl: 86400000 });
@@ -68,11 +69,14 @@ export const addResourceToFavorites = async (userId: string, resourceId: string)
     const doc = await favoriteRef.get();
 
     if (!doc.exists) {
-      await favoriteRef.set({
+      const favoriteResource: favoriteResource = {
+        id: `${userId}_${resourceId}`,
         userId,
         resourceId,
-        timestamp: new Date().toISOString(), 
-      });
+      };
+
+      await favoriteRef.set(favoriteResource);
+      console.log(`Resource ${resourceId} added to ${userId}'s favorites`);
     } else {
       console.error(`Resource ${resourceId} is already in ${userId}'s favorites`);
     }
@@ -91,18 +95,22 @@ export const addResourceToFavorites = async (userId: string, resourceId: string)
 };
 
 export const fetchFavoriteResources = async (userId: string): Promise<recommendedResources[]> => {
-  const userFavoritesRef = db.collection('userfavoriteresources').doc(userId);
-
   try {
-    const doc = await userFavoritesRef.get();
+    const snapshot = await db.collection('userfavoriteresources')
+      .where('userId', '==', userId)
+      .get();
 
-    if (!doc.exists) {
+    if (snapshot.empty) {
       return [];
     }
 
-    const data = doc.data();
-    const resourceIds = data?.favoriteResources || [];
+    const resourceIds: string[] = [];
+    snapshot.forEach(doc => {
+      const data = doc.data() as favoriteResource;
+      resourceIds.push(data.resourceId);
+    });
 
+    // Fetch details from the recommended resources collection
     const resourcePromises = resourceIds.map((id: string) =>
       db.collection('recommendedresources').doc(id).get()
     );
@@ -135,6 +143,7 @@ export const removeResourceFromFavorites = async (userId: string, resourceId: st
 
     if (doc.exists) {
       await favoriteRef.delete();
+      console.error(`Resource ${resourceId} removed from ${userId}'s favorites`);
     } else {
       console.error(`Resource ${resourceId} was not found in ${userId}'s favorites`);
     }

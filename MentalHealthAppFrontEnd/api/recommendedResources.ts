@@ -20,7 +20,7 @@ export const getRecommendedResources = async () => {
   };
 
   export async function addFavoriteResource(userId: string, resourceId: string): Promise<void> {
-    const response = await fetch(`${API_URL}/resources/recommendedresources/favorites`, {
+    const response = await fetch(`${API_URL}/resources/addfavouriteresource`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export const getRecommendedResources = async () => {
   }
   
   export async function getFavoriteResources(userId: string): Promise<recommendedResourceModel[]> {
-    const response = await fetch(`${API_URL}/resources/recommendedresources/favorites/${userId}`, {
+    const response = await fetch(`${API_URL}/resources/getfavoriteresources/${userId}`, {
       method: 'GET',
     });
     if (!response.ok) {
@@ -43,7 +43,7 @@ export const getRecommendedResources = async () => {
   }
 
 export async function removeFavoriteResource(userId: string, resourceId: string): Promise<void> {
-  const response = await fetch(`${API_URL}/resources/recommendedresources/favorites`, {
+  const response = await fetch(`${API_URL}/resources/removefavoriteresource`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

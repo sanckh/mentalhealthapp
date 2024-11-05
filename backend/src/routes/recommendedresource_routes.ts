@@ -5,10 +5,10 @@ const router = Router();
 // Route to fetch the recommended resources
 router.get('/recommendedresources', getRecommendedResources);
 
-router.post('/favorites', addFavoriteResource);
+router.post('/addfavouriteresource', addFavoriteResource);
 
-router.get('/favorites/:userId', getFavoriteResources);
+router.get('/getfavoriteresources/:userId', getFavoriteResources);
 
-router.delete('/favorites', removeFavoriteResource);
+router.delete('/removefavoriteresource', removeFavoriteResource);
 
 export default router;
