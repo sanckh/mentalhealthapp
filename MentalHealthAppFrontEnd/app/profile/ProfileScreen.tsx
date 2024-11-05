@@ -5,12 +5,15 @@ import * as ImagePicker from 'expo-image-picker';
 import { useThemeContext } from '@/components/ThemeContext';
 import { updateProfilePicture } from '@/api/user';
 import { getCurrentUser } from '@/api/auth';
+import { getConsecutiveCheckins } from '@/api/checkin';
 
 export default function ProfileScreen(){
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [consecutiveCheckins, setConsecutiveCheckins] = useState<number | null>(null);
+
   const [favoriteResources, setFavoriteResources] = useState([
     { id: 1, title: 'Mindfulness Basics', isFavorite: true },
     { id: 2, title: 'Tips for Better Sleep', isFavorite: true },
@@ -24,7 +27,10 @@ export default function ProfileScreen(){
         console.log
         setUser(userData);
         setProfileImage(userData.profileImageUrl);
-        console.log("Profile Picture: ", userData.profileImageUrl);
+        
+        const days = await getConsecutiveCheckins(userData.uid);
+        setConsecutiveCheckins(days);
+        
       } catch (error) {
         console.error('Error initializing settings screen:', error);
       }
@@ -67,8 +73,23 @@ export default function ProfileScreen(){
             style={styles.profileImage}
           />
         </TouchableOpacity>
-        <Text style={styles.userName}>John Doe</Text>
-        <Text style={styles.userStats}>Days in a Row Active: 5 | Days in a Row Checked In: 3</Text>
+        <Text style={styles.userName}>{user?.name}</Text>
+        <Text style={styles.userStats}>
+  {consecutiveCheckins !== null ? (
+    consecutiveCheckins > 0 ? (
+      <>
+        🎉 <Text style={styles.highlightText}>{consecutiveCheckins}</Text> days in a row checked in! Keep it up! 💪
+      </>
+    ) : (
+      <Text style={styles.zeroCheckinsNote}>
+        😔 No consecutive days yet. Start today to build your streak! 🚀
+      </Text>
+    )
+  ) : (
+    'Loading...'
+  )}
+</Text>
+
       </View>
 
       {/* Graph Section */}
@@ -143,11 +164,28 @@ const createStyles = (theme: string) => {
       marginBottom: 5,
     },
     userStats: {
-      fontSize: 14,
-      color: isDark ? '#ccc' : '#333',
+      fontSize: 16, // Slightly larger font for better readability
+      color: isDark ? '#eee' : '#222', // Brighter color for more fun
       textAlign: 'center',
       marginBottom: 10,
+      padding: 10,
+      backgroundColor: isDark ? '#444' : '#e0f7fa', // Background color for emphasis
+      borderRadius: 10, // Rounded corners for a more modern look
+      borderColor: isDark ? '#666' : '#00acc1', // Border for a touch of color
+      borderWidth: 1,
     },
+    
+    highlightText: {
+      fontWeight: 'bold',
+      color: '#ff9800', // Highlight color for emphasis
+    },
+    
+    zeroCheckinsNote: {
+      fontSize: 16,
+      color: isDark ? '#f0a' : '#d32f2f', // Bright color for the message
+      textAlign: 'center',
+      marginTop: 10,
+    },    
     graphContainer: {
       width: '100%',
       marginVertical: 20,

@@ -38,3 +38,19 @@ export const submitCheckIn = async (data: {
     await new Promise(resolve => setTimeout(resolve, 10));
     return data.hasSubmitted;
   };
+
+  export const getConsecutiveCheckins = async (userId: string) => {
+    const response = await fetch(`${API_URL}/checkin/consecutive/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch consecutive check-ins');
+    }
+    const data = await response.json();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    return data.consecutiveDays;
+  };
+  

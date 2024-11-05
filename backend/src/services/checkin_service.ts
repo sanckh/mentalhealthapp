@@ -2,7 +2,7 @@ import { db } from '../firebase_options';
 import admin from 'firebase-admin';
 import { Averages } from '../interfaces/averages';
 import { CheckinData } from '../interfaces/checkinData';
-import { logToFirestore } from '../services/logs_service';  // Import logging service
+import { logToFirestore } from '../services/logs_service'; 
 
 export const saveCheckIn = async (
   userId: string,
@@ -107,6 +107,39 @@ export async function getUserCheckinData(userId: string, days: number): Promise<
     throw new Error('Failed to fetch user check-in data');
   }
 }
+
+/**
+ * Fetches all of a users check-in data.
+ * @param userId - The ID of the user.
+ * @returns Promise of an array of check-in data.
+ */
+export async function getUserCheckinDataAllTime(userId: string): Promise<CheckinData[]> {
+  const checkinRef = db.collection('checkins');
+
+  try {
+    const snapshot = await checkinRef
+      .where('userId', '==', userId)
+      .orderBy('timestamp', 'desc')
+      .get();
+
+    const checkinData: CheckinData[] = [];
+    snapshot.forEach(doc => checkinData.push(doc.data() as CheckinData));
+
+    return checkinData;
+  } catch (error: any) {
+    console.error('Error fetching user check-in data:', error);
+
+    await logToFirestore({
+      eventType: 'ERROR',
+      message: 'Failed to fetch user check-in data',
+      data: { error: error.message, userId },
+      timestamp: new Date().toISOString(),
+    });
+
+    throw new Error('Failed to fetch user check-in data');
+  }
+}
+
 
 /**
  * Calculates the average for each metric (mood, stress, sleep, activity).

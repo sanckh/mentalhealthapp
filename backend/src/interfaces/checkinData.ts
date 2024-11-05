@@ -3,5 +3,5 @@ export interface CheckinData {
     stress?: number;
     sleep?: number;
     activity?: number;
-    date: FirebaseFirestore.Timestamp;
+    timestamp: FirebaseFirestore.Timestamp;
   }
