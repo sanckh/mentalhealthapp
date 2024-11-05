@@ -157,22 +157,22 @@ export default function ProfileScreen() {
             datasets: [
               {
                 data: moodData,
-                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`, // Red for Mood
+                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`, 
                 strokeWidth: 2,
               },
               {
                 data: activityData,
-                color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`, // Blue for Activity
+                color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`,
                 strokeWidth: 2,
               },
               {
                 data: stressData,
-                color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`, // Yellow for Stress
+                color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`, 
                 strokeWidth: 2,
               },
               {
                 data: sleepData,
-                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`, // Teal for Sleep
+                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`, 
                 strokeWidth: 2,
               },
             ],
@@ -259,25 +259,25 @@ const createStyles = (theme: string) => {
       marginBottom: 10,
     },
     userStats: {
-      fontSize: 16, // Slightly larger font for better readability
-      color: isDark ? "#eee" : "#222", // Brighter color for more fun
+      fontSize: 16, 
+      color: isDark ? "#eee" : "#222", 
       textAlign: "center",
       marginBottom: 10,
       padding: 10,
-      backgroundColor: isDark ? "#444" : "#e0f7fa", // Background color for emphasis
-      borderRadius: 10, // Rounded corners for a more modern look
-      borderColor: isDark ? "#666" : "#00acc1", // Border for a touch of color
+      backgroundColor: isDark ? "#444" : "#e0f7fa", 
+      borderRadius: 10,
+      borderColor: isDark ? "#666" : "#00acc1", 
       borderWidth: 1,
     },
 
     highlightText: {
       fontWeight: "bold",
-      color: "#ff9800", // Highlight color for emphasis
+      color: "#ff9800",
     },
 
     zeroCheckinsNote: {
       fontSize: 16,
-      color: isDark ? "#f0a" : "#d32f2f", // Bright color for the message
+      color: isDark ? "#f0a" : "#d32f2f", 
       textAlign: "center",
       marginTop: 10,
     },
