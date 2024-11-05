@@ -34,6 +34,7 @@ export default function ProfileScreen() {
   const [activityData, setActivityData] = useState<number[]>([]);
   const [stressData, setStressData] = useState<number[]>([]);
   const [sleepData, setSleepData] = useState<number[]>([]);
+  const [labels, setLabels] = useState<string[]>([]);
 
   const [favoriteResources, setFavoriteResources] = useState([
     { id: 1, title: "Mindfulness Basics", isFavorite: true },
@@ -56,14 +57,13 @@ export default function ProfileScreen() {
         const checkinData = await getRecentCheckinData(userData.uid);
         setRecentCheckinData(checkinData);
 
-        console.log("checkin data: ", checkinData)
-        
-        const { mood, activity, stress, sleep } = processCheckinData(checkinData);
+        const { mood, activity, stress, sleep, labels } = processCheckinData(checkinData);
         setMoodData(mood);
         setActivityData(activity);
         setStressData(stress);
         setSleepData(sleep);
-        
+        setLabels(labels);
+
       } catch (error) {
         console.error("Error initializing settings screen:", error);
       }
@@ -100,7 +100,6 @@ export default function ProfileScreen() {
       console.error("Error picking image:", error);
     }
   };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -150,14 +149,15 @@ export default function ProfileScreen() {
       {/* Graph Section */}
       <View style={styles.graphContainer}>
         <Text style={styles.sectionTitle}>Recent Check-in Stats</Text>
+        {moodData.length > 0 && activityData.length > 0 && stressData.length > 0 && sleepData.length > 0 && labels.length > 0 ? (
         <LineChart
           data={{
-            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            legend: ["Mood", "Activity", "Stress", "Sleep"],
+            labels: labels,
+            legend: ["Mood", "Activity", "Stress", "Sleep"], 
             datasets: [
               {
                 data: moodData,
-                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`, 
+                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
                 strokeWidth: 2,
               },
               {
@@ -167,16 +167,17 @@ export default function ProfileScreen() {
               },
               {
                 data: stressData,
-                color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`, 
+                color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`,
                 strokeWidth: 2,
               },
               {
                 data: sleepData,
-                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`, 
+                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
                 strokeWidth: 2,
               },
             ],
           }}
+          fromZero={true}
           width={Dimensions.get("window").width}
           height={200}
           chartConfig={{
@@ -187,9 +188,11 @@ export default function ProfileScreen() {
             color: () => (theme === "dark" ? "#fff" : "#333"),
             labelColor: () => (theme === "dark" ? "#ccc" : "#666"),
           }}
-          bezier
           style={styles.chart}
         />
+        ) : (
+    <Text>Loading chart data...</Text>
+  )}
       </View>
 
       {/* Favorite Resources */}
@@ -208,17 +211,19 @@ export default function ProfileScreen() {
 
 function processCheckinData(checkinData: any[]) {
   const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+
   const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
+    const date = new Date(currentDate);
     date.setDate(currentDate.getDate() - (6 - i));
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString().split("T")[0];
+    return convertToUserLocalTime(date.getTime() / 1000);
   });
 
-  const mood = Array(7).fill(null);
-  const activity = Array(7).fill(null);
-  const stress = Array(7).fill(null);
-  const sleep = Array(7).fill(null);
+  const mood = Array(7).fill(0);
+  const activity = Array(7).fill(0);
+  const stress = Array(7).fill(0);
+  const sleep = Array(7).fill(0);
   const mappedDays = new Set();
 
   checkinData.forEach((entry: any) => {
@@ -226,16 +231,23 @@ function processCheckinData(checkinData: any[]) {
     const dayIndex = last7Days.indexOf(entryDate);
 
     if (dayIndex !== -1 && !mappedDays.has(entryDate)) {
-      mood[dayIndex] = entry.mood ?? 0;
-      activity[dayIndex] = entry.activity ?? 0;
-      stress[dayIndex] = entry.stress ?? 0;
-      sleep[dayIndex] = entry.sleep ?? 0;
+      mood[dayIndex] = Number(entry.mood) || 0;
+      activity[dayIndex] = Number(entry.activity) || 0;
+      stress[dayIndex] = Number(entry.stress) || 0;
+      sleep[dayIndex] = Number(entry.sleep) || 0;
       mappedDays.add(entryDate);
     }
   });
 
-  return { mood, activity, stress, sleep };
+  const labels = last7Days.map((dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  });
+
+  return { mood, activity, stress, sleep, labels };
 }
+
 
 const createStyles = (theme: string) => {
   const isDark = theme === "dark";
@@ -259,14 +271,14 @@ const createStyles = (theme: string) => {
       marginBottom: 10,
     },
     userStats: {
-      fontSize: 16, 
-      color: isDark ? "#eee" : "#222", 
+      fontSize: 16,
+      color: isDark ? "#eee" : "#222",
       textAlign: "center",
       marginBottom: 10,
       padding: 10,
-      backgroundColor: isDark ? "#444" : "#e0f7fa", 
+      backgroundColor: isDark ? "#444" : "#e0f7fa",
       borderRadius: 10,
-      borderColor: isDark ? "#666" : "#00acc1", 
+      borderColor: isDark ? "#666" : "#00acc1",
       borderWidth: 1,
     },
 
@@ -277,7 +289,7 @@ const createStyles = (theme: string) => {
 
     zeroCheckinsNote: {
       fontSize: 16,
-      color: isDark ? "#f0a" : "#d32f2f", 
+      color: isDark ? "#f0a" : "#d32f2f",
       textAlign: "center",
       marginTop: 10,
     },
