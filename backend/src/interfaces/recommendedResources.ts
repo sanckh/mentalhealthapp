@@ -1,5 +1,5 @@
 export interface recommendedResources {
-    length: number;
+    id: string;
     category: string;
     title: string;
     description: string;
