@@ -25,7 +25,7 @@ const CARD_WIDTH = (width - 60) / 2;
 const CrisisScreen = () => {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
-  
+
   const [crisisDocuments, setCrisisDocuments] = useState<
     crisisDocumentModel[] | null
   >(null);
@@ -120,7 +120,8 @@ const CrisisScreen = () => {
         {crisisDocuments && crisisDocuments.length > 0 ? (
           <View style={styles.cardGrid}>
             {crisisDocuments.map((document) => (
-              <DocumentCard 
+              <DocumentCard
+                key={document.id}
                 document={document}
                 styles={styles} />
             ))}
