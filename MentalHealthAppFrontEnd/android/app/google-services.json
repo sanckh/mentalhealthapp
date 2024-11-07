@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "952239612198",
+    "firebase_url": "https://mental-health-app-77517-default-rtdb.firebaseio.com",
+    "project_id": "mental-health-app-77517",
+    "storage_bucket": "mental-health-app-77517.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952239612198:android:649e04eec95c46969261e7",
+        "android_client_info": {
+          "package_name": "com.csutton.mentalhealthapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952239612198-odo4k8ukhcsj7kidq102p6u0d0ccaq0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyl9BZLSnVAVLwzSFG1YU7xcLQmjqUj6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952239612198-odo4k8ukhcsj7kidq102p6u0d0ccaq0h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

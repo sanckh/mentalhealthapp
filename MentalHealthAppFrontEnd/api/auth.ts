@@ -28,7 +28,7 @@ export const login = async (email: string, password: string) => {
 
     const data = await response.json();
 
-    // Check if the response is OK before parsing JSON
+    //Check if the response is OK before parsing JSON
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.error || 'Login failed');

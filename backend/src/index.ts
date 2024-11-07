@@ -26,8 +26,9 @@ const logRateLimiter = rateLimit({
 // List of allowed origins
 const allowedOrigins = [
   'http://localhost:8081',
-  'http://10.0.2.2:3000', 
+  'http://10.0.2.2:3000',
   'http://192.168.1.79:3000',
+  'http://192.168.1.96:3000',
 ];
 
 // Use Parameters utility to infer CORS options type
@@ -69,7 +70,10 @@ app.use('/log', logRateLimiter, logRoutes);
 app.use('/user', userRoutes);
 app.use('/resources', recommendedResourceRoutes);
 
-// Start the server
-app.listen(port, () => {
+app.get('/', (req: Request, res: Response) => {
+  res.send('Backend running...');
+});
+
+app.listen(3000, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
 });
