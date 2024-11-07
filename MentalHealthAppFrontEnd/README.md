@@ -48,3 +48,13 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Local Android Development Build
+
+1. In terminal run `ipconfig` to retrieve your machine's ip address.
+2. Create a .env file in the MentalHealthApp directory.
+3. In .env set the EXPO_PUBLIC_API_URL=http://192.168.x.x:3000 with ip address from the step 1.
+4. Run `npx expo prebuild`.
+5. Download google-services.json into the MentalHealthApp/android/app directory.
+6. Run `npx expo run:android`.
+  

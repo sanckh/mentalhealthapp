@@ -16,9 +16,8 @@ export const register = async (name: string, email: string, password: string) =>
 };
 
 export const login = async (email: string, password: string) => {
-  console.log("logging in");
   try {
-    const response = await fetch(`http://localhost:3000/auth/login`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -30,11 +29,11 @@ export const login = async (email: string, password: string) => {
     const data = await response.json();
     console.log("data", data);
 
-    // Check if the response is OK before parsing JSON
-    // if (!response.ok) {
-    //   const errorData = await response.json();
-    //   throw new Error(errorData.error || 'Login failed');
-    // }
+    //Check if the response is OK before parsing JSON
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Login failed');
+    }
 
     return data;
     

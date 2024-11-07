@@ -64,7 +64,6 @@ export const register = async (req: Request, res: Response) => {
 // Login User
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const token = await userCredential.user.getIdToken();
