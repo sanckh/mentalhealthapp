@@ -27,7 +27,6 @@ export const login = async (email: string, password: string) => {
     });
 
     const data = await response.json();
-    console.log("data", data);
 
     //Check if the response is OK before parsing JSON
     if (!response.ok) {
