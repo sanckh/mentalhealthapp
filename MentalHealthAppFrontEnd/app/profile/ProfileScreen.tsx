@@ -16,7 +16,9 @@ import { updateProfilePicture } from "@/api/user";
 import { getCurrentUser } from "@/api/auth";
 import { getConsecutiveCheckins, getRecentCheckinData } from "@/api/checkin";
 import ChangeDisplayNameModal from "@/components/ChangeDisplayNameModal";
-import { convertToUserLocalTime } from "../utilities/dateUtils"
+import { convertToUserLocalTime } from "../utilities/dateUtils";
+import { recommendedResourceModel } from "@/models/recommendedResourceModel";
+import { getFavoriteResources } from "@/api/recommendedResources";
 
 export default function ProfileScreen() {
   const { theme } = useThemeContext();
@@ -36,11 +38,9 @@ export default function ProfileScreen() {
   const [sleepData, setSleepData] = useState<number[]>([]);
   const [labels, setLabels] = useState<string[]>([]);
 
-  const [favoriteResources, setFavoriteResources] = useState([
-    { id: 1, title: "Mindfulness Basics", isFavorite: true },
-    { id: 2, title: "Tips for Better Sleep", isFavorite: true },
-    { id: 3, title: "Managing Stress", isFavorite: true },
-  ]);
+  const [favoriteResources, setFavoriteResources] = useState<
+    recommendedResourceModel[]
+  >([]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -57,13 +57,16 @@ export default function ProfileScreen() {
         const checkinData = await getRecentCheckinData(userData.uid);
         setRecentCheckinData(checkinData);
 
-        const { mood, activity, stress, sleep, labels } = processCheckinData(checkinData);
+        const { mood, activity, stress, sleep, labels } =
+          processCheckinData(checkinData);
         setMoodData(mood);
         setActivityData(activity);
         setStressData(stress);
         setSleepData(sleep);
         setLabels(labels);
 
+        const resources = await getFavoriteResources(userData.uid);
+        setFavoriteResources(resources);
       } catch (error) {
         console.error("Error initializing settings screen:", error);
       }
@@ -149,61 +152,69 @@ export default function ProfileScreen() {
       {/* Graph Section */}
       <View style={styles.graphContainer}>
         <Text style={styles.sectionTitle}>Recent Check-in Stats</Text>
-        {moodData.length > 0 && activityData.length > 0 && stressData.length > 0 && sleepData.length > 0 && labels.length > 0 ? (
-        <LineChart
-          data={{
-            labels: labels,
-            legend: ["Mood", "Activity", "Stress", "Sleep"], 
-            datasets: [
-              {
-                data: moodData,
-                color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
-                strokeWidth: 2,
-              },
-              {
-                data: activityData,
-                color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`,
-                strokeWidth: 2,
-              },
-              {
-                data: stressData,
-                color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`,
-                strokeWidth: 2,
-              },
-              {
-                data: sleepData,
-                color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
-                strokeWidth: 2,
-              },
-            ],
-          }}
-          fromZero={true}
-          width={Dimensions.get("window").width}
-          height={200}
-          chartConfig={{
-            backgroundColor: theme === "dark" ? "#333" : "#fff",
-            backgroundGradientFrom: theme === "dark" ? "#333" : "#fff",
-            backgroundGradientTo: theme === "dark" ? "#333" : "#fff",
-            decimalPlaces: 0,
-            color: () => (theme === "dark" ? "#fff" : "#333"),
-            labelColor: () => (theme === "dark" ? "#ccc" : "#666"),
-          }}
-          style={styles.chart}
-        />
+        {moodData.length > 0 &&
+        activityData.length > 0 &&
+        stressData.length > 0 &&
+        sleepData.length > 0 &&
+        labels.length > 0 ? (
+          <LineChart
+            data={{
+              labels: labels,
+              legend: ["Mood", "Activity", "Stress", "Sleep"],
+              datasets: [
+                {
+                  data: moodData,
+                  color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
+                  strokeWidth: 2,
+                },
+                {
+                  data: activityData,
+                  color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`,
+                  strokeWidth: 2,
+                },
+                {
+                  data: stressData,
+                  color: (opacity = 1) => `rgba(255, 206, 86, ${opacity})`,
+                  strokeWidth: 2,
+                },
+                {
+                  data: sleepData,
+                  color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
+                  strokeWidth: 2,
+                },
+              ],
+            }}
+            fromZero={true}
+            width={Dimensions.get("window").width}
+            height={200}
+            chartConfig={{
+              backgroundColor: theme === "dark" ? "#333" : "#fff",
+              backgroundGradientFrom: theme === "dark" ? "#333" : "#fff",
+              backgroundGradientTo: theme === "dark" ? "#333" : "#fff",
+              decimalPlaces: 0,
+              color: () => (theme === "dark" ? "#fff" : "#333"),
+              labelColor: () => (theme === "dark" ? "#ccc" : "#666"),
+            }}
+            style={styles.chart}
+          />
         ) : (
-    <Text>Loading chart data...</Text>
-  )}
+          <Text>Loading chart data...</Text>
+        )}
       </View>
 
       {/* Favorite Resources */}
       <View style={styles.resourcesContainer}>
         <Text style={styles.sectionTitle}>Favorite Resources</Text>
-        {favoriteResources.map((resource) => (
-          <TouchableOpacity key={resource.id} style={styles.resourceItem}>
-            <Text style={styles.resourceTitle}>{resource.title}</Text>
-            <Text style={styles.star}>⭐</Text>
-          </TouchableOpacity>
-        ))}
+        {favoriteResources.length > 0 ? (
+          favoriteResources.map((resource) => (
+            <TouchableOpacity key={resource.id} style={styles.resourceItem}>
+              <Text style={styles.resourceTitle}>{resource.title}</Text>
+              <Text style={styles.star}>⭐</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noFavoritesText}>No favorite resources yet.</Text>
+        )}
       </View>
     </ScrollView>
   );
@@ -212,7 +223,6 @@ export default function ProfileScreen() {
 function processCheckinData(checkinData: any[]) {
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
-
 
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date(currentDate);
@@ -240,14 +250,13 @@ function processCheckinData(checkinData: any[]) {
   });
 
   const labels = last7Days.map((dateString) => {
-    const [year, month, day] = dateString.split('-').map(Number);
+    const [year, month, day] = dateString.split("-").map(Number);
     const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('en-US', { weekday: 'short' });
+    return date.toLocaleDateString("en-US", { weekday: "short" });
   });
 
   return { mood, activity, stress, sleep, labels };
 }
-
 
 const createStyles = (theme: string) => {
   const isDark = theme === "dark";
@@ -347,6 +356,12 @@ const createStyles = (theme: string) => {
     editButtonText: {
       fontSize: 16,
       color: isDark ? "#fff" : "#00acc1",
+    },
+    noFavoritesText: {
+      fontSize: 16,
+      color: isDark ? "#ccc" : "#666",
+      textAlign: "center",
+      marginTop: 10,
     },
   });
 };

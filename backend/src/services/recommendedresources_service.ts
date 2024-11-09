@@ -25,15 +25,15 @@ export const fetchRecommendedResources = async (): Promise<recommendedResources[
     const resourcesSnapshot = await firestore().collection('recommendedresources').get();
 
     const allResources: recommendedResources[] = resourcesSnapshot.docs.map((doc) => {
-        const data = doc.data() as recommendedResources;
-        return data;
-      });
+      const data = doc.data() as recommendedResources;
+      return { ...data, id: doc.id }; 
+    });
 
     const resourcesByCategory = allResources.reduce<Record<string, recommendedResources[]>>((acc, resource) => {
-        if (!acc[resource.category]) acc[resource.category] = [];
-        acc[resource.category].push(resource);
-        return acc;
-      }, {});
+      if (!acc[resource.category]) acc[resource.category] = [];
+      acc[resource.category].push(resource);
+      return acc;
+    }, {});
 
     const categories = Object.keys(resourcesByCategory);
     if (categories.length < 2) {
@@ -52,6 +52,7 @@ export const fetchRecommendedResources = async (): Promise<recommendedResources[
     return selectedResources;
   } catch (error: any) {
     console.error('Error fetching recommended resources:', error);
+
     await logToFirestore({
       eventType: 'ERROR',
       message: 'Failed to fetch recommended resources',
@@ -61,6 +62,7 @@ export const fetchRecommendedResources = async (): Promise<recommendedResources[
     throw new Error('Failed to fetch recommended resources.');
   }
 };
+
 
 export const addResourceToFavorites = async (userId: string, resourceId: string): Promise<void> => {
   const favoriteRef = db.collection('userfavoriteresources').doc(`${userId}_${resourceId}`);
@@ -96,6 +98,7 @@ export const addResourceToFavorites = async (userId: string, resourceId: string)
 
 export const fetchFavoriteResources = async (userId: string): Promise<recommendedResources[]> => {
   try {
+    // Step 1: Retrieve the user's favorite entries from `userfavoriteresources` to get `recommendedResourceId`s
     const snapshot = await db.collection('userfavoriteresources')
       .where('userId', '==', userId)
       .get();
@@ -104,21 +107,26 @@ export const fetchFavoriteResources = async (userId: string): Promise<recommende
       return [];
     }
 
-    const resourceIds: string[] = [];
-    snapshot.forEach(doc => {
+    // Step 2: Extract the `recommendedResourceId`s from the user's favorite resources
+    const recommendedResourceIds = snapshot.docs.map(doc => {
       const data = doc.data() as favoriteResource;
-      resourceIds.push(data.resourceId);
+      return data.resourceId;
     });
 
-    // Fetch details from the recommended resources collection
-    const resourcePromises = resourceIds.map((id: string) =>
-      db.collection('recommendedresources').doc(id).get()
+    // Step 3: Fetch each recommended resource by its ID in `recommendedresources`
+    const resourcePromises = recommendedResourceIds.map(resourceId =>
+      db.collection('recommendedresources').doc(resourceId).get()
     );
 
     const resourceDocs = await Promise.all(resourcePromises);
+
+    // Step 4: Map the results to include both the recommended resource data and its `resourceId`
     const resources: recommendedResources[] = resourceDocs
       .filter(doc => doc.exists)
-      .map(doc => doc.data() as recommendedResources);
+      .map(doc => ({
+        ...doc.data(),
+        id: doc.id, // Set the `recommendedResourceId` as the `id` for each resource
+      }) as recommendedResources);
 
     return resources;
   } catch (error: any) {
