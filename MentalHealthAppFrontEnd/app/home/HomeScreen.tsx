@@ -50,7 +50,6 @@ export default function HomeScreen() {
         setInsights(insights);
         const resources = await getRecommendedResources();
         setResources(resources);
-        console.log("Resources: ", resources);
         const favorites = await getFavoriteResources(user.uid);
         setFavoriteResourceIds(favorites.map((resource) => resource.id));
       } catch (error) {

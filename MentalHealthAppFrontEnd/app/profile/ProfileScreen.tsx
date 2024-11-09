@@ -19,7 +19,8 @@ import { getConsecutiveCheckins, getRecentCheckinData } from "@/api/checkin";
 import ChangeDisplayNameModal from "@/components/ChangeDisplayNameModal";
 import { convertToUserLocalTime } from "../utilities/dateUtils";
 import { recommendedResourceModel } from "@/models/recommendedResourceModel";
-import { getFavoriteResources } from "@/api/recommendedResources";
+import { getFavoriteResources, removeFavoriteResource } from "@/api/recommendedResources";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function ProfileScreen() {
   const { theme } = useThemeContext();
@@ -75,6 +76,19 @@ export default function ProfileScreen() {
     };
     initialize();
   }, []);
+
+  const handleRemoveFavorite = async (resourceId: string) => {
+    try {
+      if (user) {
+        await removeFavoriteResource(user.uid, resourceId);
+        setFavoriteResources((prevResources) =>
+          prevResources.filter((resource) => resource.id !== resourceId)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to remove favorite resource:", error);
+    }
+  };
 
   const handleChangeDisplayName = () => {
     setDisplayNameModalVisible(true);
@@ -209,12 +223,14 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Favorite Resources</Text>
         {favoriteResources.length > 0 ? (
           favoriteResources.map((resource) => (
-            <TouchableOpacity key={resource.id}
-             style={styles.resourceItem}
-             onPress={() => Linking.openURL(resource.link)}>
-              <Text style={styles.resourceTitle}>{resource.title}</Text>
-              <Text style={styles.star}>⭐</Text>
-            </TouchableOpacity>
+            <View key={resource.id} style={styles.resourceItem}>
+              <TouchableOpacity onPress={() => Linking.openURL(resource.link)}>
+                <Text style={styles.resourceTitle}>{resource.title}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleRemoveFavorite(resource.id)}>
+                <Icon name="delete" size={24} color={theme === "dark" ? "#ff4d4d" : "#d32f2f"} />
+              </TouchableOpacity>
+            </View>
           ))
         ) : (
           <Text style={styles.noFavoritesText}>No favorite resources yet.</Text>
