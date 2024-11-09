@@ -67,6 +67,7 @@ export default function ProfileScreen() {
 
         const resources = await getFavoriteResources(userData.uid);
         setFavoriteResources(resources);
+
       } catch (error) {
         console.error("Error initializing settings screen:", error);
       }

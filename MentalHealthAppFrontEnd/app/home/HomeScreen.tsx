@@ -50,6 +50,7 @@ export default function HomeScreen() {
         setInsights(insights);
         const resources = await getRecommendedResources();
         setResources(resources);
+        console.log("Resources: ", resources);
         const favorites = await getFavoriteResources(user.uid);
         setFavoriteResourceIds(favorites.map((resource) => resource.id));
       } catch (error) {
@@ -147,7 +148,7 @@ export default function HomeScreen() {
         {resources && resources.length > 0 ? (
           <View style={styles.card}>
             <Text style={styles.header}>Recommended Resources</Text>
-            <Text style={styles.textSmall}>Tap to read more</Text>
+            <Text style={styles.textSmall}>Tap to see more</Text>
             {resources.map(
               (resource: recommendedResourceModel, index: number) => (
                 <TouchableOpacity

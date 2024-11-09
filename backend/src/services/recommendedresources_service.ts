@@ -78,7 +78,6 @@ export const addResourceToFavorites = async (userId: string, resourceId: string)
       };
 
       await favoriteRef.set(favoriteResource);
-      console.log(`Resource ${resourceId} added to ${userId}'s favorites`);
     } else {
       console.error(`Resource ${resourceId} is already in ${userId}'s favorites`);
     }

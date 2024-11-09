@@ -16,7 +16,10 @@ export const getRecommendedResources = async () => {
     }
     const data = await response.json();
     await new Promise(resolve => setTimeout(resolve, 10));
-    return data.resources;
+    return data.resources.map((resource: any) => ({
+      ...resource,
+      id: resource.id,
+    })) as recommendedResourceModel[];
   };
 
   export async function addFavoriteResource(userId: string, resourceId: string): Promise<void> {
@@ -39,7 +42,11 @@ export const getRecommendedResources = async () => {
     if (!response.ok) {
       throw new Error('Failed to fetch favorite resources');
     }
-    return response.json();
+    const resources = await response.json();
+    return resources.map((resource: any) => ({
+      ...resource,
+      id: resource.id,
+    })) as recommendedResourceModel[];
   }
 
 export async function removeFavoriteResource(userId: string, resourceId: string): Promise<void> {
