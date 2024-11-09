@@ -78,23 +78,33 @@ export const getConsecutiveCheckins = async (req: Request, res: Response) => {
 
       let consecutiveDays = 1;
 
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const latestCheckinDate = new Date(checkins[0].timestamp.toDate());
+      latestCheckinDate.setHours(0, 0, 0, 0);
+
+      const initialDifference = Math.round((today.getTime() - latestCheckinDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (initialDifference > 1) {
+          
+          return res.status(200).json({ consecutiveDays: 0 });
+      }
+
       for (let i = 0; i < checkins.length - 1; i++) {
-        if (!checkins[i].timestamp || !checkins[i + 1].timestamp) {
-          throw new Error(`Missing timestamp field in one or more check-in records`);
-        }
+          if (!checkins[i].timestamp || !checkins[i + 1].timestamp) {
+              throw new Error(`Missing timestamp field in one or more check-in records`);
+          }
 
-        // Create Date objects without time components
-        const currentDate = new Date(checkins[i].timestamp.toDate());
-        const nextDate = new Date(checkins[i + 1].timestamp.toDate());
+          const currentDate = new Date(checkins[i].timestamp.toDate());
+          const nextDate = new Date(checkins[i + 1].timestamp.toDate());
 
-        // Set time components to 0 for date-only comparison
-        currentDate.setHours(0, 0, 0, 0);
-        nextDate.setHours(0, 0, 0, 0);
+          currentDate.setHours(0, 0, 0, 0);
+          nextDate.setHours(0, 0, 0, 0);
 
-        // Calculate the difference in days
-        const difference = Math.round((currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24));
+          const difference = Math.round((currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24));
 
-        if (difference === 1) {
+          if (difference === 1) {
               consecutiveDays++;
           } else {
               break;
@@ -107,6 +117,7 @@ export const getConsecutiveCheckins = async (req: Request, res: Response) => {
       res.status(500).json({ error: error.message });
   }
 };
+
 
 export const getRecentCheckinData = async (req: Request, res: Response) => {
   const { userId } = req.params;

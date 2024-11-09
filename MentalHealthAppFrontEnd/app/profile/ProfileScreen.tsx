@@ -143,7 +143,7 @@ export default function ProfileScreen() {
               <>
                 🎉{" "}
                 <Text style={styles.highlightText}>{consecutiveCheckins}</Text>{" "}
-                days in a row checked in! Keep it up! 💪
+                day(s) in a row checked in! Keep it up! 💪
               </>
             ) : (
               <Text style={styles.zeroCheckinsNote}>
