@@ -8,6 +8,7 @@ import {
   ScrollView,
   Button,
   Dimensions,
+  Linking,
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import * as ImagePicker from "expo-image-picker";
@@ -208,7 +209,9 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Favorite Resources</Text>
         {favoriteResources.length > 0 ? (
           favoriteResources.map((resource) => (
-            <TouchableOpacity key={resource.id} style={styles.resourceItem}>
+            <TouchableOpacity key={resource.id}
+             style={styles.resourceItem}
+             onPress={() => Linking.openURL(resource.link)}>
               <Text style={styles.resourceTitle}>{resource.title}</Text>
               <Text style={styles.star}>⭐</Text>
             </TouchableOpacity>
