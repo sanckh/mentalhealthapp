@@ -15,12 +15,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 // Parse the service account JSON from the environment variable
-const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const serviceAccountPath =  process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 if (!serviceAccountPath || !fs.existsSync(serviceAccountPath)) {
   console.error('Service account key file not found!');
   process.exit(1); // Stop the process if the key is missing
 }
+
 
 const serviceAccount = require(serviceAccountPath);
 
@@ -39,11 +40,13 @@ const firebaseConfig = {
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: firebaseConfig.databaseURL,
+  storageBucket: firebaseConfig.storageBucket
 });
 
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
-export { app, auth, db };
+export { app, auth, db, bucket };

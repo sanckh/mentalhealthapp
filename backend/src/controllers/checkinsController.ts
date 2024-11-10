@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { hasSubmittedDailyCheckin, saveCheckIn } from '../services/checkin_service';
+import { getUserCheckinData, getUserCheckinDataAllTime, hasSubmittedDailyCheckin, saveCheckIn } from '../services/checkin_service';
 import { logToFirestore } from '../services/logs_service';
 
 // Submit Daily Check-in
@@ -65,3 +65,71 @@ export const getHasSubmittedDailyCheckin = async (req: Request, res: Response) =
     res.status(500).json({ error: 'Failed to fetch daily check-in status' });
   }
 };
+
+export const getConsecutiveCheckins = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  try {
+      const checkins = await getUserCheckinDataAllTime(userId);
+
+      if (!checkins.length) {
+          return res.status(200).json({ consecutiveDays: 0 });
+      }
+
+      let consecutiveDays = 1;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const latestCheckinDate = new Date(checkins[0].timestamp.toDate());
+      latestCheckinDate.setHours(0, 0, 0, 0);
+
+      const initialDifference = Math.round((today.getTime() - latestCheckinDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (initialDifference > 1) {
+          
+          return res.status(200).json({ consecutiveDays: 0 });
+      }
+
+      for (let i = 0; i < checkins.length - 1; i++) {
+          if (!checkins[i].timestamp || !checkins[i + 1].timestamp) {
+              throw new Error(`Missing timestamp field in one or more check-in records`);
+          }
+
+          const currentDate = new Date(checkins[i].timestamp.toDate());
+          const nextDate = new Date(checkins[i + 1].timestamp.toDate());
+
+          currentDate.setHours(0, 0, 0, 0);
+          nextDate.setHours(0, 0, 0, 0);
+
+          const difference = Math.round((currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24));
+
+          if (difference === 1) {
+              consecutiveDays++;
+          } else {
+              break;
+          }
+      }
+
+      res.status(200).json({ consecutiveDays });
+  } catch (error: any) {
+      console.error('Error processing consecutive check-ins:', error);
+      res.status(500).json({ error: error.message });
+  }
+};
+
+
+export const getRecentCheckinData = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const days = 7;
+
+  try {
+    const checkinData = await getUserCheckinData(userId, days);
+    res.status(200).json(checkinData);
+  } catch (error: any) {
+    console.error('Error fetching last 7 days of check-in data:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
