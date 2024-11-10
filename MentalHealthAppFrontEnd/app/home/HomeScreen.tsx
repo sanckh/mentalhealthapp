@@ -6,8 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Linking,
 } from "react-native";
+import * as Linking from 'expo-linking';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser, signout } from "@/api/auth";

@@ -2,6 +2,7 @@
   "expo": {
     "name": "mentalhealthappfrontend",
     "slug": "mentalhealthappfrontend",
+    "scheme": "mentalhealthappfrontend",
     "version": "1.0.0",
     "sdkVersion": "51.0.0",
     "platforms": [
