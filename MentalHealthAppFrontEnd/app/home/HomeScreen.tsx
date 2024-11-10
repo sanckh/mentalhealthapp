@@ -89,6 +89,7 @@ export default function HomeScreen() {
     }
   };
 
+  {/**#TODO: pull this into a utilty function it is being used more than once */}
   const handleSignout = async () => {
     try {
       await signout();
