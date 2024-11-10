@@ -93,15 +93,15 @@ const CustomDrawerContent = ({
 
 const styles = ScaledSheet.create({
   userInfoContainer: {
-    padding: ms(20),
-    backgroundColor: "#f4f4f4",
     alignItems: "center",
+    backgroundColor: "#f4f4f4",
+    padding: ms(20),
   },
   avatar: {
-    width: s(60),
-    height: vs(60),
     borderRadius: 70,
+    height: vs(60),
     marginBottom: vs(10),
+    width: s(60),
   },
   userName: {
     fontSize: s(18),
@@ -109,8 +109,8 @@ const styles = ScaledSheet.create({
     marginBottom: vs(5),
   },
   userDate: {
-    fontSize: s(14),
     color: "#888",
+    fontSize: s(14),
   },
 });
 
