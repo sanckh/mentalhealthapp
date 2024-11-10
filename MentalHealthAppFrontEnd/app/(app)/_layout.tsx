@@ -1,56 +1,15 @@
 import React from "react";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-} from "@react-navigation/drawer";
-import { useThemeContext } from "@/components/ThemeContext"; // Access the theme context
+import { Redirect } from "expo-router";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import CrisisScreen from "../crisis/CrisisScreen";
+import CustomDrawerContent from "../../components/CustomDrawerContent";
+import DailyCheckInScreen from "./dailycheckin";
 import HomeScreen from "./home";
 import ProfileScreen from "./profile";
 import SettingsScreen from "./settings";
-import DailyCheckInScreen from "./dailycheckin";
-import { signout } from "@/api/auth";
 import { useAuth } from "../AuthContext";
-import { Redirect } from "expo-router";
-import CrisisScreen from "../crisis/CrisisScreen";
-import { DarkTheme, DefaultTheme, Theme } from "@react-navigation/native";
-
-import { DrawerContentComponentProps } from "@react-navigation/drawer";
-
-const handleSignout = async (
-  signout: () => Promise<void>,
-  setAuth: (value: boolean) => void
-) => {
-  try {
-    await signout();
-    setAuth(false);
-  } catch (error) {
-    console.error("Error signing out:", error);
-  }
-};
-
-function CustomDrawerContent({
-  props,
-  signout,
-  setAuth,
-}: {
-  props: DrawerContentComponentProps;
-  signout: () => Promise<void>;
-  setAuth: (value: boolean) => void;
-}) {
-  return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
-      <DrawerItem
-        label="Signout"
-        onPress={async () => {
-          await handleSignout(signout, setAuth);
-        }}
-      />
-    </DrawerContentScrollView>
-  );
-}
+import { useThemeContext } from "@/components/ThemeContext";
+import { signout } from "@/api/auth";
 
 const Drawer = createDrawerNavigator();
 
@@ -59,28 +18,6 @@ const DrawerNavigator = () => {
   const { theme } = useThemeContext();
   const isDark = theme === "dark";
 
-  // Define custom themes for the drawer
-  const CustomDarkTheme: Theme = {
-    ...DarkTheme,
-    colors: {
-      ...DarkTheme.colors,
-      background: "#121212",
-      card: "#1e1e1e",
-      text: "#ffffff",
-    },
-  };
-
-  const CustomLightTheme: Theme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: "#f7f7f7",
-      card: "#ffffff",
-      text: "#000000",
-    },
-  };
-
-  // Redirect to login if the user is not authenticated
   if (!isAuthenticated) {
     return <Redirect href="/login" />;
   }
