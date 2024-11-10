@@ -89,16 +89,6 @@ export default function HomeScreen() {
     }
   };
 
-  const handleSignout = async () => {
-    try {
-      await signout();
-      setUser(null);
-      setIsAuthenticated(false);
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -204,15 +194,6 @@ export default function HomeScreen() {
           <Text style={styles.title}>Progress Overview</Text>
           <Text style={styles.contentText}>Your recent progress...</Text>
         </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            handleSignout();
-          }}
-        >
-          <Text style={styles.buttonText}>Sign Out</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
