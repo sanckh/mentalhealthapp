@@ -5,12 +5,12 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   ScrollView,
   ActivityIndicator,
   Alert,
   Dimensions,
 } from "react-native";
+import * as Linking from 'expo-linking';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getCrisisDocuments } from "../../api/crisis";
 import { crisisDocumentModel } from "@/models/crisisDocumentModel";

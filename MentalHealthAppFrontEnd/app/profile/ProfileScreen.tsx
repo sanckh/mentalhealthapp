@@ -8,8 +8,8 @@ import {
   ScrollView,
   Button,
   Dimensions,
-  Linking,
 } from "react-native";
+import * as Linking from 'expo-linking';
 import { LineChart } from "react-native-chart-kit";
 import * as ImagePicker from "expo-image-picker";
 import { useThemeContext } from "@/components/ThemeContext";
