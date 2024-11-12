@@ -27,7 +27,7 @@ import {
 export default function HomeScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
-  const { isAuthenticated, uid } = useAuth();
+  const { isAuthenticated, token, uid, setIsAuthenticated } = useAuth();
   const router = useRouter();
 
   const [user, setUser] = useState<any>(null);
@@ -38,6 +38,7 @@ export default function HomeScreen() {
     null
   );
   const [favoriteResourceIds, setFavoriteResourceIds] = useState<string[]>([]);
+
 
   useEffect(() => {
     const initialize = async () => {
@@ -62,11 +63,7 @@ export default function HomeScreen() {
     initialize();
   }, []);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated]);
+
 
   const toggleFavorite = async (resourceId: string) => {
     const isFavorite = favoriteResourceIds.includes(resourceId);
@@ -88,6 +85,7 @@ export default function HomeScreen() {
       );
     }
   };
+  
 
   if (loading) {
     return (

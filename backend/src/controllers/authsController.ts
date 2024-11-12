@@ -46,7 +46,7 @@ export const register = async (req: Request, res: Response) => {
 
     await saveUserToFirestore(userData);
     
-    res.status(201).send({ uid: userCredential.user.uid });
+    res.status(201).send({ uid: userCredential.user.uid, token: await userCredential.user.getIdToken() });
   } catch (error: any) {
     console.error('Registration error:', error);
 

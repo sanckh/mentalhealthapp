@@ -82,6 +82,7 @@ const CustomDrawerContent = ({
 
       <DrawerItem
         label="Sign out"
+        inactiveTintColor="#888"
         onPress={async () => {
           await signout();
           removeAuth();

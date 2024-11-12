@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CrisisScreen from "../crisis/CrisisScreen";
 import CustomDrawerContent from "../../components/CustomDrawerContent";
@@ -14,7 +14,7 @@ import { signout } from "@/api/auth";
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
-  const { isAuthenticated, removeAuth } = useAuth();
+  const { isAuthenticated, removeAuth, setIsAuthenticated } = useAuth();
   const { theme } = useThemeContext();
   const isDark = theme === "dark";
 
