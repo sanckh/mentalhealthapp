@@ -62,7 +62,7 @@ export default function LoginScreen() {
     login(email, password)
       .then((response) => {
         console.log('Login successful:', response);
-        setIsAuthenticated(true);
+        setIsAuthenticated(true, response.uid);
         hasSubmittedDailyCheckin(response.uid).then((hasSubmitted) => {
           if (hasSubmitted) {
             router.replace('/home');

@@ -2,15 +2,15 @@ import React, { createContext, useReducer, ReactNode, useContext } from "react";
 import { authReducer, AuthState, Action } from "./auth-reducer";
 
 export interface AuthContextType extends AuthState {
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setUid: (uid: string | undefined) => void;
+  setIsAuthenticated: (isAuthenticated: boolean, uid: string) => void;
+  removeAuth: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   uid: "",
   setIsAuthenticated: () => {},
-  setUid: () => {},
+  removeAuth: () => {},
 });
 
 interface AuthContextProviderProps {
@@ -26,18 +26,18 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   );
 
-  const setIsAuthenticated = (isAuthenticated: boolean) => {
-    dispatch({ type: "Authenticated", isAuthenticated });
+  const setIsAuthenticated = (isAuthenticated: boolean, uid: string) => {
+    dispatch({ type: "Authenticated", value: { isAuthenticated, uid } });
   };
 
-  const setUid = (uid: string | undefined = "") => {
-    dispatch({ type: "UID", uid: uid || "" });
+  const removeAuth = () => {
+    dispatch({ type: "Signout" });
   };
 
   const ctxValue: AuthContextType = {
     ...state,
     setIsAuthenticated,
-    setUid,
+    removeAuth,
   };
 
   return (

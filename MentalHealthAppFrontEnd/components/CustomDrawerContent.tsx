@@ -17,12 +17,12 @@ export interface User {
 
 const CustomDrawerContent = ({
   props,
+  removeAuth,
   signout,
-  setAuth,
 }: {
   props: any;
+  removeAuth: () => void;
   signout: () => Promise<void>;
-  setAuth: (value: boolean) => void;
 }) => {
   const [user, setUser] = useState<User | null>(null);
 
@@ -84,7 +84,7 @@ const CustomDrawerContent = ({
         label="Sign out"
         onPress={async () => {
           await signout();
-          setAuth(false);
+          removeAuth();
         }}
       />
     </DrawerContentScrollView>

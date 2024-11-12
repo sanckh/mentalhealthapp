@@ -14,7 +14,7 @@ import { signout } from "@/api/auth";
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, removeAuth } = useAuth();
   const { theme } = useThemeContext();
   const isDark = theme === "dark";
 
@@ -39,7 +39,7 @@ const DrawerNavigator = () => {
         <CustomDrawerContent
           props={props}
           signout={signout}
-          setAuth={setIsAuthenticated}
+          removeAuth={removeAuth}
         />
       )}
     >

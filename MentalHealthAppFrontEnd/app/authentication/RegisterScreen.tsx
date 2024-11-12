@@ -15,7 +15,7 @@ import { useThemeContext } from '@/components/ThemeContext';
 export default function RegisterScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
-  const { setIsAuthenticated, setUid } = useAuth();
+  const { setIsAuthenticated } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -43,8 +43,7 @@ export default function RegisterScreen() {
     try {
       const response = await register(name, email, password);
       if (response) {
-        setUid(response.uid);
-        setIsAuthenticated(true);
+        setIsAuthenticated(true, response.uid);
         Alert.alert('Success', 'User registered successfully');
         router.replace('/home');
       }
