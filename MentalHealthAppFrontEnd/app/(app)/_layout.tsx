@@ -7,7 +7,7 @@ import DailyCheckInScreen from "./dailycheckin";
 import HomeScreen from "./home";
 import ProfileScreen from "./profile";
 import SettingsScreen from "./settings";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../store/auth/auth-context";
 import { useThemeContext } from "@/components/ThemeContext";
 import { signout } from "@/api/auth";
 
