@@ -6,25 +6,19 @@ export interface AuthState {
 
 export type Action =
   | { type: "Signout" }
-  | { type: "Authenticated"; value: { isAuthenticated: boolean; token: string, uid: string } };
+  | { type: "Authetication"; value: { isAuthenticated: boolean; token: string, uid: string } };
+
 
 /**
- * Reducer function for handling authentication state.
+ * Reducer function for authentication state management.
+ *
  * @param state - The current authentication state.
- * @param action - The action object that describes the state change.
+ * @param action - The action to be processed.
  * @returns The new authentication state.
- */
+*/
 export function authReducer(state: AuthState, action: Action): AuthState {
   switch (action.type) {
-    case "Authenticated":
-      localStorage.setItem(
-        "mhAuthState",
-        JSON.stringify({
-          isAuthenticated: action.value.isAuthenticated,
-          token: action.value.token,
-          uid: action.value.uid,
-        })
-      );
+    case "Authetication":
       return {
         ...state,
         isAuthenticated: action.value.isAuthenticated,
@@ -32,7 +26,6 @@ export function authReducer(state: AuthState, action: Action): AuthState {
         uid: action.value.uid,
       };
     case "Signout":
-      localStorage.removeItem("mhAuthState");
       return {
         ...state,
         isAuthenticated: false,

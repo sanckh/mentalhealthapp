@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser } from "@/api/auth";
@@ -23,7 +23,6 @@ import {
   removeFavoriteResource,
 } from "@/api/recommendedResources";
 
-
 export default function HomeScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
@@ -38,7 +37,6 @@ export default function HomeScreen() {
     null
   );
   const [favoriteResourceIds, setFavoriteResourceIds] = useState<string[]>([]);
-
 
   useEffect(() => {
     const initialize = async () => {
@@ -63,8 +61,6 @@ export default function HomeScreen() {
     initialize();
   }, []);
 
-
-
   const toggleFavorite = async (resourceId: string) => {
     const isFavorite = favoriteResourceIds.includes(resourceId);
 
@@ -85,7 +81,6 @@ export default function HomeScreen() {
       );
     }
   };
-  
 
   if (loading) {
     return (

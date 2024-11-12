@@ -15,6 +15,7 @@ import { useAuth } from "../store/auth/auth-context";
 import { router } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
 import ResetPasswordModal from "@/components/ResetPasswordModal";
+import { getData } from "../utilities/storage-utility";
 
 export default function LoginScreen() {
   const { theme } = useThemeContext();
@@ -30,19 +31,24 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isResetModalVisible, setIsResetModalVisible] = useState(false);
 
-  const authState = localStorage.getItem("mhAuthState");
-  const data = authState ? JSON.parse(authState) : null;
+  const getAuthState = async () => {
+    const authState = await getData("mhAuthState");
+    return authState ? JSON.parse(authState) : null;
+  };
 
-useEffect(() => {
-  if (data) {
-    setIsLoading(true);
-    console.log("DAta", data);
-    const { isAuthenticated, token, uid } = data;
-    setIsAuthenticated(isAuthenticated, token, uid);
-    router.replace("/home");
-    setIsLoading(false);
-  }
-}, [authState]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAuthState();
+      if (data) {
+        setIsLoading(true);
+        const { isAuthenticated, token, uid } = data;
+        setIsAuthenticated(isAuthenticated, token, uid);
+        router.replace("/home");
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const validate = () => {
     let valid = true;
@@ -99,9 +105,8 @@ useEffect(() => {
       });
   };
 
-  return (
-    !data ? (
-      <View style={styles.container}>
+  return !isAuthenticated ? (
+    <View style={styles.container}>
       <Text style={styles.title}>Mental Health App Placeholder</Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -178,7 +183,8 @@ useEffect(() => {
         onClose={() => setIsResetModalVisible(false)}
       />
     </View>
-    ) : (<ActivityIndicator color="#fff" />)
+  ) : (
+    <ActivityIndicator color="#fff" />
   );
 }
 
