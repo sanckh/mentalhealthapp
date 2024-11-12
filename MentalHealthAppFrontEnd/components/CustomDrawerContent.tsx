@@ -17,12 +17,12 @@ export interface User {
 
 const CustomDrawerContent = ({
   props,
+  removeAuth,
   signout,
-  setAuth,
 }: {
   props: any;
+  removeAuth: () => void;
   signout: () => Promise<void>;
-  setAuth: (value: boolean) => void;
 }) => {
   const [user, setUser] = useState<User | null>(null);
 
@@ -82,9 +82,10 @@ const CustomDrawerContent = ({
 
       <DrawerItem
         label="Sign out"
+        inactiveTintColor="#888"
         onPress={async () => {
           await signout();
-          setAuth(false);
+          removeAuth();
         }}
       />
     </DrawerContentScrollView>
@@ -101,6 +102,8 @@ const styles = ScaledSheet.create({
     borderRadius: 70,
     height: vs(60),
     marginBottom: vs(10),
+    objectFit: "cover",
+    resizeMode: "cover",
     width: s(60),
   },
   userName: {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CrisisScreen from "../crisis/CrisisScreen";
 import CustomDrawerContent from "../../components/CustomDrawerContent";
@@ -7,14 +7,14 @@ import DailyCheckInScreen from "./dailycheckin";
 import HomeScreen from "./home";
 import ProfileScreen from "./profile";
 import SettingsScreen from "./settings";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../store/auth/auth-context";
 import { useThemeContext } from "@/components/ThemeContext";
 import { signout } from "@/api/auth";
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, removeAuth, setIsAuthenticated } = useAuth();
   const { theme } = useThemeContext();
   const isDark = theme === "dark";
 
@@ -39,7 +39,7 @@ const DrawerNavigator = () => {
         <CustomDrawerContent
           props={props}
           signout={signout}
-          setAuth={setIsAuthenticated}
+          removeAuth={removeAuth}
         />
       )}
     >

@@ -13,10 +13,11 @@ import RemoveCrisisContactModal from '@/components/RemoveCrisisContactModal';
 import ResetPasswordModal from '@/components/ResetPasswordModal';
 import { getCurrentUser, resetPassword, signout } from '@/api/auth';
 import ThemeContext from '../../components/ThemeContext';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../store/auth/auth-context';
 import ChangeDisplayNameModal from '@/components/ChangeDisplayNameModal';
 
 export default function SettingsScreen() {
+  const { removeAuth } = useAuth();
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false);
@@ -25,7 +26,6 @@ export default function SettingsScreen() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [displayName, setDisplayName] = useState('');
 
   // Access theme and toggleTheme from ThemeContext
@@ -66,7 +66,7 @@ export default function SettingsScreen() {
     try {
       await signout();
       setUser(null);
-      setIsAuthenticated(false);
+      removeAuth();
     } catch (error) {
       console.error("Error signing out:", error);
     }
