@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,21 +8,22 @@ import {
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
-} from 'react-native';
-import { login } from '../../api/auth';
-import { hasSubmittedDailyCheckin } from '@/api/checkin';
-import { useAuth } from '../store/auth/auth-context';
-import { router } from 'expo-router';
-import { useThemeContext } from '@/components/ThemeContext';
-import ResetPasswordModal from '@/components/ResetPasswordModal';
+} from "react-native";
+import { login } from "../../api/auth";
+import { hasSubmittedDailyCheckin } from "@/api/checkin";
+import { useAuth } from "../store/auth/auth-context";
+import { router } from "expo-router";
+import { useThemeContext } from "@/components/ThemeContext";
+import ResetPasswordModal from "@/components/ResetPasswordModal";
+import { getData } from "../utilities/storage-utility";
 
 export default function LoginScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { setIsAuthenticated } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -30,20 +31,39 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isResetModalVisible, setIsResetModalVisible] = useState(false);
 
+  const getAuthState = async () => {
+    const authState = await getData("mhAuthState");
+    return authState ? JSON.parse(authState) : null;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAuthState();
+      if (data) {
+        setIsLoading(true);
+        const { isAuthenticated, token, uid } = data;
+        setIsAuthenticated(isAuthenticated, token, uid);
+        router.replace("/home");
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const validate = () => {
     let valid = true;
 
     // Simple email validation regex
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email');
+      setEmailError("Please enter a valid email");
       valid = false;
     } else {
       setEmailError(null);
     }
 
     if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError("Password must be at least 6 characters");
       valid = false;
     } else {
       setPasswordError(null);
@@ -61,22 +81,23 @@ export default function LoginScreen() {
 
     login(email, password)
       .then((response) => {
-        console.log('Login successful:', response);
-        setIsAuthenticated(true, response.uid);
+        console.log("Login successful:", response);
+
+        setIsAuthenticated(true, response.token, response.uid);
         hasSubmittedDailyCheckin(response.uid).then((hasSubmitted) => {
           if (hasSubmitted) {
-            router.replace('/home');
+            router.replace("/home");
           } else {
-            router.replace('/dailycheckin');
+            router.replace("/dailycheckin");
           }
         });
       })
       .catch((error: any) => {
-        console.error('Login failed:', error);
+        console.error("Login failed:", error);
         if (error instanceof Error) {
-          Alert.alert('Login Error', error.message);
+          Alert.alert("Login Error", error.message);
         } else {
-          Alert.alert('Login Error', 'An unknown error occurred');
+          Alert.alert("Login Error", "An unknown error occurred");
         }
       })
       .finally(() => {
@@ -84,7 +105,7 @@ export default function LoginScreen() {
       });
   };
 
-  return (
+  return !isAuthenticated ? (
     <View style={styles.container}>
       <Text style={styles.title}>Mental Health App Placeholder</Text>
       <View style={styles.inputContainer}>
@@ -103,7 +124,10 @@ export default function LoginScreen() {
       <View style={styles.inputContainer}>
         <View style={styles.passwordContainer}>
           <TextInput
-            style={[styles.input, passwordError ? styles.errorInput : { flex: 1 }]}
+            style={[
+              styles.input,
+              passwordError ? styles.errorInput : { flex: 1 },
+            ]}
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
@@ -112,9 +136,13 @@ export default function LoginScreen() {
           />
           <TouchableOpacity
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}
+            accessibilityLabel={
+              isPasswordVisible ? "Hide password" : "Show password"
+            }
           >
-            <Text style={styles.showHideText}>{isPasswordVisible ? 'Hide' : 'Show'}</Text>
+            <Text style={styles.showHideText}>
+              {isPasswordVisible ? "Hide" : "Show"}
+            </Text>
           </TouchableOpacity>
         </View>
         {passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
@@ -138,11 +166,13 @@ export default function LoginScreen() {
       </Pressable>
       <Pressable
         style={styles.registerButton}
-        onPress={() => router.replace('/register')}
+        onPress={() => router.replace("/register")}
         accessibilityLabel="Register"
         accessibilityHint="Press to create a new account"
       >
-        <Text style={styles.registerButtonText}>Don't have an account? Register</Text>
+        <Text style={styles.registerButtonText}>
+          Don't have an account? Register
+        </Text>
       </Pressable>
       <Pressable onPress={() => setIsResetModalVisible(true)}>
         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
@@ -153,87 +183,89 @@ export default function LoginScreen() {
         onClose={() => setIsResetModalVisible(false)}
       />
     </View>
+  ) : (
+    <ActivityIndicator color="#fff" />
   );
 }
 
 const createStyles = (theme: string) => {
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
   return StyleSheet.create({
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: isDark ? '#121212' : '#ffffff',
-      justifyContent: 'center',
+      backgroundColor: isDark ? "#121212" : "#ffffff",
+      justifyContent: "center",
     },
     title: {
       fontSize: 32,
-      fontWeight: 'bold',
-      color: isDark ? '#bb86fc' : '#007aff',
+      fontWeight: "bold",
+      color: isDark ? "#bb86fc" : "#007aff",
       marginBottom: 40,
-      textAlign: 'center',
+      textAlign: "center",
     },
     inputContainer: {
       marginBottom: 20,
     },
     input: {
       height: 50,
-      backgroundColor: isDark ? '#333333' : '#f2f2f2',
+      backgroundColor: isDark ? "#333333" : "#f2f2f2",
       paddingHorizontal: 15,
       borderRadius: 8,
       fontSize: 16,
-      color: isDark ? '#e0e0e0' : '#333',
+      color: isDark ? "#e0e0e0" : "#333",
     },
     errorInput: {
       borderWidth: 1,
-      borderColor: 'red',
+      borderColor: "red",
     },
     errorText: {
-      color: 'red',
+      color: "red",
       fontSize: 12,
       marginTop: 5,
     },
     passwordContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
     },
     showHideText: {
-      color: isDark ? '#bb86fc' : '#007aff',
+      color: isDark ? "#bb86fc" : "#007aff",
       marginLeft: 10,
       fontSize: 14,
-      fontWeight: '600',
+      fontWeight: "600",
     },
     button: {
       height: 50,
-      backgroundColor: isDark ? '#bb86fc' : '#007aff',
+      backgroundColor: isDark ? "#bb86fc" : "#007aff",
       borderRadius: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       marginTop: 10,
     },
     buttonPressed: {
-      backgroundColor: isDark ? '#8854d0' : '#005bb5',
+      backgroundColor: isDark ? "#8854d0" : "#005bb5",
     },
     buttonDisabled: {
-      backgroundColor: isDark ? '#5a5a5a' : '#a0c4ff',
+      backgroundColor: isDark ? "#5a5a5a" : "#a0c4ff",
     },
     buttonText: {
-      color: '#fff',
+      color: "#fff",
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
     registerButton: {
       marginTop: 20,
-      alignItems: 'center',
+      alignItems: "center",
     },
     registerButtonText: {
-      color: isDark ? '#bb86fc' : '#007aff',
+      color: isDark ? "#bb86fc" : "#007aff",
       fontSize: 16,
-      fontWeight: '600',
+      fontWeight: "600",
     },
     forgotPasswordText: {
       marginTop: 10,
-      textAlign: 'center',
-      color: isDark ? '#bb86fc' : '#007aff',
+      textAlign: "center",
+      color: isDark ? "#bb86fc" : "#007aff",
     },
   });
 };

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { getCurrentUser } from "@/api/auth";
@@ -23,11 +23,10 @@ import {
   removeFavoriteResource,
 } from "@/api/recommendedResources";
 
-
 export default function HomeScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
-  const { isAuthenticated, uid } = useAuth();
+  const { isAuthenticated, token, uid, setIsAuthenticated } = useAuth();
   const router = useRouter();
 
   const [user, setUser] = useState<any>(null);
@@ -61,12 +60,6 @@ export default function HomeScreen() {
 
     initialize();
   }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated]);
 
   const toggleFavorite = async (resourceId: string) => {
     const isFavorite = favoriteResourceIds.includes(resourceId);

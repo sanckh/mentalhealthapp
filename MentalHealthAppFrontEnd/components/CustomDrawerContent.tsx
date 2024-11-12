@@ -82,6 +82,7 @@ const CustomDrawerContent = ({
 
       <DrawerItem
         label="Sign out"
+        inactiveTintColor="#888"
         onPress={async () => {
           await signout();
           removeAuth();
@@ -101,6 +102,8 @@ const styles = ScaledSheet.create({
     borderRadius: 70,
     height: vs(60),
     marginBottom: vs(10),
+    objectFit: "cover",
+    resizeMode: "cover",
     width: s(60),
   },
   userName: {

@@ -1,30 +1,35 @@
 export interface AuthState {
   isAuthenticated: boolean;
+  token: string;
   uid: string;
 }
 
 export type Action =
   | { type: "Signout" }
-  | { type: "Authenticated"; value: { isAuthenticated: boolean; uid: string } };
+  | { type: "Authetication"; value: { isAuthenticated: boolean; token: string, uid: string } };
+
 
 /**
- * Reducer function for handling authentication state.
+ * Reducer function for authentication state management.
+ *
  * @param state - The current authentication state.
- * @param action - The action object that describes the state change.
+ * @param action - The action to be processed.
  * @returns The new authentication state.
- */
+*/
 export function authReducer(state: AuthState, action: Action): AuthState {
   switch (action.type) {
-    case "Authenticated":
+    case "Authetication":
       return {
         ...state,
         isAuthenticated: action.value.isAuthenticated,
+        token: action.value.token,
         uid: action.value.uid,
       };
     case "Signout":
       return {
         ...state,
         isAuthenticated: false,
+        token: "",
         uid: "",
       };
     default:

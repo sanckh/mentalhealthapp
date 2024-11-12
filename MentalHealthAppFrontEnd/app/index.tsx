@@ -7,9 +7,10 @@ export default function Index() {
   const router = useRouter();
   useEffect(() => {
     // Delay navigation slightly
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       router.replace('/login');
     }, 0); // You can increase the delay slightly if necessary
+    return () => clearTimeout(timer);
   }, [router]);
 
   return (

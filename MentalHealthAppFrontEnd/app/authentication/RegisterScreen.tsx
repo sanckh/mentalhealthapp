@@ -43,7 +43,7 @@ export default function RegisterScreen() {
     try {
       const response = await register(name, email, password);
       if (response) {
-        setIsAuthenticated(true, response.uid);
+        setIsAuthenticated(true, response.token, response.uid);
         Alert.alert('Success', 'User registered successfully');
         router.replace('/home');
       }
