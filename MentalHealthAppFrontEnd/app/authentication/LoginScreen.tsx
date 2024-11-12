@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { login } from '../../api/auth';
 import { hasSubmittedDailyCheckin } from '@/api/checkin';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../store/auth/auth-context';
 import { router } from 'expo-router';
 import { useThemeContext } from '@/components/ThemeContext';
 import ResetPasswordModal from '@/components/ResetPasswordModal';
@@ -61,7 +61,8 @@ export default function LoginScreen() {
 
     login(email, password)
       .then((response) => {
-        setIsAuthenticated(true);
+        console.log('Login successful:', response);
+        setIsAuthenticated(true, response.uid);
         hasSubmittedDailyCheckin(response.uid).then((hasSubmitted) => {
           if (hasSubmitted) {
             router.replace('/home');

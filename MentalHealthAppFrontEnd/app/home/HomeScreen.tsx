@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -10,10 +9,10 @@ import {
 import * as Linking from 'expo-linking';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { hasSubmittedDailyCheckin } from "@/api/checkin";
-import { getCurrentUser, signout } from "@/api/auth";
+import { getCurrentUser } from "@/api/auth";
 import { getPersonalizedInsights } from "@/api/insights";
 import { insightModel } from "@/models/insightModel";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../store/auth/auth-context";
 import { useRouter } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
 import { recommendedResourceModel } from "@/models/recommendedResourceModel";
@@ -24,9 +23,12 @@ import {
   removeFavoriteResource,
 } from "@/api/recommendedResources";
 
+
 export default function HomeScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
+  const { isAuthenticated, uid } = useAuth();
+  const router = useRouter();
 
   const [user, setUser] = useState<any>(null);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
@@ -36,8 +38,6 @@ export default function HomeScreen() {
     null
   );
   const [favoriteResourceIds, setFavoriteResourceIds] = useState<string[]>([]);
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
     const initialize = async () => {

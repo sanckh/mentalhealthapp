@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   Alert,
@@ -10,18 +9,17 @@ import {
 } from 'react-native';
 import { register } from '../../api/auth';
 import { router } from 'expo-router';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../store/auth/auth-context';
 import { useThemeContext } from '@/components/ThemeContext';
 
 export default function RegisterScreen() {
   const { theme } = useThemeContext();
   const styles = createStyles(theme);
-
+  const { setIsAuthenticated } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
-  const { setIsAuthenticated } = useAuth();
 
   const validatePassword = (pass: string) => {
     const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -45,7 +43,7 @@ export default function RegisterScreen() {
     try {
       const response = await register(name, email, password);
       if (response) {
-        setIsAuthenticated(true);
+        setIsAuthenticated(true, response.uid);
         Alert.alert('Success', 'User registered successfully');
         router.replace('/home');
       }

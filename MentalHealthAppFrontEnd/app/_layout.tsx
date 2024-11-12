@@ -1,17 +1,15 @@
-// app/_layout.tsx
 import { Slot } from "expo-router";
-import { AuthProvider } from "./AuthContext";
+import { AuthContextProvider } from "./store/auth/auth-context";
 import { ThemeProvider } from "@/components/ThemeContext";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function RootLayout() {
-  console.log("API_URL:", API_URL);
   return (
     <ThemeProvider>
-      <AuthProvider>
+      <AuthContextProvider>
         <Slot />
-      </AuthProvider>
+      </AuthContextProvider>
     </ThemeProvider>
   );
 }
