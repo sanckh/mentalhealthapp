@@ -43,11 +43,46 @@ const DrawerNavigator = () => {
         />
       )}
     >
-      <Drawer.Screen name="Home" component={HomeScreen} />
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
-      <Drawer.Screen name="Settings" component={SettingsScreen} />
-      <Drawer.Screen name="Daily Check In" component={DailyCheckInScreen} />
-      <Drawer.Screen name="Crisis" component={CrisisScreen} />
+      <Drawer.Screen
+        options={{
+          drawerLabel: "Home",
+          title: "Home",
+        }}
+        name="home"
+        component={HomeScreen}
+      />
+      <Drawer.Screen
+        options={{
+          drawerLabel: "Profile",
+          title: "Profile",
+        }}
+        name="profile"
+        component={ProfileScreen}
+      />
+      <Drawer.Screen
+        options={{
+          drawerLabel: "Settings",
+          title: "Settings",
+        }}
+        name="settings"
+        component={SettingsScreen}
+      />
+      <Drawer.Screen
+        options={{
+          drawerLabel: "Daily Check In",
+          title: "Daily Check In",
+        }}
+        name="dailycheckin"
+        component={DailyCheckInScreen}
+      />
+      <Drawer.Screen
+        options={{
+          drawerLabel: "Crisis",
+          title: "Crisis",
+        }}
+        name="crisis"
+        component={CrisisScreen}
+      />
     </Drawer.Navigator>
   );
 };
