@@ -7,4 +7,5 @@ export interface Insight {
     trigger: InsightTrigger;
     icon: string;
     category: string;
+    moreInformation: string;
   }
