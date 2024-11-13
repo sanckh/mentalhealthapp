@@ -7,5 +7,6 @@ export interface insightModel {
         condition: string,
         type: string,
         value: number
-    }
+    },
+    moreinformation: string;
 }
