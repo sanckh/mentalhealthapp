@@ -14,7 +14,7 @@ import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { useAuth } from "../store/auth/auth-context";
 import { router } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
-import ResetPasswordModal from "@/components/ResetPasswordModal";
+import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
 import { getData } from "../utilities/storage-utility";
 import { colors } from '../theme/colors';
 
@@ -24,7 +24,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, isLoading: isAuthLoading } = useAuth();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -33,23 +33,31 @@ export default function LoginScreen() {
   const [isResetModalVisible, setIsResetModalVisible] = useState(false);
 
   const getAuthState = async () => {
-    const authState = await getData("mhAuthState");
-    return authState ? JSON.parse(authState) : null;
+    try {
+      const authState = await getData("mhAuthState");
+      return authState ? JSON.parse(authState) : null;
+    } catch (error) {
+      console.error("Error getting auth state:", error);
+      return null;
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getAuthState();
-      if (data) {
-        setIsLoading(true);
+      if (data?.isAuthenticated && data?.uid) {
         const { isAuthenticated, token, uid } = data;
-        setIsAuthenticated(isAuthenticated, token, uid);
-        router.replace("/home");
-        setIsLoading(false);
+        await setIsAuthenticated(isAuthenticated, token, uid);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/home");
+    }
+  }, [isAuthenticated]);
 
   const validate = () => {
     let valid = true;
@@ -73,41 +81,35 @@ export default function LoginScreen() {
     return valid;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validate()) {
       return;
     }
 
     setIsLoading(true);
-
-    login(email, password)
-      .then((response) => {
-        console.log("Login successful:", response);
-
-        setIsAuthenticated(true, response.token, response.uid);
-        hasSubmittedDailyCheckin(response.uid).then((hasSubmitted) => {
-          if (hasSubmitted) {
-            router.replace("/home");
-          } else {
-            router.replace("/dailycheckin");
-          }
-        });
-      })
-      .catch((error: any) => {
-        console.error("Login failed:", error);
-        if (error instanceof Error) {
-          Alert.alert("Login Error", error.message);
-        } else {
-          Alert.alert("Login Error", "An unknown error occurred");
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const response = await login(email, password);
+      await setIsAuthenticated(true, response.token, response.uid);
+      const hasSubmitted = await hasSubmittedDailyCheckin(response.uid);
+      router.replace(hasSubmitted ? "/home" : "/dailycheckin");
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      Alert.alert(
+        "Login Error",
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return !isAuthenticated ? (
     <View style={styles.container}>
+      {(isLoading || isAuthLoading) && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large"/>
+        </View>
+      )}
       <Text style={styles.title}>Mental Health App Placeholder</Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -152,14 +154,14 @@ export default function LoginScreen() {
         style={({ pressed }) => [
           styles.button,
           pressed && styles.buttonPressed,
-          isLoading && styles.buttonDisabled,
+          (isLoading || isAuthLoading) && styles.buttonDisabled,
         ]}
         onPress={handleLogin}
-        disabled={isLoading}
+        disabled={isLoading || isAuthLoading}
         accessibilityLabel="Login"
         accessibilityHint="Press to log into your account"
       >
-        {isLoading ? (
+        {(isLoading || isAuthLoading) ? (
           <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.buttonText}>Login</Text>
@@ -274,6 +276,16 @@ const createStyles = (theme: string) => {
     showHideText: {
       color: themeColors.primary,
       paddingHorizontal: 10,
+    },
+    loadingOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 };
