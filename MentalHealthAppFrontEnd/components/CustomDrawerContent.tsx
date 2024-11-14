@@ -8,6 +8,8 @@ import {
 } from "@react-navigation/drawer";
 import { getCurrentUser } from "@/api/auth";
 import ShowIf from "./ShowIf";
+import { useThemeContext } from "./ThemeContext";
+import { colors } from '../app/theme/colors';
 
 export interface User {
   profileImageUrl: string;
@@ -25,6 +27,9 @@ const CustomDrawerContent = ({
   signout: () => Promise<void>;
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const { theme } = useThemeContext();
+  const isDark = theme === 'dark';
+  const themeColors = isDark ? colors.dark : colors.light;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -38,6 +43,38 @@ const CustomDrawerContent = ({
 
     fetchUser();
   }, []);
+
+  const createStyles = (themeColors: any) => {
+    return ScaledSheet.create({
+      userInfoContainer: {
+        alignItems: "center",
+        backgroundColor: themeColors.surfaceVariant,
+        padding: ms(20),
+      },
+      avatar: {
+        borderRadius: 70,
+        height: vs(60),
+        marginBottom: vs(10),
+        objectFit: "cover",
+        resizeMode: "cover",
+        width: s(60),
+        borderWidth: 2,
+        borderColor: themeColors.primary,
+      },
+      userName: {
+        fontSize: s(18),
+        fontWeight: "bold",
+        marginBottom: vs(5),
+        color: themeColors.text,
+      },
+      userDate: {
+        color: themeColors.textSecondary,
+        fontSize: s(14),
+      },
+    });
+  };
+
+  const styles = createStyles(themeColors);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -58,13 +95,15 @@ const CustomDrawerContent = ({
                 style={[
                   styles.avatar,
                   {
-                    backgroundColor: "#ccc",
+                    backgroundColor: themeColors.surfaceVariant,
                     alignItems: "center",
                     justifyContent: "center",
                   },
                 ]}
               >
-                <Text style={{ color: "#fff" }}>{user?.name?.charAt(0)}</Text>
+                <Text style={{ color: themeColors.primary }}>
+                  {user?.name?.charAt(0)}
+                </Text>
               </View>
             );
           }}
@@ -82,7 +121,7 @@ const CustomDrawerContent = ({
 
       <DrawerItem
         label="Sign out"
-        inactiveTintColor="#888"
+        inactiveTintColor={themeColors.textSecondary}
         onPress={async () => {
           await signout();
           removeAuth();
@@ -91,30 +130,5 @@ const CustomDrawerContent = ({
     </DrawerContentScrollView>
   );
 };
-
-const styles = ScaledSheet.create({
-  userInfoContainer: {
-    alignItems: "center",
-    backgroundColor: "#f4f4f4",
-    padding: ms(20),
-  },
-  avatar: {
-    borderRadius: 70,
-    height: vs(60),
-    marginBottom: vs(10),
-    objectFit: "cover",
-    resizeMode: "cover",
-    width: s(60),
-  },
-  userName: {
-    fontSize: s(18),
-    fontWeight: "bold",
-    marginBottom: vs(5),
-  },
-  userDate: {
-    color: "#888",
-    fontSize: s(14),
-  },
-});
 
 export default CustomDrawerContent;

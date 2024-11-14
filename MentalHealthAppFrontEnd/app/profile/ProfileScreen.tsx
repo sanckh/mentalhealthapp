@@ -21,6 +21,7 @@ import { convertToUserLocalTime } from "../utilities/dateUtils";
 import { recommendedResourceModel } from "@/models/recommendedResourceModel";
 import { getFavoriteResources, removeFavoriteResource } from "@/api/recommendedResources";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { colors } from '../theme/colors';
 
 export default function ProfileScreen() {
   const { theme } = useThemeContext();
@@ -280,10 +281,13 @@ function processCheckinData(checkinData: any[]) {
 
 const createStyles = (theme: string) => {
   const isDark = theme === "dark";
+  const themeColors = isDark ? colors.dark : colors.light;
+  const screenWidth = Dimensions.get("window").width;
+
   return StyleSheet.create({
     container: {
       flexGrow: 1,
-      backgroundColor: isDark ? "#1e1e1e" : "#f5f5f5",
+      backgroundColor: themeColors.background,
       alignItems: "center",
       padding: 20,
     },
@@ -296,29 +300,27 @@ const createStyles = (theme: string) => {
       height: 100,
       borderRadius: 50,
       borderWidth: 3,
-      borderColor: isDark ? "#333" : "#fff",
+      borderColor: themeColors.primary,
       marginBottom: 10,
     },
     userStats: {
       fontSize: 16,
-      color: isDark ? "#eee" : "#222",
+      color: themeColors.text,
       textAlign: "center",
       marginBottom: 10,
       padding: 10,
-      backgroundColor: isDark ? "#444" : "#e0f7fa",
+      backgroundColor: themeColors.surfaceVariant,
       borderRadius: 10,
-      borderColor: isDark ? "#666" : "#00acc1",
+      borderColor: themeColors.primary,
       borderWidth: 1,
     },
-
     highlightText: {
       fontWeight: "bold",
-      color: "#ff9800",
+      color: themeColors.primary,
     },
-
     zeroCheckinsNote: {
       fontSize: 16,
-      color: isDark ? "#f0a" : "#d32f2f",
+      color: themeColors.textSecondary,
       textAlign: "center",
       marginTop: 10,
     },
@@ -326,11 +328,19 @@ const createStyles = (theme: string) => {
       width: "100%",
       marginVertical: 20,
       alignItems: "center",
+      backgroundColor: themeColors.surface,
+      borderRadius: 10,
+      padding: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     sectionTitle: {
       fontSize: 18,
       fontWeight: "600",
-      color: isDark ? "#fff" : "#333",
+      color: themeColors.text,
       marginBottom: 10,
     },
     chart: {
@@ -347,15 +357,15 @@ const createStyles = (theme: string) => {
       alignItems: "center",
       paddingVertical: 15,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "#333" : "#ddd",
+      borderBottomColor: themeColors.border,
     },
     resourceTitle: {
       fontSize: 16,
-      color: isDark ? "#ccc" : "#333",
+      color: themeColors.text,
     },
     star: {
       fontSize: 18,
-      color: isDark ? "#ffcc00" : "#ffd700",
+      color: themeColors.accent,
     },
     nameContainer: {
       flexDirection: "row",
@@ -364,24 +374,55 @@ const createStyles = (theme: string) => {
     userName: {
       fontSize: 24,
       fontWeight: "bold",
-      color: isDark ? "#fff" : "#000",
+      color: themeColors.text,
       marginBottom: 5,
     },
     editButton: {
       marginLeft: 10,
       padding: 5,
-      backgroundColor: isDark ? "#555" : "#e0f7fa",
+      backgroundColor: themeColors.surfaceVariant,
       borderRadius: 5,
     },
     editButtonText: {
       fontSize: 16,
-      color: isDark ? "#fff" : "#00acc1",
+      color: themeColors.primary,
     },
     noFavoritesText: {
       fontSize: 16,
-      color: isDark ? "#ccc" : "#666",
       textAlign: "center",
+      color: themeColors.textSecondary,
       marginTop: 10,
+    },
+    favoriteResourcesContainer: {
+      marginTop: 20,
+      width: "100%",
+    },
+    resourceCard: {
+      backgroundColor: themeColors.surfaceVariant,
+      borderRadius: 8,
+      padding: 15,
+      marginBottom: 10,
+      flexDirection: "row",
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    resourceInfo: {
+      flex: 1,
+    },
+    resourceCategory: {
+      fontSize: 14,
+      color: themeColors.textSecondary,
+    },
+    removeButton: {
+      padding: 8,
+    },
+    removeButtonText: {
+      color: themeColors.error,
+      fontSize: 16,
     },
   });
 };

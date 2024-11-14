@@ -14,6 +14,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { deleteUserContact, getUserContacts } from '../api/userContacts';
 import { userContactModel } from '@/models/userContactModel';
+import { useThemeContext } from './ThemeContext';
+import { colors } from '../app/theme/colors';
 
 interface Props {
   visible: boolean;
@@ -31,6 +33,8 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
   const [contacts, setContacts] = useState<userContactModel[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { theme } = useThemeContext();
+  const styles = createStyles(theme);
 
   // Fetch user contacts when modal opens
   useEffect(() => {
@@ -72,8 +76,8 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
     try {
       await deleteUserContact(userId, contactId);
       Alert.alert('Success', 'Contact removed successfully.');
-      fetchContacts(); 
-      onContactRemoved(); 
+      fetchContacts();
+      onContactRemoved();
     } catch (err: any) {
       console.error('Error removing contact:', err);
       Alert.alert('Error', 'Failed to remove contact. Please try again.');
@@ -92,7 +96,7 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
           onPress={() => handleRemoveContact(item.contactId, item.contactName)}
           accessibilityLabel={`Remove ${item.contactName}`}
         >
-          <Icon name="delete" size={24} color="#fff" />
+          <Icon name="delete" size={24} color={theme === 'dark' ? colors.dark.error : colors.light.error} />
         </TouchableOpacity>
       </View>
     ),
@@ -110,7 +114,7 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
           <Text style={styles.title}>Remove Crisis Contact</Text>
 
           {loading ? (
-            <ActivityIndicator size="large" color="#6200EE" style={styles.loader} />
+            <ActivityIndicator size="large" color={theme === 'dark' ? colors.dark.primary : colors.light.primary} style={styles.loader} />
           ) : error ? (
             <Text style={styles.errorText}>{error}</Text>
           ) : contacts && contacts.length > 0 ? (
@@ -137,92 +141,107 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
 
 export default RemoveCrisisContactModal;
 
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  touchableArea: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 20,
-    width: '90%',
-    maxHeight: '80%',
-  },
-  title: {
-    fontSize: 22,
-    marginBottom: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    color: '#1A237E',
-  },
-  loader: {
-    marginVertical: 20,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  contactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E3F2FD',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  contactInfo: {
-    flex: 1,
-  },
-  contactName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A237E',
-  },
-  contactNumber: {
-    fontSize: 14,
-    color: '#3949AB',
-  },
-  removeButton: {
-    backgroundColor: '#D32F2F',
-    padding: 8,
-    borderRadius: 6,
-  },
-  noDataText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  closeButton: {
-    backgroundColor: '#3949AB',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    alignItems: 'center',
-    width: '100%',
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-});
+const createStyles = (theme: string) => {
+  const isDark = theme === 'dark';
+  const themeColors = isDark ? colors.dark : colors.light;
+
+  return StyleSheet.create({
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    touchableArea: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+    modalContainer: {
+      backgroundColor: themeColors.surface,
+      borderRadius: 8,
+      padding: 20,
+      width: '90%',
+      maxHeight: '80%',
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    title: {
+      fontSize: 22,
+      marginBottom: 20,
+      fontWeight: '600',
+      textAlign: 'center',
+      color: themeColors.text,
+    },
+    loader: {
+      marginVertical: 20,
+    },
+    errorText: {
+      color: themeColors.error,
+      marginBottom: 15,
+      textAlign: 'center',
+    },
+    listContainer: {
+      paddingBottom: 20,
+    },
+    contactItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceVariant,
+      padding: 15,
+      borderRadius: 8,
+      marginBottom: 10,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    contactInfo: {
+      flex: 1,
+    },
+    contactName: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: themeColors.text,
+    },
+    contactNumber: {
+      fontSize: 14,
+      color: themeColors.textSecondary,
+    },
+    removeButton: {
+      backgroundColor: themeColors.error,
+      padding: 8,
+      borderRadius: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    buttonContainer: {
+      marginTop: 10,
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    closeButton: {
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 8,
+      backgroundColor: themeColors.primary,
+    },
+    closeButtonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    noDataText: {
+      color: themeColors.textSecondary,
+      textAlign: 'center',
+      marginVertical: 20,
+      fontSize: 16,
+    },
+  });
+};

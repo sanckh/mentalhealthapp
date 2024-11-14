@@ -10,6 +10,7 @@ import SettingsScreen from "./settings";
 import { useAuth } from "../store/auth/auth-context";
 import { useThemeContext } from "@/components/ThemeContext";
 import { signout } from "@/api/auth";
+import { colors } from '../theme/colors';
 
 const Drawer = createDrawerNavigator();
 
@@ -26,14 +27,17 @@ const DrawerNavigator = () => {
     <Drawer.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: isDark ? "#1e1e1e" : "#007BFF",
+          backgroundColor: isDark ? colors.dark.surface : colors.light.primary,
         },
-        headerTintColor: isDark ? "#ffffff" : "#ffffff",
+        headerTintColor: '#ffffff',
+        headerTitleStyle: {
+          fontWeight: '600',
+        },
         drawerStyle: {
-          backgroundColor: isDark ? "#121212" : "#ffffff",
+          backgroundColor: isDark ? colors.dark.background : colors.light.background,
         },
-        drawerActiveTintColor: isDark ? "#bb86fc" : "#007BFF",
-        drawerInactiveTintColor: isDark ? "#888" : "#555",
+        drawerActiveTintColor: isDark ? colors.dark.primary : colors.light.primary,
+        drawerInactiveTintColor: isDark ? colors.dark.textSecondary : colors.light.textSecondary,
       }}
       drawerContent={(props) => (
         <CustomDrawerContent

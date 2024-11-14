@@ -15,6 +15,7 @@ import { getCurrentUser, resetPassword, signout } from '@/api/auth';
 import ThemeContext from '../../components/ThemeContext';
 import { useAuth } from '../store/auth/auth-context';
 import ChangeDisplayNameModal from '@/components/ChangeDisplayNameModal';
+import { colors } from '../theme/colors';
 
 export default function SettingsScreen() {
   const { removeAuth } = useAuth();
@@ -44,7 +45,6 @@ export default function SettingsScreen() {
     initialize();
   }, []);
 
-
   const handleAddCrisisContact = () => {
     setAddModalVisible(true);
   };
@@ -52,7 +52,6 @@ export default function SettingsScreen() {
   const handleRemoveCrisisContact = () => {
     setRemoveModalVisible(true);
   }
-
 
   const handleChangePassword = () => {
     setResetPasswordModalVisible(true);
@@ -84,7 +83,6 @@ export default function SettingsScreen() {
           value={theme === 'dark'}
           onValueChange={toggleTheme}
           thumbColor={theme === 'dark' ? '#f4f3f4' : '#f4f3f4'}
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
         />
       </View>
 
@@ -155,11 +153,13 @@ export default function SettingsScreen() {
 // Function to create styles based on theme
 const createStyles = (theme: string) => {
   const isDark = theme === 'dark';
+  const themeColors = isDark ? colors.dark : colors.light;
+
   return StyleSheet.create({
     container: {
       flex: 1,
       padding: 16,
-      backgroundColor: isDark ? '#121212' : '#ffffff',
+      backgroundColor: themeColors.background,
     },
     settingItem: {
       flexDirection: 'row',
@@ -167,22 +167,28 @@ const createStyles = (theme: string) => {
       alignItems: 'center',
       paddingVertical: 12,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? '#333333' : '#cccccc',
+      borderBottomColor: themeColors.border,
+      backgroundColor: themeColors.surface,
     },
     settingText: {
       fontSize: 16,
-      color: isDark ? '#ffffff' : '#000000',
+      color: themeColors.text,
     },
     actionText: {
       fontSize: 16,
-      color: '#1E90FF',
+      color: themeColors.primary,
     },
     button: {
       marginTop: 20,
       padding: 15,
-      backgroundColor: '#1E90FF',
+      backgroundColor: themeColors.primary,
       borderRadius: 8,
       alignItems: 'center',
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     buttonText: {
       color: '#ffffff',

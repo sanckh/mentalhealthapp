@@ -18,6 +18,7 @@ import { userContactModel } from "@/models/userContactModel";
 import { getUserContacts } from "@/api/userContacts";
 import { getCurrentUser } from "@/api/auth";
 import { useThemeContext } from "@/components/ThemeContext";
+import { colors } from '../theme/colors';
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 60) / 2;
@@ -188,54 +189,64 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, styles }) => (
 
 const createStyles = (theme: string) => {
   const isDark = theme === 'dark';
+  const themeColors = isDark ? colors.dark : colors.light;
+
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? '#121212' : '#E8F0FE',
+      backgroundColor: themeColors.background,
       padding: 20,
     },
     loadingContainer: {
       flex: 1,
-      backgroundColor: isDark ? '#1e1e1e' : '#E8F0FE',
+      backgroundColor: themeColors.background,
       justifyContent: 'center',
       alignItems: 'center',
     },
     header: {
       fontSize: 28,
-      fontWeight: '700',
-      marginBottom: 25,
-      textAlign: 'center',
-      color: isDark ? '#bb86fc' : '#1A237E',
+      fontWeight: 'bold',
+      color: themeColors.text,
+      marginBottom: 20,
     },
     section: {
-      marginBottom: 30,
+      marginBottom: 24,
     },
     sectionTitle: {
       fontSize: 20,
       fontWeight: '600',
-      marginBottom: 15,
-      color: isDark ? '#bb86fc' : '#303F9F',
+      color: themeColors.text,
+      marginBottom: 16,
     },
     buttonContainer: {
-      flexDirection: 'column',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      gap: 12,
     },
     callButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: isDark ? '#2b2b8a' : '#3949AB',
+      backgroundColor: themeColors.error, // Using error color for emergency buttons
       paddingVertical: 12,
-      paddingHorizontal: 15,
-      marginVertical: 6,
-      borderRadius: 10,
-      elevation: 2,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      marginBottom: 12,
+      width: '100%',
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     buttonIcon: {
-      marginRight: 10,
+      marginRight: 8,
     },
     buttonText: {
-      color: '#fff',
-      fontWeight: '600',
+      color: '#ffffff',
       fontSize: 16,
+      fontWeight: '600',
+      flex: 1,
     },
     cardGrid: {
       flexDirection: 'row',
@@ -243,44 +254,42 @@ const createStyles = (theme: string) => {
       justifyContent: 'space-between',
     },
     card: {
-      backgroundColor: isDark ? '#1e1e1e' : '#fff',
-      padding: 15,
+      backgroundColor: themeColors.surface,
       borderRadius: 12,
-      marginBottom: 15,
+      padding: 16,
+      marginBottom: 16,
       width: CARD_WIDTH,
-      flexDirection: 'row',
-      alignItems: 'center',
-      shadowColor: isDark ? '#000' : '#000',
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 8,
+      shadowRadius: 4,
       elevation: 3,
     },
     cardContent: {
       flex: 1,
-      paddingRight: 10,
     },
     cardTitle: {
       fontSize: 16,
-      fontWeight: '700',
-      color: isDark ? '#bb86fc' : '#1A237E',
-      marginBottom: 5,
+      fontWeight: '600',
+      color: themeColors.text,
+      marginBottom: 8,
     },
     cardDescription: {
-      fontSize: 12,
-      color: isDark ? '#cccccc' : '#555',
-      lineHeight: 18,
+      fontSize: 14,
+      color: themeColors.textSecondary,
+      marginBottom: 8,
     },
     cardIcon: {
-      marginLeft: 5,
+      color: themeColors.primary,
+      alignSelf: 'flex-end',
     },
     noDataText: {
       fontSize: 16,
-      color: isDark ? '#888888' : '#888',
+      color: themeColors.textSecondary,
       textAlign: 'center',
-      marginTop: 10,
+      marginTop: 20,
     },
   });
 };
-
 
 export default CrisisScreen;
