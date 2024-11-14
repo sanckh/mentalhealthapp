@@ -19,6 +19,7 @@ import { getUserContacts } from "@/api/userContacts";
 import { getCurrentUser } from "@/api/auth";
 import { useThemeContext } from "@/components/ThemeContext";
 import { colors } from '../theme/colors';
+import RemoveCrisisContactModal from "@/components/RemoveCrisisContactModal";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 60) / 2;
@@ -35,6 +36,8 @@ const CrisisScreen = () => {
   );
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<userContactModel | null>(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -86,7 +89,30 @@ const CrisisScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Emergency Contacts</Text>
-        <View style={styles.buttonContainer}>
+        {userContacts && userContacts.length > 0 ? (
+          <>
+            <View style={styles.buttonContainer}>
+              {userContacts.map((contact, index) => (
+                <CallButton
+                  key={index}
+                  iconName="person"
+                  title={contact.contactName}
+                  phoneNumber={contact.phoneNumber}
+                  onPress={() => makePhoneCall(contact.phoneNumber)}
+                  onDelete={() => {
+                    setSelectedContact(contact);
+                    setRemoveModalVisible(true);
+                  }}
+                  styles={styles}
+                />
+              ))}
+            </View>
+          </>
+        ) : (
+          <Text style={styles.noDataText}>No emergency contacts added yet.</Text>
+        )}
+
+        <View style={[styles.buttonContainer, { marginTop: 20 }]}>
           <CallButton
             iconName="phone"
             title="Suicide Hotline"
@@ -101,18 +127,6 @@ const CrisisScreen = () => {
             onPress={() => makePhoneCall("911")}
             styles={styles}
           />
-          {userContacts &&
-            userContacts.length > 0 &&
-            userContacts.map((contact) => (
-              <CallButton
-                key={contact.contactId}
-                iconName="person"
-                title={contact.contactName}
-                phoneNumber={contact.phoneNumber}
-                onPress={() => makePhoneCall(contact.phoneNumber)}
-                styles={styles}
-              />
-            ))}
         </View>
       </View>
 
@@ -133,6 +147,21 @@ const CrisisScreen = () => {
           </Text>
         )}
       </View>
+      {user && selectedContact && (
+        <RemoveCrisisContactModal
+          visible={removeModalVisible}
+          onClose={() => {
+            setRemoveModalVisible(false);
+            setSelectedContact(null);
+          }}
+          userId={user.uid}
+          onContactRemoved={() => {
+            Alert.alert('Contact Removed');
+            getUserContacts(user.uid).then(contacts => setUserContacts(contacts));
+            setSelectedContact(null);
+          }}
+        />
+      )}
     </ScrollView>
   );
 };
@@ -142,6 +171,7 @@ interface CallButtonProps {
   title: string;
   phoneNumber: string;
   onPress: () => void;
+  onDelete?: () => void;  // Optional delete function
   styles: any;
 }
 
@@ -149,6 +179,7 @@ const CallButton: React.FC<CallButtonProps> = ({
   iconName,
   title,
   onPress,
+  onDelete,
   styles
 }) => (
   <TouchableOpacity
@@ -158,6 +189,15 @@ const CallButton: React.FC<CallButtonProps> = ({
   >
     <Icon name={iconName} size={20} color="#fff" style={styles.buttonIcon} />
     <Text style={styles.buttonText}>{title}</Text>
+    {onDelete && (
+      <TouchableOpacity 
+        onPress={onDelete}
+        style={styles.deleteButton}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      >
+        <Icon name="delete" size={20} color="#fff" />
+      </TouchableOpacity>
+    )}
   </TouchableOpacity>
 );
 
@@ -247,6 +287,11 @@ const createStyles = (theme: string) => {
       fontSize: 16,
       fontWeight: '600',
       flex: 1,
+    },
+    deleteButton: {
+      position: 'absolute',
+      right: 10,
+      padding: 5,
     },
     cardGrid: {
       flexDirection: 'row',
