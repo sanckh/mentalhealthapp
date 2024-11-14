@@ -23,6 +23,7 @@ import {
   removeFavoriteResource,
 } from "@/api/recommendedResources";
 import { colors } from '../theme/colors';
+import InsightModal from "@/components/InsightModal";
 
 export default function HomeScreen() {
   const { theme } = useThemeContext();
@@ -38,6 +39,7 @@ export default function HomeScreen() {
     null
   );
   const [favoriteResourceIds, setFavoriteResourceIds] = useState<string[]>([]);
+  const [selectedInsight, setSelectedInsight] = useState<insightModel | null>(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -83,6 +85,14 @@ export default function HomeScreen() {
     }
   };
 
+  const handleInsightPress = (insight: insightModel) => {
+    setSelectedInsight(insight);
+  };
+
+  const closeModal = () => {
+    setSelectedInsight(null);
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -108,11 +118,15 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {insights !== null && insights !== undefined && insights.length > 0 && (
+        {insights && insights.length > 0 && (
           <View style={styles.card}>
             <Text style={styles.header}>Personalized Insights</Text>
             {insights.map((insight: insightModel, index: number) => (
-              <View key={index} style={styles.reuseCard}>
+              <TouchableOpacity
+                key={index}
+                style={styles.reuseCard}
+                onPress={() => handleInsightPress(insight)}
+              >
                 <View style={styles.cardIconContainer}>
                   <Icon name={insight.icon} size={30} />
                 </View>
@@ -123,10 +137,16 @@ export default function HomeScreen() {
                     {insight.description}
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}
+
+        <InsightModal
+          visible={!!selectedInsight}
+          insight={selectedInsight!}
+          onClose={closeModal}
+        />
 
         {resources && resources.length > 0 ? (
           <View style={styles.card}>
