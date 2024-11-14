@@ -12,10 +12,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { deleteUserContact, getUserContacts } from '../api/userContacts';
+import { deleteUserContact, getUserContacts } from '../../api/userContacts';
 import { userContactModel } from '@/models/userContactModel';
-import { useThemeContext } from './ThemeContext';
-import { colors } from '../app/theme/colors';
+import { useThemeContext } from '../ThemeContext';
+import { colors } from '../../app/theme/colors';
 
 interface Props {
   visible: boolean;
@@ -139,8 +139,6 @@ const RemoveCrisisContactModal: React.FC<Props> = ({
   );
 };
 
-export default RemoveCrisisContactModal;
-
 const createStyles = (theme: string) => {
   const isDark = theme === 'dark';
   const themeColors = isDark ? colors.dark : colors.light;
@@ -165,42 +163,25 @@ const createStyles = (theme: string) => {
       padding: 20,
       width: '90%',
       maxHeight: '80%',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 4,
-      elevation: 3,
     },
     title: {
       fontSize: 22,
-      marginBottom: 20,
       fontWeight: '600',
+      marginBottom: 20,
       textAlign: 'center',
       color: themeColors.text,
     },
-    loader: {
-      marginVertical: 20,
-    },
-    errorText: {
-      color: themeColors.error,
-      marginBottom: 15,
-      textAlign: 'center',
-    },
     listContainer: {
-      paddingBottom: 20,
+      flexGrow: 1,
     },
     contactItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: themeColors.surfaceVariant,
-      padding: 15,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: themeColors.background,
       borderRadius: 8,
-      marginBottom: 10,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 2,
-      elevation: 2,
+      marginBottom: 8,
     },
     contactInfo: {
       flex: 1,
@@ -208,6 +189,7 @@ const createStyles = (theme: string) => {
     contactName: {
       fontSize: 16,
       fontWeight: '600',
+      marginBottom: 4,
       color: themeColors.text,
     },
     contactNumber: {
@@ -215,33 +197,36 @@ const createStyles = (theme: string) => {
       color: themeColors.textSecondary,
     },
     removeButton: {
-      backgroundColor: themeColors.error,
       padding: 8,
-      borderRadius: 4,
-      justifyContent: 'center',
-      alignItems: 'center',
+    },
+    loader: {
+      marginVertical: 20,
+    },
+    errorText: {
+      color: themeColors.error,
+      textAlign: 'center',
+      marginVertical: 20,
+    },
+    noDataText: {
+      color: themeColors.textSecondary,
+      textAlign: 'center',
+      marginVertical: 20,
     },
     buttonContainer: {
-      marginTop: 10,
-      flexDirection: 'row',
-      justifyContent: 'center',
+      marginTop: 20,
     },
     closeButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 8,
       backgroundColor: themeColors.primary,
+      padding: 12,
+      borderRadius: 8,
+      alignItems: 'center',
     },
     closeButtonText: {
       color: '#fff',
       fontSize: 16,
       fontWeight: '600',
     },
-    noDataText: {
-      color: themeColors.textSecondary,
-      textAlign: 'center',
-      marginVertical: 20,
-      fontSize: 16,
-    },
   });
 };
+
+export default RemoveCrisisContactModal;

@@ -23,7 +23,7 @@ import {
   removeFavoriteResource,
 } from "@/api/recommendedResources";
 import { colors } from '../theme/colors';
-import InsightModal from "@/components/InsightModal";
+import InsightModal from '@/components/modals/InsightModal';
 
 export default function HomeScreen() {
   const { theme } = useThemeContext();

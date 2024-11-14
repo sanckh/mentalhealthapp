@@ -16,7 +16,7 @@ import { useThemeContext } from "@/components/ThemeContext";
 import { updateProfilePicture } from "@/api/user";
 import { getCurrentUser } from "@/api/auth";
 import { getConsecutiveCheckins, getRecentCheckinData } from "@/api/checkin";
-import ChangeDisplayNameModal from "@/components/ChangeDisplayNameModal";
+import ChangeDisplayNameModal from "@/components/modals/ChangeDisplayNameModal";
 import { convertToUserLocalTime } from "../utilities/dateUtils";
 import { recommendedResourceModel } from "@/models/recommendedResourceModel";
 import { getFavoriteResources, removeFavoriteResource } from "@/api/recommendedResources";

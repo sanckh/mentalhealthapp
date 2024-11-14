@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import AddCrisisContactModal from '@/components/AddCrisisContactModal';
-import RemoveCrisisContactModal from '@/components/RemoveCrisisContactModal';
-import ResetPasswordModal from '@/components/ResetPasswordModal';
+import AddCrisisContactModal from '@/components/modals/AddCrisisContactModal';
+import RemoveCrisisContactModal from '@/components/modals/RemoveCrisisContactModal';
+import ResetPasswordModal from '@/components/modals/ResetPasswordModal';
 import { getCurrentUser, resetPassword, signout } from '@/api/auth';
 import ThemeContext from '../../components/ThemeContext';
 import { useAuth } from '../store/auth/auth-context';
-import ChangeDisplayNameModal from '@/components/ChangeDisplayNameModal';
+import ChangeDisplayNameModal from '@/components/modals/ChangeDisplayNameModal';
 import { colors } from '../theme/colors';
 
 export default function SettingsScreen() {
@@ -50,7 +50,7 @@ export default function SettingsScreen() {
   };
 
   const handleRemoveCrisisContact = () => {
-    setRemoveModalVisible(true);
+    setRemoveModalVisible(true)
   }
 
   const handleChangePassword = () => {

@@ -19,7 +19,7 @@ import { getUserContacts } from "@/api/userContacts";
 import { getCurrentUser } from "@/api/auth";
 import { useThemeContext } from "@/components/ThemeContext";
 import { colors } from '../theme/colors';
-import RemoveCrisisContactModal from "@/components/RemoveCrisisContactModal";
+import RemoveCrisisContactModal from "@/components/modals/RemoveCrisisContactModal";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 60) / 2;

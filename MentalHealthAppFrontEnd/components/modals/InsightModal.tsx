@@ -1,8 +1,8 @@
 import { insightModel } from '@/models/insightModel';
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
-import { useThemeContext } from './ThemeContext';
-import { colors } from '../app/theme/colors';
+import { useThemeContext } from '../ThemeContext';
+import { colors } from '../../app/theme/colors';
 
 interface Props {
   visible: boolean;
@@ -47,52 +47,51 @@ const createStyles = (theme: string) => {
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       justifyContent: 'center',
       alignItems: 'center',
+      padding: 20,
     },
     modalContent: {
       backgroundColor: themeColors.surface,
-      padding: 20,
       borderRadius: 10,
-      width: '80%',
-      alignItems: 'center',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
+      padding: 20,
+      width: '100%',
+      maxWidth: 500,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
       shadowRadius: 4,
-      elevation: 3,
+      elevation: 5,
     },
     modalTitle: {
-      fontSize: 18,
+      fontSize: 24,
       fontWeight: 'bold',
-      color: themeColors.text,
       marginBottom: 10,
+      color: themeColors.text,
     },
     modalCategory: {
-      fontSize: 14,
+      fontSize: 16,
       color: themeColors.textSecondary,
-      marginBottom: 5,
+      marginBottom: 15,
     },
     modalDescription: {
-      fontSize: 14,
+      fontSize: 16,
+      marginBottom: 15,
+      lineHeight: 24,
       color: themeColors.text,
-      textAlign: 'center',
-      marginBottom: 10,
     },
     modalMoreInfo: {
-      fontSize: 12,
-      color: themeColors.textTertiary,
-      fontStyle: 'italic',
-      textAlign: 'center',
+      fontSize: 14,
       marginBottom: 20,
+      color: themeColors.textSecondary,
+      lineHeight: 20,
     },
     closeButton: {
-      padding: 10,
       backgroundColor: themeColors.primary,
-      borderRadius: 5,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 2,
-      elevation: 2,
+      padding: 15,
+      borderRadius: 8,
+      alignItems: 'center',
     },
     closeButtonText: {
       color: '#fff',

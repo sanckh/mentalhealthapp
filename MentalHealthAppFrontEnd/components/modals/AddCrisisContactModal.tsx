@@ -10,9 +10,9 @@ import {
   Keyboard,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { saveUserContact } from '../api/userContacts';
-import { useThemeContext } from './ThemeContext';
-import { colors } from '../app/theme/colors';
+import { saveUserContact } from '../../api/userContacts';
+import { useThemeContext } from '../ThemeContext';
+import { colors } from '../../app/theme/colors';
 
 interface Props {
   visible: boolean;
@@ -200,23 +200,20 @@ const createStyles = (theme: string) => {
       borderRadius: 8,
       flex: 1,
       marginHorizontal: 5,
-      alignItems: 'center',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 2,
-      elevation: 2,
     },
     cancelButton: {
-      backgroundColor: themeColors.surfaceVariant,
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: themeColors.primary,
     },
     buttonText: {
       color: '#fff',
-      fontWeight: '600',
       fontSize: 16,
+      textAlign: 'center',
+      fontWeight: '600',
     },
     cancelButtonText: {
-      color: themeColors.text,
+      color: themeColors.primary,
     },
   });
 };

@@ -11,8 +11,8 @@ import {
   Alert,
 } from 'react-native';
 import { resetPassword } from '@/api/auth';
-import { useThemeContext } from './ThemeContext';
-import { colors } from '../app/theme/colors';
+import { useThemeContext } from '../ThemeContext';
+import { colors } from '../../app/theme/colors';
 
 interface ResetPasswordModalProps {
   visible: boolean;
@@ -78,61 +78,65 @@ const createStyles = (theme: string) => {
   return StyleSheet.create({
     modalContainer: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      padding: 20,
     },
     modalContent: {
-      width: '80%',
-      padding: 20,
       backgroundColor: themeColors.surface,
       borderRadius: 8,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      padding: 20,
+      width: '100%',
+      maxWidth: 400,
+      alignItems: 'center',
     },
     title: {
-      fontSize: 20,
+      fontSize: 24,
       fontWeight: 'bold',
-      marginBottom: 16,
-      textAlign: 'center',
+      marginBottom: 20,
       color: themeColors.text,
     },
     input: {
-      height: 40,
-      borderColor: themeColors.border,
+      width: '100%',
+      height: 50,
       borderWidth: 1,
+      borderColor: themeColors.border,
       borderRadius: 8,
-      paddingHorizontal: 10,
-      marginBottom: 16,
+      paddingHorizontal: 15,
+      marginBottom: 20,
+      fontSize: 16,
       backgroundColor: themeColors.background,
       color: themeColors.text,
     },
     button: {
       backgroundColor: themeColors.primary,
-      padding: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 30,
       borderRadius: 8,
-      alignItems: 'center',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 2,
-      elevation: 2,
+      marginBottom: 10,
+      width: '100%',
     },
     buttonText: {
       color: '#fff',
       fontSize: 16,
-      fontWeight: 'bold',
+      fontWeight: '600',
+      textAlign: 'center',
     },
     closeButton: {
-      marginTop: 10,
-      alignItems: 'center',
+      backgroundColor: 'transparent',
+      paddingVertical: 12,
+      paddingHorizontal: 30,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: themeColors.primary,
+      width: '100%',
     },
     closeButtonText: {
       color: themeColors.primary,
-      fontSize: 14,
+      fontSize: 16,
+      fontWeight: '600',
+      textAlign: 'center',
     },
   });
 };

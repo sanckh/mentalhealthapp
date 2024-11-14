@@ -11,13 +11,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { updateDisplayName } from '@/api/user';
-import { useThemeContext } from './ThemeContext';
-import { colors } from '../app/theme/colors';
+import { useThemeContext } from '../ThemeContext';
+import { colors } from '../../app/theme/colors';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
-  currentDisplayName: string;
+  currentDisplayName: string | undefined;
   userId: string;
 }
 
@@ -90,74 +90,64 @@ const createStyles = (theme: string) => {
   return StyleSheet.create({
     modalOverlay: {
       flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-      width: '80%',
-      padding: 20,
       backgroundColor: themeColors.surface,
-      borderRadius: 10,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      borderRadius: 8,
+      padding: 20,
+      width: '90%',
+      maxWidth: 400,
     },
     title: {
       fontSize: 20,
       fontWeight: 'bold',
-      marginBottom: 15,
+      marginBottom: 20,
       textAlign: 'center',
       color: themeColors.text,
     },
     input: {
       borderWidth: 1,
       borderColor: themeColors.border,
-      borderRadius: 5,
-      padding: 10,
+      borderRadius: 8,
+      padding: 12,
       marginBottom: 20,
+      fontSize: 16,
       backgroundColor: themeColors.background,
       color: themeColors.text,
     },
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      gap: 10,
     },
     button: {
-      flex: 1,
-      marginRight: 5,
       backgroundColor: themeColors.primary,
       padding: 12,
-      borderRadius: 5,
+      borderRadius: 8,
+      flex: 1,
       alignItems: 'center',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 2,
-      elevation: 2,
     },
     buttonText: {
       color: '#fff',
-      fontWeight: 'bold',
+      fontSize: 16,
+      fontWeight: '600',
     },
     cancelButton: {
-      flex: 1,
-      marginLeft: 5,
-      backgroundColor: themeColors.surfaceVariant,
+      backgroundColor: 'transparent',
       padding: 12,
-      borderRadius: 5,
+      borderRadius: 8,
+      flex: 1,
       alignItems: 'center',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: isDark ? 0.3 : 0.1,
-      shadowRadius: 2,
-      elevation: 2,
+      borderWidth: 1,
+      borderColor: themeColors.primary,
     },
     cancelButtonText: {
-      color: themeColors.text,
-      fontWeight: 'bold',
+      color: themeColors.primary,
+      fontSize: 16,
+      fontWeight: '600',
     },
   });
 };
