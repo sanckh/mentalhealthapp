@@ -4,4 +4,5 @@ export interface userModel {
     email?: string;
     profilePicture?: string;
     createdAt: Date;
+    isPaid: boolean;
 }

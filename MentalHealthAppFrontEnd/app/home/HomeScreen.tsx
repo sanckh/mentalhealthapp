@@ -24,6 +24,7 @@ import {
 } from "@/api/recommendedResources";
 import { colors } from '../theme/colors';
 import InsightModal from '@/components/modals/InsightModal';
+import GlobalBannerAd from '@/components/advertisements/GlobalBannerAd.native';
 
 export default function HomeScreen() {
   const { theme } = useThemeContext();
@@ -154,37 +155,37 @@ export default function HomeScreen() {
             <Text style={styles.textSmall}>Tap to see more</Text>
             {resources.map(
               (resource: recommendedResourceModel, index: number) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.reuseCard}
-                  onPress={() => Linking.openURL(resource.link)}
-                >
-                  <View style={styles.cardIconContainer}>
-                    <Icon name={resource.icon} size={30} />
-                  </View>
-                  <View style={styles.cardTextContainer}>
-                    <Text style={styles.title}>{resource.title}</Text>
-                    <Text style={styles.cardCategory}>{resource.category}</Text>
+              <TouchableOpacity
+                key={index}
+                style={styles.reuseCard}
+                onPress={() => Linking.openURL(resource.link)}
+              >
+                <View style={styles.cardIconContainer}>
+                  <Icon name={resource.icon} size={30} />
+                </View>
+                <View style={styles.cardTextContainer}>
+                  <Text style={styles.title}>{resource.title}</Text>
+                  <Text style={styles.cardCategory}>{resource.category}</Text>
                     <Text style={styles.cardDescription}>
                       {resource.description}
                     </Text>
-                  </View>
+                </View>
                   {/* Add favorite toggle button */}
-                  <TouchableOpacity
-                    style={styles.favoriteButton}
-                    onPress={() => toggleFavorite(resource.id)}
-                  >
-                    <Icon
+                <TouchableOpacity
+                  style={styles.favoriteButton}
+                  onPress={() => toggleFavorite(resource.id)}
+                >
+                  <Icon
                       name={
                         favoriteResourceIds.includes(resource.id)
                           ? "star"
                           : "star-border"
                       }
-                      size={25}
-                      color="gold"
-                    />
-                  </TouchableOpacity>
+                    size={25}
+                    color="gold"
+                  />
                 </TouchableOpacity>
+              </TouchableOpacity>
               )
             )}
           </View>
@@ -209,6 +210,7 @@ export default function HomeScreen() {
           <Text style={styles.contentText}>Your recent progress...</Text>
         </View>
       </View>
+      <GlobalBannerAd />
     </ScrollView>
   );
 }
