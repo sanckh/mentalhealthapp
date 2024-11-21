@@ -38,6 +38,17 @@ allprojects {
 
         google()
         mavenCentral()
-        maven { url 'https://www.jitpack.io' }
+        maven { url 'https://www.jitpack.io'
+                content {
+                /*https://github.com/invertase/notifee/issues/350 docs claim installation with npx 
+                is sufficient but we need to add line to the android build.gradle file*/
+                excludeGroup "app.notifee"
+            }
+        }
+        maven {
+            /*https://github.com/invertase/notifee/issues/350 docs claim installation with npx 
+            is sufficient but we need to add this repo to the android build.gradle file*/
+            url "$rootDir/../node_modules/@notifee/react-native/android/libs"
+        }
     }
 }
