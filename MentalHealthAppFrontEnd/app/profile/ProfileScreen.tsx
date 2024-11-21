@@ -207,7 +207,7 @@ export default function ProfileScreen() {
                 ],
               }}
               fromZero={true}
-              width={Dimensions.get("window").width - 50}
+              width={Dimensions.get("window").width - 70}
               height={220}
               chartConfig={{
                 backgroundColor: theme === "dark" ? "#333" : "#fff",
