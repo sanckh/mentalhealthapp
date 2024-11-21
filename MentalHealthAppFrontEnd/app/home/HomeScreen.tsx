@@ -24,7 +24,7 @@ import {
 } from "@/api/recommendedResources";
 import { colors } from '../theme/colors';
 import InsightModal from '@/components/modals/InsightModal';
-import GlobalBannerAd from '@/components/advertisements/GlobalBannerAd.native';
+//import GlobalBannerAd from '@/components/advertisements/GlobalBannerAd.native';
 
 export default function HomeScreen() {
   const { theme } = useThemeContext();
@@ -210,7 +210,7 @@ export default function HomeScreen() {
           <Text style={styles.contentText}>Your recent progress...</Text>
         </View>
       </View>
-      <GlobalBannerAd />
+      {/* <GlobalBannerAd /> */}
     </ScrollView>
   );
 }
