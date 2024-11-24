@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { confirmPasswordReset } from '@/api/auth';
 
+//this screen is tbh and not in use atm 
 const ConfirmPasswordResetScreen: React.FC<{ route: any }> = ({ route }) => {
-  const { oobCode } = route.params; // Extract oobCode from params
+  const { oobCode } = route.params; 
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
 

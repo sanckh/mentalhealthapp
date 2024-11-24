@@ -14,8 +14,9 @@ import { hasSubmittedDailyCheckin } from "@/api/checkin";
 import { useAuth } from "../store/auth/auth-context";
 import { router } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
-import ResetPasswordModal from "@/components/ResetPasswordModal";
+import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
 import { getData } from "../utilities/storage-utility";
+import { colors } from '../theme/colors';
 
 export default function LoginScreen() {
   const { theme } = useThemeContext();
@@ -23,7 +24,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, isLoading: isAuthLoading } = useAuth();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -32,23 +33,31 @@ export default function LoginScreen() {
   const [isResetModalVisible, setIsResetModalVisible] = useState(false);
 
   const getAuthState = async () => {
-    const authState = await getData("mhAuthState");
-    return authState ? JSON.parse(authState) : null;
+    try {
+      const authState = await getData("mhAuthState");
+      return authState ? JSON.parse(authState) : null;
+    } catch (error) {
+      console.error("Error getting auth state:", error);
+      return null;
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getAuthState();
-      if (data) {
-        setIsLoading(true);
+      if (data?.isAuthenticated && data?.uid) {
         const { isAuthenticated, token, uid } = data;
-        setIsAuthenticated(isAuthenticated, token, uid);
-        router.replace("/home");
-        setIsLoading(false);
+        await setIsAuthenticated(isAuthenticated, token, uid);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/home");
+    }
+  }, [isAuthenticated]);
 
   const validate = () => {
     let valid = true;
@@ -72,41 +81,35 @@ export default function LoginScreen() {
     return valid;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validate()) {
       return;
     }
 
     setIsLoading(true);
-
-    login(email, password)
-      .then((response) => {
-        console.log("Login successful:", response);
-
-        setIsAuthenticated(true, response.token, response.uid);
-        hasSubmittedDailyCheckin(response.uid).then((hasSubmitted) => {
-          if (hasSubmitted) {
-            router.replace("/home");
-          } else {
-            router.replace("/dailycheckin");
-          }
-        });
-      })
-      .catch((error: any) => {
-        console.error("Login failed:", error);
-        if (error instanceof Error) {
-          Alert.alert("Login Error", error.message);
-        } else {
-          Alert.alert("Login Error", "An unknown error occurred");
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const response = await login(email, password);
+      await setIsAuthenticated(true, response.token, response.uid);
+      const hasSubmitted = await hasSubmittedDailyCheckin(response.uid);
+      router.replace(hasSubmitted ? "/home" : "/dailycheckin");
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      Alert.alert(
+        "Login Error",
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return !isAuthenticated ? (
     <View style={styles.container}>
+      {(isLoading || isAuthLoading) && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large"/>
+        </View>
+      )}
       <Text style={styles.title}>Mental Health App Placeholder</Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -151,14 +154,14 @@ export default function LoginScreen() {
         style={({ pressed }) => [
           styles.button,
           pressed && styles.buttonPressed,
-          isLoading && styles.buttonDisabled,
+          (isLoading || isAuthLoading) && styles.buttonDisabled,
         ]}
         onPress={handleLogin}
-        disabled={isLoading}
+        disabled={isLoading || isAuthLoading}
         accessibilityLabel="Login"
         accessibilityHint="Press to log into your account"
       >
-        {isLoading ? (
+        {(isLoading || isAuthLoading) ? (
           <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.buttonText}>Login</Text>
@@ -190,82 +193,99 @@ export default function LoginScreen() {
 
 const createStyles = (theme: string) => {
   const isDark = theme === "dark";
+  const themeColors = isDark ? colors.dark : colors.light;
+
   return StyleSheet.create({
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: isDark ? "#121212" : "#ffffff",
+      backgroundColor: themeColors.background,
       justifyContent: "center",
     },
     title: {
       fontSize: 32,
       fontWeight: "bold",
-      color: isDark ? "#bb86fc" : "#007aff",
       marginBottom: 40,
+      color: themeColors.text,
       textAlign: "center",
     },
     inputContainer: {
       marginBottom: 20,
+      width: "100%",
     },
     input: {
-      height: 50,
-      backgroundColor: isDark ? "#333333" : "#f2f2f2",
-      paddingHorizontal: 15,
+      backgroundColor: themeColors.surface,
       borderRadius: 8,
+      padding: 15,
       fontSize: 16,
-      color: isDark ? "#e0e0e0" : "#333",
+      borderWidth: 1,
+      borderColor: themeColors.border,
+      color: themeColors.text,
+      width: "100%",
     },
     errorInput: {
-      borderWidth: 1,
-      borderColor: "red",
+      borderColor: themeColors.error,
     },
     errorText: {
-      color: "red",
-      fontSize: 12,
+      color: themeColors.error,
+      fontSize: 14,
       marginTop: 5,
     },
-    passwordContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    showHideText: {
-      color: isDark ? "#bb86fc" : "#007aff",
-      marginLeft: 10,
-      fontSize: 14,
-      fontWeight: "600",
-    },
     button: {
-      height: 50,
-      backgroundColor: isDark ? "#bb86fc" : "#007aff",
+      backgroundColor: themeColors.primary,
+      padding: 15,
       borderRadius: 8,
-      justifyContent: "center",
       alignItems: "center",
       marginTop: 10,
     },
     buttonPressed: {
-      backgroundColor: isDark ? "#8854d0" : "#005bb5",
+      opacity: 0.8,
     },
     buttonDisabled: {
-      backgroundColor: isDark ? "#5a5a5a" : "#a0c4ff",
+      backgroundColor: themeColors.textTertiary,
     },
     buttonText: {
       color: "#fff",
       fontSize: 18,
-      fontWeight: "bold",
+      fontWeight: "600",
     },
     registerButton: {
       marginTop: 20,
-      alignItems: "center",
+      padding: 10,
     },
     registerButtonText: {
-      color: isDark ? "#bb86fc" : "#007aff",
+      color: themeColors.primary,
       fontSize: 16,
-      fontWeight: "600",
+      textAlign: "center",
     },
     forgotPasswordText: {
-      marginTop: 10,
+      color: themeColors.primary,
+      fontSize: 14,
       textAlign: "center",
-      color: isDark ? "#bb86fc" : "#007aff",
+      marginTop: 15,
+      textDecorationLine: "underline",
+    },
+    passwordContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: themeColors.surface,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: themeColors.border,
+    },
+    showHideText: {
+      color: themeColors.primary,
+      paddingHorizontal: 10,
+    },
+    loadingOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 };

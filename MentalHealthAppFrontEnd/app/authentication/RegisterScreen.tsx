@@ -11,6 +11,7 @@ import { register } from '../../api/auth';
 import { router } from 'expo-router';
 import { useAuth } from '../store/auth/auth-context';
 import { useThemeContext } from '@/components/ThemeContext';
+import { colors } from '../theme/colors';
 
 export default function RegisterScreen() {
   const { theme } = useThemeContext();
@@ -99,33 +100,35 @@ export default function RegisterScreen() {
 
 const createStyles = (theme: string) => {
   const isDark = theme === 'dark';
+  const themeColors = isDark ? colors.dark : colors.light;
+
   return StyleSheet.create({
     container: {
       flexGrow: 1,
       paddingHorizontal: 30,
       paddingTop: 80,
-      backgroundColor: isDark ? '#121212' : '#f7f7f7',
+      backgroundColor: themeColors.background,
       alignItems: 'center',
     },
     headerText: {
       fontSize: 32,
       fontWeight: '600',
       marginBottom: 40,
-      color: isDark ? '#e0e0e0' : '#333',
+      color: themeColors.text,
     },
     input: {
       width: '100%',
       padding: 15,
       marginVertical: 10,
-      backgroundColor: isDark ? '#333333' : '#ffffff',
+      backgroundColor: themeColors.surface,
       borderRadius: 8,
       fontSize: 16,
-      borderColor: isDark ? '#444444' : '#ddd',
+      borderColor: themeColors.border,
       borderWidth: 1,
-      color: isDark ? '#e0e0e0' : '#000',
+      color: themeColors.text,
     },
     registerButton: {
-      backgroundColor: isDark ? '#388e3c' : '#4e9c81',
+      backgroundColor: themeColors.primary,
       paddingVertical: 15,
       borderRadius: 8,
       alignItems: 'center',
@@ -141,7 +144,7 @@ const createStyles = (theme: string) => {
       marginTop: 20,
     },
     backButtonText: {
-      color: isDark ? '#81c784' : '#4e9c81',
+      color: themeColors.primary,
       fontSize: 16,
       textDecorationLine: 'underline',
     },

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
-import { ms, s, ScaledSheet, vs } from "react-native-size-matters";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+} from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -8,29 +12,30 @@ import {
 } from "@react-navigation/drawer";
 import { getCurrentUser } from "@/api/auth";
 import ShowIf from "./ShowIf";
+import { useThemeContext } from "./ThemeContext";
+import { colors } from '../app/theme/colors';
+import { userModel } from "@/models/userModel";
 
-export interface User {
-  profileImageUrl: string;
-  name: string;
-  date: string;
-}
-
-const CustomDrawerContent = ({
-  props,
-  removeAuth,
-  signout,
-}: {
+interface CustomDrawerContentProps {
   props: any;
   removeAuth: () => void;
   signout: () => Promise<void>;
-}) => {
-  const [user, setUser] = useState<User | null>(null);
+}
+
+export default function CustomDrawerContent({
+  props,
+  removeAuth,
+  signout,
+}: CustomDrawerContentProps) {
+  const [user, setUser] = useState<userModel | null>(null);
+  const { theme } = useThemeContext();
+  const styles = createStyles(theme);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const user = await getCurrentUser();
-        setUser(user);
+        const userData = await getCurrentUser();
+        setUser(userData);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -44,45 +49,24 @@ const CustomDrawerContent = ({
       <View style={styles.userInfoContainer}>
         <ShowIf
           condition={!!user?.profileImageUrl}
-          render={() => {
-            return (
-              <Image
-                source={{ uri: user?.profileImageUrl }}
-                style={styles.avatar}
-              />
-            );
-          }}
-          renderElse={() => {
-            return (
-              <View
-                style={[
-                  styles.avatar,
-                  {
-                    backgroundColor: "#ccc",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                ]}
-              >
-                <Text style={{ color: "#fff" }}>{user?.name?.charAt(0)}</Text>
-              </View>
-            );
-          }}
+          render={() => (
+            <Image
+              source={{ uri: user?.profileImageUrl }}
+              style={styles.avatar}
+            />
+          )}
+          renderElse={() => (
+            <View style={[styles.avatar, styles.placeholderAvatar]} />
+          )}
         />
-        <Text style={styles.userName}>{user?.name || ""}</Text>
+        <Text style={styles.userName}>{user?.name || "User"}</Text>
         <Text style={styles.userDate}>
-          {new Intl.DateTimeFormat("default", {
-            dateStyle: "short",
-            timeStyle: "short",
-          }).format(new Date())}
+          {user?.createdAt ? `Joined ${new Date(user.createdAt).toLocaleDateString()}` : ""}
         </Text>
       </View>
-
       <DrawerItemList {...props} />
-
       <DrawerItem
-        label="Sign out"
-        inactiveTintColor="#888"
+        label="Sign Out"
         onPress={async () => {
           await signout();
           removeAuth();
@@ -90,31 +74,41 @@ const CustomDrawerContent = ({
       />
     </DrawerContentScrollView>
   );
+}
+
+const createStyles = (theme: string) => {
+  const isDark = theme === "dark";
+  const themeColors = isDark ? colors.dark : colors.light;
+
+  return StyleSheet.create({
+    userInfoContainer: {
+      alignItems: "center",
+      backgroundColor: themeColors.surfaceVariant,
+      padding: 16,
+      marginBottom: 8,
+    },
+    avatar: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      marginBottom: 12,
+      borderWidth: 3,
+      borderColor: themeColors.primary,
+    },
+    placeholderAvatar: {
+      backgroundColor: themeColors.surfaceVariant,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    userName: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: themeColors.text,
+      marginBottom: 4,
+    },
+    userDate: {
+      fontSize: 14,
+      color: themeColors.textSecondary,
+    },
+  });
 };
-
-const styles = ScaledSheet.create({
-  userInfoContainer: {
-    alignItems: "center",
-    backgroundColor: "#f4f4f4",
-    padding: ms(20),
-  },
-  avatar: {
-    borderRadius: 70,
-    height: vs(60),
-    marginBottom: vs(10),
-    objectFit: "cover",
-    resizeMode: "cover",
-    width: s(60),
-  },
-  userName: {
-    fontSize: s(18),
-    fontWeight: "bold",
-    marginBottom: vs(5),
-  },
-  userDate: {
-    color: "#888",
-    fontSize: s(14),
-  },
-});
-
-export default CustomDrawerContent;

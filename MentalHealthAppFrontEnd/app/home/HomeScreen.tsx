@@ -22,7 +22,8 @@ import {
   getRecommendedResources,
   removeFavoriteResource,
 } from "@/api/recommendedResources";
-import InsightModal from "@/components/InsightModal";
+import { colors } from '../theme/colors';
+import InsightModal from '@/components/modals/InsightModal';
 
 export default function HomeScreen() {
   const { theme } = useThemeContext();
@@ -214,31 +215,33 @@ export default function HomeScreen() {
 
 const createStyles = (theme: string) => {
   const isDark = theme === "dark";
+  const themeColors = isDark ? colors.dark : colors.light;
+
   return StyleSheet.create({
     container: {
       flex: 1,
       padding: 16,
-      backgroundColor: isDark ? "#121212" : "#ffffff",
+      backgroundColor: themeColors.background,
     },
     loadingContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: isDark ? "#1e1e1e" : "#f5f5f5",
+      backgroundColor: themeColors.background,
     },
     loadingText: {
       fontSize: 18,
-      color: isDark ? "#cccccc" : "#666",
+      color: themeColors.textSecondary,
     },
     header: {
       fontSize: 28,
       fontWeight: "bold",
       marginBottom: 12,
-      color: isDark ? "#e0e0e0" : "#333",
+      color: themeColors.text,
       textAlign: "center",
     },
     card: {
-      backgroundColor: isDark ? "#1e1e1e" : "#fafafa",
+      backgroundColor: themeColors.surface,
       padding: 16,
       borderRadius: 8,
       marginBottom: 16,
@@ -252,14 +255,14 @@ const createStyles = (theme: string) => {
       fontSize: 20,
       fontWeight: "600",
       marginBottom: 8,
-      color: isDark ? "#e0e0e0" : "#333",
+      color: themeColors.text,
     },
     contentText: {
       fontSize: 16,
-      color: isDark ? "#bbbbbb" : "#666",
+      color: themeColors.textSecondary,
     },
     button: {
-      backgroundColor: isDark ? "#005bb5" : "#007bff",
+      backgroundColor: themeColors.primary,
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderRadius: 8,
@@ -276,7 +279,7 @@ const createStyles = (theme: string) => {
       alignItems: "center",
       padding: 10,
       marginBottom: 10,
-      backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
+      backgroundColor: themeColors.surfaceVariant,
       borderRadius: 5,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
@@ -294,20 +297,20 @@ const createStyles = (theme: string) => {
       fontSize: 18,
       fontWeight: "bold",
       marginBottom: 5,
-      color: isDark ? "#e0e0e0" : "#333",
+      color: themeColors.text,
     },
     cardCategory: {
       fontSize: 14,
-      color: isDark ? "#bbbbbb" : "#666",
+      color: themeColors.textSecondary,
       marginBottom: 5,
     },
     cardDescription: {
       fontSize: 14,
-      color: isDark ? "#e0e0e0" : "#333",
+      color: themeColors.text,
     },
     textSmall: {
       fontSize: 12,
-      color: isDark ? "#e0e0e0" : "#333",
+      color: themeColors.textSecondary,
       marginBottom: 4,
       textAlign: "center",
     },
