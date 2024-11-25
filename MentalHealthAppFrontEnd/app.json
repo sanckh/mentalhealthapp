@@ -18,7 +18,8 @@
       "expo-router",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "@react-native-firebase/crashlytics"
+      "@react-native-firebase/crashlytics",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true

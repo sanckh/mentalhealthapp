@@ -16,7 +16,14 @@ import { router } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
 import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
 import { getData } from "../utilities/storage-utility";
-import { colors } from '../theme/colors';
+import { colors } from "../theme/colors";
+import GoogleLoginButton from "../utilities/google-signin/GoogleLoginButton";
+import {
+  configureGoogleSignIn,
+  signInWithGoogle,
+} from "../utilities/google-signin/googleSignInUtility";
+import { Platform } from "react-native";
+
 
 export default function LoginScreen() {
   const { theme } = useThemeContext();
@@ -24,7 +31,11 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isAuthenticated, setIsAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    isLoading: isAuthLoading,
+  } = useAuth();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -52,6 +63,27 @@ export default function LoginScreen() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const userData = await signInWithGoogle();
+      if (userData) {
+        // #TODO: Handle the signed-in user data 
+        // set autheticated
+        // set localstorage
+        console.log("User data:", userData);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to sign in with Google. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -107,7 +139,7 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {(isLoading || isAuthLoading) && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large"/>
+          <ActivityIndicator size="large" />
         </View>
       )}
       <Text style={styles.title}>Mental Health App Placeholder</Text>
@@ -161,12 +193,19 @@ export default function LoginScreen() {
         accessibilityLabel="Login"
         accessibilityHint="Press to log into your account"
       >
-        {(isLoading || isAuthLoading) ? (
+        {isLoading || isAuthLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.buttonText}>Login</Text>
         )}
       </Pressable>
+
+      {Platform.OS !== "web" ? (
+        <Pressable style={styles.button} onPress={handleGoogleSignIn}>
+        <Text style={styles.buttonText}>Sign in with Google</Text>
+      </Pressable>
+      ) : (<GoogleLoginButton />)}
+
       <Pressable
         style={styles.registerButton}
         onPress={() => router.replace("/register")}
