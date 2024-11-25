@@ -16,15 +16,14 @@ import { router } from "expo-router";
 import { useThemeContext } from "@/components/ThemeContext";
 import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
 import { getData } from "../utilities/storage-utility";
-import { colors } from '../theme/colors';
+import { colors } from "../theme/colors";
+import GoogleLoginButton from "../utilities/google-signin/GoogleLoginButton";
 import {
-  GoogleSignin,
-  statusCodes,
-  isErrorWithCode,
-  isSuccessResponse,
-  isNoSavedCredentialFoundResponse,
-} from '@react-native-google-signin/google-signin';
-import { Platform } from 'react-native';
+  configureGoogleSignIn,
+  signInWithGoogle,
+} from "../utilities/google-signin/googleSignInUtility";
+import { Platform } from "react-native";
+
 
 export default function LoginScreen() {
   const { theme } = useThemeContext();
@@ -32,7 +31,11 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isAuthenticated, setIsAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    isLoading: isAuthLoading,
+  } = useAuth();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -60,6 +63,27 @@ export default function LoginScreen() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const userData = await signInWithGoogle();
+      if (userData) {
+        // #TODO: Handle the signed-in user data 
+        // set autheticated
+        // set localstorage
+        console.log("User data:", userData);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to sign in with Google. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -111,50 +135,11 @@ export default function LoginScreen() {
     }
   };
 
-  // #TODO MOVE GoogleSignin logic to a separate file
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: 'YOUR_GOOGLE_CLIENT_ID', // #TODO: Replace with client ID - get one from Google Developer Console
-      offlineAccess: true,
-    });
-  }, []);
-
-  const googleSignIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-
-      if (isSuccessResponse(response)) {
-        // Read user's info
-        console.log(response);
-        return;
-      } 
-        await GoogleSignin.signIn();
-      
-    } catch (error) {
-      console.error("Google Sign-In error:", error);
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.SIGN_IN_CANCELLED:
-            console.log("User cancelled the login flow");
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            console.log("Play services not available or outdated");
-            break;
-          default:
-            console.log("Unknown error", error);
-        }
-      } else {
-        console.log("Non-Google Sign-In error occurred", error);
-      }
-    }
-  };
-
   return !isAuthenticated ? (
     <View style={styles.container}>
       {(isLoading || isAuthLoading) && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large"/>
+          <ActivityIndicator size="large" />
         </View>
       )}
       <Text style={styles.title}>Mental Health App Placeholder</Text>
@@ -208,16 +193,18 @@ export default function LoginScreen() {
         accessibilityLabel="Login"
         accessibilityHint="Press to log into your account"
       >
-        {(isLoading || isAuthLoading) ? (
+        {isLoading || isAuthLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.buttonText}>Login</Text>
         )}
       </Pressable>
 
-      <Pressable style={styles.button} onPress={googleSignIn}>
+      {Platform.OS !== "web" ? (
+        <Pressable style={styles.button} onPress={handleGoogleSignIn}>
         <Text style={styles.buttonText}>Sign in with Google</Text>
       </Pressable>
+      ) : (<GoogleLoginButton />)}
 
       <Pressable
         style={styles.registerButton}
