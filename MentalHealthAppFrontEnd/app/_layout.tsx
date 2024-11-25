@@ -1,10 +1,12 @@
+import React from "react";
 import { Slot } from "expo-router";
 import { AuthContextProvider } from "./store/auth/auth-context";
 import { ThemeProvider } from "@/components/ThemeContext";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import useNotificationSetup from "@/hooks/useNotificationSetup";
 
 export default function RootLayout() {
+  useNotificationSetup()
+
   return (
     <ThemeProvider>
       <AuthContextProvider>
